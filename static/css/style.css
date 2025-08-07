@@ -269,10 +269,7 @@ body {
 
 /* REMOVED - Using navbar_clean.css for login button */
 
-/* HOVER EFFECT REMOVED - HANDLED IN navbar_clean.css */
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 230, 118, 0.3);
-}
+/* CSS CLEANUP - REMOVED CONFLICTING STYLES */
 
 .btn-login-nav::after {
     display: none !important;

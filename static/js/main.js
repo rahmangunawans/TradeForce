@@ -66,9 +66,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Set active state to current section link
-        const activeLink = document.querySelector(`a[href="#${currentSection}"]`);
-        if (activeLink && activeLink.classList.contains('nav-link')) {
-            activeLink.classList.add('active');
+        if (currentSection) {
+            const activeLink = document.querySelector(`a[href="#${currentSection}"]`);
+            if (activeLink && activeLink.classList.contains('nav-link')) {
+                activeLink.classList.add('active');
+            }
         }
     }
     

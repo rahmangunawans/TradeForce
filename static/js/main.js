@@ -1,7 +1,12 @@
 // Main JavaScript for AUTO TRADE VIP Landing Page
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Navbar scroll effect with transparent background
+    // Create scroll progress bar
+    const progressBar = document.createElement('div');
+    progressBar.className = 'scroll-progress';
+    document.body.appendChild(progressBar);
+    
+    // Navbar scroll effect with transparent background + progress bar
     const navbar = document.querySelector('.navbar');
     let lastScrollTop = 0;
     
@@ -9,6 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
         
+        // Calculate scroll progress
+        const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = scrollPercent + '%';
+        
+        // Navbar transparency effects
         if (scrollTop > 100) {
             // Scrolling down - make navbar more transparent
             navbar.style.background = 'rgba(26, 31, 46, 0.3)';

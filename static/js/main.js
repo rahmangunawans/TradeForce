@@ -1,17 +1,32 @@
 // Main JavaScript for AUTO TRADE VIP Landing Page
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Navbar scroll effect
+    // Navbar scroll effect with transparent background
     const navbar = document.querySelector('.navbar');
+    let lastScrollTop = 0;
     
     window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-            navbar.style.background = 'rgba(13, 20, 33, 0.98)';
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+        
+        if (scrollTop > 100) {
+            // Scrolling down - make navbar more transparent
+            navbar.style.background = 'rgba(26, 31, 46, 0.3)';
+            navbar.style.backdropFilter = 'blur(20px)';
+            navbar.classList.add('navbar-transparent');
+        } else if (scrollTop > 50) {
+            // Mid-scroll - semi-transparent
+            navbar.style.background = 'rgba(26, 31, 46, 0.7)';
             navbar.style.backdropFilter = 'blur(15px)';
+            navbar.classList.remove('navbar-transparent');
         } else {
-            navbar.style.background = 'rgba(13, 20, 33, 0.95)';
+            // At top - normal background
+            navbar.style.background = 'rgba(26, 31, 46, 0.95)';
             navbar.style.backdropFilter = 'blur(10px)';
+            navbar.classList.remove('navbar-transparent');
         }
+        
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
     });
     
     // Smooth scrolling for anchor links

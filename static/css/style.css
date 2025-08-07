@@ -381,12 +381,62 @@ body {
     margin: 0 auto;
 }
 
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-    gap: 3rem;
-    max-width: 1200px;
+.products-carousel-wrapper {
+    position: relative;
+    max-width: 1400px;
     margin: 0 auto;
+    overflow: hidden;
+}
+
+.products-carousel {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0 3rem;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.products-carousel::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-gold) 100%);
+    color: var(--primary-dark);
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.carousel-nav:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 230, 118, 0.4);
+}
+
+.nav-left {
+    left: 0;
+}
+
+.nav-right {
+    right: 0;
+}
+
+.carousel-nav.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .product-box {
@@ -397,6 +447,8 @@ body {
     transition: all 0.4s ease;
     box-shadow: var(--shadow-medium);
     position: relative;
+    min-width: 400px;
+    flex-shrink: 0;
 }
 
 .product-box::before {
@@ -715,9 +767,13 @@ body {
         max-width: 280px;
     }
     
-    .products-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
+    .products-carousel {
+        padding: 0 1rem;
+        gap: 1.5rem;
+    }
+    
+    .product-box {
+        min-width: 320px;
     }
     
     .broker-carousel {
@@ -763,11 +819,12 @@ body {
         font-size: 2rem;
     }
     
-    .products-grid {
-        grid-template-columns: 1fr;
+    .products-carousel {
+        padding: 0 0.5rem;
     }
     
     .product-box {
+        min-width: 300px;
         margin: 0 1rem;
     }
     

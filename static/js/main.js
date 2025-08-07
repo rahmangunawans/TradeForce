@@ -376,7 +376,63 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
     
     console.log('AUTO TRADE VIP Landing Page initialized successfully!');
+    
+    // Initialize products carousel
+    initProductsCarousel();
 });
+
+// Products Carousel Navigation
+function initProductsCarousel() {
+    const carousel = document.getElementById('productsCarousel');
+    const navLeft = document.getElementById('navLeft');
+    const navRight = document.getElementById('navRight');
+    
+    if (!carousel || !navLeft || !navRight) return;
+    
+    const checkScrollButtons = () => {
+        const scrollLeft = carousel.scrollLeft;
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        
+        // Hide/show left button
+        if (scrollLeft <= 0) {
+            navLeft.classList.add('hidden');
+        } else {
+            navLeft.classList.remove('hidden');
+        }
+        
+        // Hide/show right button  
+        if (scrollLeft >= maxScroll - 1) {
+            navRight.classList.add('hidden');
+        } else {
+            navRight.classList.remove('hidden');
+        }
+    };
+    
+    // Initial check
+    checkScrollButtons();
+    
+    // Scroll left
+    navLeft.addEventListener('click', () => {
+        carousel.scrollBy({
+            left: -420, // Card width + gap
+            behavior: 'smooth'
+        });
+    });
+    
+    // Scroll right
+    navRight.addEventListener('click', () => {
+        carousel.scrollBy({
+            left: 420, // Card width + gap  
+            behavior: 'smooth'
+        });
+    });
+    
+    // Check buttons on scroll
+    carousel.addEventListener('scroll', checkScrollButtons);
+    
+    // Check buttons on resize
+    window.addEventListener('resize', checkScrollButtons);
+}
 
 // Performance optimization: Lazy load broker images
 if ('IntersectionObserver' in window) {

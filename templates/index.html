@@ -252,52 +252,62 @@
                 <p class="section-description">Pilih paket robot trading berdasarkan broker favorit Anda</p>
             </div>
             
-            <!-- Products Grid -->
-            <div class="products-grid">
-                <!-- Dynamic Packages -->
-                {% for package in packages %}
-                <div class="product-box">
-                    <div class="product-top">
-                        <div class="broker-tags">
-                            {% for broker in package.brokers %}
-                            <span class="tag">{{ broker }}</span>
-                            {% endfor %}
+            <!-- Products Carousel -->
+            <div class="products-carousel-wrapper">
+                <button class="carousel-nav nav-left" id="navLeft">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <div class="products-carousel" id="productsCarousel">
+                    <!-- Dynamic Packages -->
+                    {% for package in packages %}
+                    <div class="product-box">
+                        <div class="product-top">
+                            <div class="broker-tags">
+                                {% for broker in package.brokers %}
+                                <span class="tag">{{ broker }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <h3 class="product-title">{{ package.name }}</h3>
+                            
+                            {% if package.price == 'FREE' %}
+                            <div class="price-box free">
+                                <span class="amount free-text">{{ package.price }}</span>
+                                <span class="period">/ {{ package.period }}</span>
+                            </div>
+                            {% else %}
+                            <div class="price-box">
+                                <span class="currency">$</span>
+                                <span class="amount">{{ package.price.replace('$', '') }}</span>
+                                <span class="period">/ {{ package.period }}</span>
+                            </div>
+                            {% endif %}
                         </div>
                         
-                        <h3 class="product-title">{{ package.name }}</h3>
+                        <div class="features-section">
+                            <h4 class="features-title">Fitur Utama:</h4>
+                            <ul class="features-list">
+                                {% for feature in package.features %}
+                                <li><i class="fas fa-check"></i>{{ feature }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                         
-                        {% if package.price == 'FREE' %}
-                        <div class="price-box free">
-                            <span class="amount free-text">{{ package.price }}</span>
-                            <span class="period">/ {{ package.period }}</span>
+                        <div class="product-bottom">
+                            {% if package.price == 'FREE' %}
+                            <button class="subscribe-btn free">Coba Gratis Sekarang</button>
+                            {% else %}
+                            <button class="subscribe-btn">Berlangganan Sekarang</button>
+                            {% endif %}
                         </div>
-                        {% else %}
-                        <div class="price-box">
-                            <span class="currency">$</span>
-                            <span class="amount">{{ package.price.replace('$', '') }}</span>
-                            <span class="period">/ {{ package.period }}</span>
-                        </div>
-                        {% endif %}
                     </div>
-                    
-                    <div class="features-section">
-                        <h4 class="features-title">Fitur Utama:</h4>
-                        <ul class="features-list">
-                            {% for feature in package.features %}
-                            <li><i class="fas fa-check"></i>{{ feature }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    
-                    <div class="product-bottom">
-                        {% if package.price == 'FREE' %}
-                        <button class="subscribe-btn free">Coba Gratis Sekarang</button>
-                        {% else %}
-                        <button class="subscribe-btn">Berlangganan Sekarang</button>
-                        {% endif %}
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                
+                <button class="carousel-nav nav-right" id="navRight">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         </div>
     </section>

@@ -870,19 +870,6 @@ html {
     box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
 }
 
-.feature-icon.icon-svg {
-    background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-gold) 100%);
-    border: 2px solid rgba(0, 230, 118, 0.3);
-    padding: 12px;
-}
-
-.feature-icon.icon-svg img {
-    max-width: 56px;
-    max-height: 56px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-}
 
 
 
@@ -897,16 +884,6 @@ html {
     transform: scale(1.1);
 }
 
-.feature-card:hover .feature-icon.icon-svg {
-    background: rgba(0, 230, 118, 0.15);
-    border-color: var(--accent-green);
-    box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4);
-}
-
-.feature-card:hover .feature-icon.icon-svg img {
-    transform: scale(1.1);
-    filter: brightness(1.2) drop-shadow(0 4px 12px rgba(0, 230, 118, 0.4));
-}
 
 .feature-title {
     font-size: 1.25rem;

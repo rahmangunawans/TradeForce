@@ -32,7 +32,7 @@ db = SQLAlchemy(app, model_class=Base)
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'index'  # Redirect to main page instead of separate login page
+login_manager.login_view = 'index'  # type: ignore # Redirect to main page instead of separate login page
 
 # User model
 class User(UserMixin, db.Model):

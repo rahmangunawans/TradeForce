@@ -96,16 +96,104 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Broker carousel pause on hover
-    const brokerTrack = document.querySelector('.broker-track');
+    // Enhanced broker carousel interactions
+    const brokerSlider = document.querySelector('.broker-slider');
+    const brokerCarousel = document.querySelector('.broker-carousel');
     
-    if (brokerTrack) {
-        brokerTrack.addEventListener('mouseenter', function() {
-            this.style.animationPlayState = 'paused';
+    if (brokerSlider) {
+        // Pause on hover
+        brokerCarousel.addEventListener('mouseenter', function() {
+            brokerSlider.style.animationPlayState = 'paused';
         });
         
-        brokerTrack.addEventListener('mouseleave', function() {
-            this.style.animationPlayState = 'running';
+        brokerCarousel.addEventListener('mouseleave', function() {
+            brokerSlider.style.animationPlayState = 'running';
+        });
+        
+        // Add click functionality to broker items
+        document.querySelectorAll('.broker-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const brokerName = this.querySelector('.broker-label').textContent;
+                showBrokerInfo(brokerName);
+            });
+        });
+    }
+    
+    // Show broker info modal
+    function showBrokerInfo(brokerName) {
+        const brokerInfo = {
+            'Binomo': {
+                description: 'Platform trading binary options dengan interface yang user-friendly dan berbagai instrumen trading.',
+                features: ['Minimal deposit rendah', 'Trading turnamen', 'Bonus deposit', 'Mobile app']
+            },
+            'Olymptrade': {
+                description: 'Broker internasional dengan lisensi resmi dan berbagai instrumen keuangan.',
+                features: ['Regulasi international', 'Fixed time trades', 'Forex trading', 'Crypto trading']
+            },
+            'Stockity': {
+                description: 'Platform trading modern dengan fokus pada pengalaman user yang optimal.',
+                features: ['Interface modern', 'Fast execution', 'Multiple assets', 'Educational resources']
+            },
+            'IQ Option': {
+                description: 'Salah satu broker terpopuler dengan jutaan trader di seluruh dunia.',
+                features: ['Chart analysis tools', 'Copy trading', 'Tournaments', 'Demo account']
+            },
+            'Quotex': {
+                description: 'Platform trading inovatif dengan teknologi terdepan dan spread kompetitif.',
+                features: ['Advanced charts', 'Social trading', 'Risk management', 'Fast withdrawals']
+            },
+            'Pocket Option': {
+                description: 'Broker yang menawarkan trading experience yang simpel namun powerful.',
+                features: ['One-click trading', 'Social features', 'Achievement system', 'Multiple languages']
+            }
+        };
+        
+        const info = brokerInfo[brokerName] || {
+            description: 'Platform trading terpercaya dengan berbagai fitur unggulan.',
+            features: ['Trading tools', 'Customer support', 'Secure platform', 'Educational content']
+        };
+        
+        const modal = document.createElement('div');
+        modal.innerHTML = `
+            <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.8);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="background: var(--secondary-dark); border: 2px solid var(--border-color); border-radius: 20px;">
+                        <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                            <h5 class="modal-title" style="color: var(--accent-green);">
+                                <i class="fas fa-chart-line me-2"></i>
+                                ${brokerName}
+                            </h5>
+                            <button type="button" class="btn-close" onclick="this.closest('.modal').remove()" style="filter: invert(1);"></button>
+                        </div>
+                        <div class="modal-body" style="color: var(--text-gray);">
+                            <p class="mb-3">${info.description}</p>
+                            <h6 style="color: var(--text-white); margin-bottom: 1rem;">Fitur Utama:</h6>
+                            <ul class="list-unstyled">
+                                ${info.features.map(feature => `
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        ${feature}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+                            <button class="btn" style="background: var(--accent-green); color: white;" onclick="this.closest('.modal').remove()">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Remove modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
         });
     }
     

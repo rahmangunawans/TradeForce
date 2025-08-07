@@ -336,6 +336,12 @@
                 img.style.opacity = '1';
                 img.style.visibility = 'visible';
                 
+                // Check if image is already loaded
+                if (img.complete && img.naturalWidth > 0) {
+                    console.log(`Image ${index + 1} already loaded successfully`);
+                    return;
+                }
+                
                 // Set timeout for slow loading images
                 const timeout = setTimeout(() => {
                     if (!img.complete || img.naturalWidth === 0) {
@@ -344,7 +350,7 @@
                         const brokerName = brokerItem ? brokerItem.dataset.broker : 'Unknown';
                         handleImageError(img, brokerName);
                     } else {
-                        console.log(`Image ${index + 1} loaded successfully`);
+                        console.log(`Image ${index + 1} loaded successfully after timeout`);
                     }
                 }, 2000); // 2 second timeout
                 

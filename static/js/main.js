@@ -53,15 +53,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isRegisterMode) {
             loginForm.style.display = 'none';
             registerForm.style.display = 'block';
-            toggleFormBtn.textContent = 'Sudah punya akun? Login di sini';
+            toggleFormBtn.textContent = 'Already have an account? Login here';
             document.querySelector('.modal-title').innerHTML = 
-                '<i class="fas fa-user-plus me-2 text-accent"></i>Daftar ke AUTO TRADE VIP';
+                '<i class="fas fa-user-plus me-2 text-accent"></i>Register to AUTO TRADE VIP';
         } else {
             loginForm.style.display = 'block';
             registerForm.style.display = 'none';
-            toggleFormBtn.textContent = 'Daftar akun baru';
+            toggleFormBtn.textContent = 'Create new account';
             document.querySelector('.modal-title').innerHTML = 
-                '<i class="fas fa-sign-in-alt me-2 text-accent"></i>Login ke AUTO TRADE VIP';
+                '<i class="fas fa-sign-in-alt me-2 text-accent"></i>Login to AUTO TRADE VIP';
         }
         hideAlert();
     });
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle login form submission
     loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const username = document.getElementById('loginUsername').value;
+        const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
         try {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
@@ -92,16 +92,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 showAlert('danger', data.message);
             }
         } catch (error) {
-            showAlert('danger', 'Terjadi kesalahan. Silakan coba lagi.');
+            showAlert('danger', 'An error occurred. Please try again.');
         }
     });
 
     // Handle register form submission
     registerForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const username = document.getElementById('registerUsername').value;
+        const name = document.getElementById('registerName').value;
         const email = document.getElementById('registerEmail').value;
+        const gender = document.getElementById('registerGender').value;
+        const country = document.getElementById('registerCountry').value;
         const password = document.getElementById('registerPassword').value;
+        const confirm_password = document.getElementById('registerConfirmPassword').value;
+        const agree_terms = document.getElementById('agreeTerms').checked;
 
         try {
             const response = await fetch('/register', {
@@ -109,7 +113,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({ 
+                    name, 
+                    email, 
+                    gender, 
+                    country, 
+                    password, 
+                    confirm_password, 
+                    agree_terms 
+                })
             });
 
             const data = await response.json();
@@ -123,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showAlert('danger', data.message);
             }
         } catch (error) {
-            showAlert('danger', 'Terjadi kesalahan. Silakan coba lagi.');
+            showAlert('danger', 'An error occurred. Please try again.');
         }
     });
 

@@ -37,9 +37,12 @@ login_manager.login_view = 'index'  # Redirect to main page instead of separate 
 # User model
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    gender = db.Column(db.String(10), nullable=False)
+    country = db.Column(db.String(50), nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -164,42 +167,51 @@ def index():
 def login():
     """Handle login via AJAX from modal"""
     data = request.get_json()
-    username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
     
-    if not username or not password:
-        return jsonify({'success': False, 'message': 'Username dan password harus diisi'})
+    if not email or not password:
+        return jsonify({'success': False, 'message': 'Email and password are required'})
     
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(email=email).first()
     
     if user and check_password_hash(user.password_hash, password):
         login_user(user)
-        return jsonify({'success': True, 'message': 'Login berhasil!'})
+        return jsonify({'success': True, 'message': 'Login successful!'})
     else:
-        return jsonify({'success': False, 'message': 'Username atau password salah'})
+        return jsonify({'success': False, 'message': 'Invalid email or password'})
 
 @app.route('/register', methods=['POST'])
 def register():
     """Handle registration via AJAX from modal"""
     data = request.get_json()
-    username = data.get('username')
+    name = data.get('name')
     email = data.get('email')
+    gender = data.get('gender')
+    country = data.get('country')
     password = data.get('password')
+    confirm_password = data.get('confirm_password')
+    agree_terms = data.get('agree_terms')
     
-    if not username or not email or not password:
-        return jsonify({'success': False, 'message': 'Semua field harus diisi'})
+    if not all([name, email, gender, country, password, confirm_password]):
+        return jsonify({'success': False, 'message': 'All fields are required'})
+    
+    if password != confirm_password:
+        return jsonify({'success': False, 'message': 'Passwords do not match'})
+        
+    if not agree_terms:
+        return jsonify({'success': False, 'message': 'You must agree to the terms and conditions'})
     
     # Check if user exists
-    if User.query.filter_by(username=username).first():
-        return jsonify({'success': False, 'message': 'Username sudah digunakan'})
-    
     if User.query.filter_by(email=email).first():
-        return jsonify({'success': False, 'message': 'Email sudah digunakan'})
+        return jsonify({'success': False, 'message': 'Email already registered'})
     
     # Create new user
     user = User(
-        username=username,
+        name=name,
         email=email,
+        gender=gender,
+        country=country,
         password_hash=generate_password_hash(password)
     )
     
@@ -207,7 +219,7 @@ def register():
     db.session.commit()
     
     login_user(user)
-    return jsonify({'success': True, 'message': 'Registrasi berhasil!'})
+    return jsonify({'success': True, 'message': 'Registration successful!'})
 
 @app.route('/logout')
 @login_required

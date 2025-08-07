@@ -885,35 +885,59 @@ body {
         font-size: 0.55rem;
     }
     
-    .features-section {
-        margin-bottom: 0.5rem;
+    /* Force features to display with higher specificity */
+    .products-carousel .product-box .features-section {
+        display: block !important;
+        margin-bottom: 0.5rem !important;
+        padding: 0 !important;
+        background: none !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
-    .features-title {
-        font-size: 0.5rem;
-        margin-bottom: 0.25rem;
-        font-weight: 700;
-        text-align: center;
+    .products-carousel .product-box .features-title {
+        font-size: 0.5rem !important;
+        margin-bottom: 0.25rem !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+        color: var(--text-white) !important;
+        display: block !important;
     }
     
-    .features-list {
-        margin-bottom: 0.5rem;
-        max-height: 4rem;
-        overflow: hidden;
+    .products-carousel .product-box .features-list {
+        display: flex !important;
+        flex-direction: column !important;
+        margin-bottom: 0.5rem !important;
+        max-height: 4rem !important;
+        overflow: hidden !important;
+        list-style: none !important;
+        padding: 0 !important;
+        gap: 0.1rem !important;
     }
     
-    .features-list li {
-        font-size: 0.45rem;
-        margin-bottom: 0.1rem;
-        line-height: 1.1;
-        padding-left: 0.1rem;
+    .products-carousel .product-box .features-list li {
+        display: flex !important;
+        align-items: flex-start !important;
+        font-size: 0.45rem !important;
+        margin-bottom: 0.1rem !important;
+        line-height: 1.1 !important;
+        padding: 0 !important;
+        color: var(--text-gray) !important;
+        background: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        transform: none !important;
+        gap: 0.3rem !important;
     }
     
-    .features-list i {
-        font-size: 0.4rem;
-        margin-right: 0.3rem;
-        width: 0.4rem;
-        display: inline-block;
+    .products-carousel .product-box .features-list li i {
+        color: var(--accent-green) !important;
+        font-size: 0.4rem !important;
+        margin-right: 0.3rem !important;
+        width: 0.4rem !important;
+        display: inline-block !important;
+        flex-shrink: 0 !important;
+        margin-top: 0 !important;
     }
     
     .subscribe-btn {

@@ -15,17 +15,7 @@
     align-items: center;
 }
 
-.navbar-logo {
-    width: 42px !important;
-    height: 42px !important;
-    background: white !important;
-    border-radius: 8px;
-    padding: 6px;
-    margin-right: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    display: block !important;
-    object-fit: contain;
-}
+/* Remove old logo styling to prevent conflicts */
 
 .brand-text {
     background: linear-gradient(135deg, #00e676, #ffd700);

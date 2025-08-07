@@ -9,31 +9,31 @@ app.secret_key = os.environ.get("SESSION_SECRET", "auto-trade-vip-secret-key")
 def index():
     """Landing page for AUTO TRADE VIP"""
     
-    # Broker data for carousel - Using local downloaded images with Flask url_for
+    # Broker data for carousel - Using static path directly for better reliability
     brokers = [
         {
             'name': 'Binomo',
-            'logo': url_for('static', filename='images/brokers/binomo.png')
+            'logo': '/static/images/brokers/binomo.png'
         },
         {
             'name': 'Olymptrade', 
-            'logo': url_for('static', filename='images/brokers/olymptrade.png')
+            'logo': '/static/images/brokers/olymptrade.png'
         },
         {
             'name': 'Stockity',
-            'logo': url_for('static', filename='images/brokers/stockity.png')
+            'logo': '/static/images/brokers/stockity.png'
         },
         {
             'name': 'IQ Option',
-            'logo': url_for('static', filename='images/brokers/iqoption.png')
+            'logo': '/static/images/brokers/iqoption.png'
         },
         {
             'name': 'Quotex',
-            'logo': url_for('static', filename='images/brokers/quotex.png')
+            'logo': '/static/images/brokers/quotex.png'
         },
         {
             'name': 'Pocket Option',
-            'logo': url_for('static', filename='images/brokers/pocket-option.png')
+            'logo': '/static/images/brokers/pocket-option.png'
         }
     ]
     
@@ -46,10 +46,10 @@ def index():
             'period': 'bulan',
             'brokers': ['IQ Option', 'Olymptrade', 'Quotex', 'Pocket Option'],
             'broker_logos': [
-                url_for('static', filename='images/brokers/iqoption.png'),
-                url_for('static', filename='images/brokers/olymptrade.png'),
-                url_for('static', filename='images/brokers/quotex.png'),
-                url_for('static', filename='images/brokers/pocket-option.png')
+                '/static/images/brokers/iqoption.png',
+                '/static/images/brokers/olymptrade.png',
+                '/static/images/brokers/quotex.png',
+                '/static/images/brokers/pocket-option.png'
             ],
             'features': [
                 'Auto trade via MetaTrader 4 (MT4) ke IQ Option',
@@ -71,8 +71,8 @@ def index():
             'period': 'bulan',
             'brokers': ['Binomo', 'Stockity'],
             'broker_logos': [
-                url_for('static', filename='images/brokers/binomo.png'),
-                url_for('static', filename='images/brokers/stockity.png')
+                '/static/images/brokers/binomo.png',
+                '/static/images/brokers/stockity.png'
             ],
             'features': [
                 'Auto trade via MetaTrader 4 (MT4) ke Binomo & Stockity',

@@ -76,7 +76,7 @@
                                     {% for broker in brokers %}
                                     <div class="broker-item" data-broker="{{ broker.name }}">
                                         <div class="broker-logo">
-                                            <img src="{{ broker.logo }}" alt="{{ broker.name }}" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="handleImageError(this, '{{ broker.name }}')">
+                                            <img src="{{ broker.logo }}" alt="{{ broker.name }}" loading="eager" onerror="handleImageError(this, '{{ broker.name }}')" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                                         </div>
                                         <span class="broker-label">{{ broker.name }}</span>
                                     </div>
@@ -85,7 +85,7 @@
                                     {% for broker in brokers %}
                                     <div class="broker-item" data-broker="{{ broker.name }}">
                                         <div class="broker-logo">
-                                            <img src="{{ broker.logo }}" alt="{{ broker.name }}" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="handleImageError(this, '{{ broker.name }}')">
+                                            <img src="{{ broker.logo }}" alt="{{ broker.name }}" loading="eager" onerror="handleImageError(this, '{{ broker.name }}')" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                                         </div>
                                         <span class="broker-label">{{ broker.name }}</span>
                                     </div>
@@ -322,22 +322,40 @@
         
         // Additional image loading improvements
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Checking broker images...');
             const images = document.querySelectorAll('.broker-logo img');
-            images.forEach(img => {
+            console.log('Found images:', images.length);
+            
+            images.forEach((img, index) => {
                 if (!img) return; // Safety check
+                
+                console.log(`Image ${index + 1}: ${img.src}`);
+                
+                // Force display and ensure visibility
+                img.style.display = 'block';
+                img.style.opacity = '1';
+                img.style.visibility = 'visible';
                 
                 // Set timeout for slow loading images
                 const timeout = setTimeout(() => {
-                    if (!img.complete) {
+                    if (!img.complete || img.naturalWidth === 0) {
+                        console.log(`Image ${index + 1} failed to load, using fallback`);
                         const brokerItem = img.closest('.broker-item');
                         const brokerName = brokerItem ? brokerItem.dataset.broker : 'Unknown';
                         handleImageError(img, brokerName);
+                    } else {
+                        console.log(`Image ${index + 1} loaded successfully`);
                     }
-                }, 3000); // 3 second timeout
+                }, 2000); // 2 second timeout
                 
-                img.onload = () => clearTimeout(timeout);
+                img.onload = () => {
+                    clearTimeout(timeout);
+                    console.log(`Image ${index + 1} loaded: ${img.src}`);
+                };
+                
                 img.onerror = () => {
                     clearTimeout(timeout);
+                    console.log(`Image ${index + 1} error: ${img.src}`);
                     const brokerItem = img.closest('.broker-item');
                     const brokerName = brokerItem ? brokerItem.dataset.broker : 'Unknown';
                     handleImageError(img, brokerName);

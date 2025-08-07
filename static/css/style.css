@@ -871,8 +871,7 @@ html {
 }
 
 .feature-icon.icon-svg {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-gold) 100%);
     border: 2px solid rgba(0, 230, 118, 0.3);
     padding: 12px;
 }

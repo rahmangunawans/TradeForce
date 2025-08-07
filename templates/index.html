@@ -22,11 +22,15 @@
         <div class="container">
             <!-- Brand/Logo -->
             <a class="navbar-brand" href="#hero">
-                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" 
-                     alt="AUTO TRADE VIP Logo" 
-                     class="navbar-logo"
-                     onerror="console.error('Logo failed to load:', this.src); this.style.border='2px solid red';"
-                     onload="console.log('Logo loaded successfully:', this.src);">
+                <div class="logo-container">
+                    <img src="/static/images/atv_logo.png" 
+                         alt="ATV" 
+                         class="navbar-logo"
+                         style="width: 45px; height: 45px; background: white; padding: 4px; border-radius: 8px; margin-right: 12px; display: inline-block;"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"
+                         onload="console.log('Logo berhasil dimuat');">
+                    <div class="logo-fallback" style="display: none; width: 45px; height: 45px; background: white; border: 2px solid #00e676; border-radius: 8px; margin-right: 12px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: #00e676; font-size: 14px;">ATV</div>
+                </div>
                 <span class="brand-text">AUTO TRADE VIP</span>
             </a>
             

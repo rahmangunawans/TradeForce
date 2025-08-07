@@ -1,21 +1,29 @@
-/* CLEAN LOGO STYLING */
-img.navbar-logo {
+/* FORCE LOGO DISPLAY */
+.logo-container {
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+img.navbar-logo, .logo-fallback {
     width: 45px !important;
     height: 45px !important;
     background: #ffffff !important;
-    border: 1px solid rgba(0, 230, 118, 0.3) !important;
+    border: 1px solid #00e676 !important;
     border-radius: 8px !important;
     padding: 4px !important;
     margin-right: 12px !important;
-    display: inline-block !important;
     object-fit: contain !important;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important;
-    transition: all 0.3s ease !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3) !important;
+    flex-shrink: 0 !important;
 }
 
-img.navbar-logo:hover {
-    border-color: #00e676 !important;
-    transform: scale(1.05) !important;
+.logo-fallback {
+    font-weight: bold !important;
+    color: #00e676 !important;
+    font-size: 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 /* Force brand container */

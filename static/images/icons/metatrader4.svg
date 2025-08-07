@@ -1,0 +1,34 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- MetaTrader4 Background -->
+  <rect width="64" height="64" rx="12" fill="#1E3A8A"/>
+  
+  <!-- MT4 Logo Elements -->
+  <g fill="#3B82F6">
+    <!-- M Letter -->
+    <polygon points="8,16 8,44 12,44 12,24 20,36 28,24 28,44 32,44 32,16 24,16 20,28 16,16"/>
+    
+    <!-- T Letter -->
+    <rect x="36" y="16" width="20" height="4"/>
+    <rect x="44" y="20" width="4" height="24"/>
+  </g>
+  
+  <!-- Number 4 -->
+  <g fill="#60A5FA">
+    <rect x="48" y="28" width="4" height="16"/>
+    <rect x="44" y="32" width="8" height="4"/>
+    <rect x="44" y="28" width="4" height="8"/>
+  </g>
+  
+  <!-- Chart Bars -->
+  <g fill="#10B981">
+    <rect x="10" y="48" width="3" height="8"/>
+    <rect x="15" y="44" width="3" height="12"/>
+    <rect x="20" y="50" width="3" height="6"/>
+    <rect x="25" y="46" width="3" height="10"/>
+    <rect x="30" y="42" width="3" height="14"/>
+    <rect x="35" y="48" width="3" height="8"/>
+    <rect x="40" y="45" width="3" height="11"/>
+    <rect x="45" y="49" width="3" height="7"/>
+    <rect x="50" y="47" width="3" height="9"/>
+  </g>
+</svg>

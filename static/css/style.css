@@ -870,18 +870,19 @@ html {
     box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
 }
 
-.feature-icon.icon-image {
-    background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-gold) 100%);
-    padding: 15px;
+.feature-icon.icon-svg {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 230, 118, 0.3);
+    padding: 12px;
 }
 
-.feature-icon img {
-    max-width: 50px;
-    max-height: 50px;
+.feature-icon.icon-svg img {
+    max-width: 56px;
+    max-height: 56px;
     width: auto;
     height: auto;
     object-fit: contain;
-    filter: brightness(0.2) contrast(2);
 }
 
 
@@ -897,9 +898,15 @@ html {
     transform: scale(1.1);
 }
 
-.feature-card:hover .feature-icon img {
-    filter: brightness(0.3) contrast(2.5);
+.feature-card:hover .feature-icon.icon-svg {
+    background: rgba(0, 230, 118, 0.15);
+    border-color: var(--accent-green);
+    box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4);
+}
+
+.feature-card:hover .feature-icon.icon-svg img {
     transform: scale(1.1);
+    filter: brightness(1.2) drop-shadow(0 4px 12px rgba(0, 230, 118, 0.4));
 }
 
 .feature-title {

@@ -237,9 +237,11 @@ body {
     
     .btn-login-nav {
         margin: 0.5rem 0 0 0 !important;
-        width: 100% !important;
+        width: auto !important;
         text-align: center !important;
         border-radius: 6px !important;
+        padding: 0.5rem 1rem !important;
+        display: inline-block !important;
     }
 }
 

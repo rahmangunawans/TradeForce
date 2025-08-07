@@ -74,18 +74,21 @@
     width: 0;
 }
 
-/* Professional Login Button */
+/* Professional Login Button - Compact Size */
 .btn-login-nav {
     background: rgba(255, 255, 255, 0.08) !important;
     border: 1px solid rgba(0, 230, 118, 0.3) !important;
     color: rgba(255, 255, 255, 0.9) !important;
     font-weight: 500 !important;
-    padding: 0.6rem 1.2rem !important;
+    padding: 0.5rem 0.8rem !important;
     border-radius: 6px !important;
     margin-left: 10px !important;
     transition: all 0.3s ease !important;
     backdrop-filter: blur(10px) !important;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+    width: auto !important;
 }
 
 .btn-login-nav:hover {
@@ -107,6 +110,9 @@
     }
     
     .btn-login-nav {
-        margin: 0.5rem 0;
+        margin: 0.5rem 0 !important;
+        width: auto !important;
+        padding: 0.5rem 1rem !important;
+        display: inline-block !important;
     }
 }

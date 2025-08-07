@@ -669,10 +669,28 @@ body {
 }
 
 .feature-card .feature-icon img {
-    width: 32px !important;
-    height: 32px !important;
+    width: 48px !important;
+    height: 48px !important;
     display: block !important;
     opacity: 1 !important;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-gold));
+    transform: scale(1.05);
+    box-shadow: 0 15px 35px rgba(0, 230, 118, 0.4);
+}
+
+.feature-card:hover .feature-icon img {
+    filter: brightness(0) invert(1);
+    transform: scale(1.1);
+}
+
+.feature-card:hover .feature-icon i {
+    transform: scale(1.1);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .feature-card .feature-title {

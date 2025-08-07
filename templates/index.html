@@ -43,56 +43,54 @@
 
     <!-- Hero Section -->
     <section id="hero" class="hero-section">
-        <div class="hero-overlay"></div>
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 text-center">
-                    <div class="hero-content">
-                        <h1 class="hero-title mb-4">
-                            ATV ROBOT TRADING & 
-                            <span class="text-accent">SIGNAL TRADING</span>
-                        </h1>
-                        <p class="hero-subtitle mb-5">
-                            AUTO TRADE VIP adalah platform robot trading yang kuat dan aman. 
-                            Dapat berjalan otomatis pada broker seperti Binomo, Olymp Trade, Stockity, 
-                            IQ Option, Quotex, dan Pocket Option. Robot ini menggunakan sinyal dari 
-                            indikator MetaTrader atau dari penyedia sinyal favorit Anda.
-                        </p>
-                        <div class="hero-buttons mb-5">
-                            <a href="#packages" class="btn btn-cta btn-lg me-3">
-                                Coba Sekarang
-                            </a>
-                            <a href="#packages" class="btn btn-cta-secondary btn-lg me-3">
-                                Lihat Paket
-                            </a>
-                            <a href="#contact" class="btn btn-cta-accent btn-lg">
-                                Gabung VIP
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Hero Carousel - Broker Logos -->
-            <div class="row mt-5">
+            <div class="row">
                 <div class="col-12">
-                    <div class="hero-carousel">
-                        <h3 class="carousel-subtitle text-center mb-4">Broker yang Didukung:</h3>
-                        <div class="broker-logos-container">
-                            <div class="broker-logos-scroll">
-                                {% for broker in brokers %}
-                                <div class="broker-logo-item">
-                                    <img src="{{ broker.logo }}" alt="{{ broker.name }}" class="broker-logo-img">
-                                    <span class="broker-name">{{ broker.name }}</span>
+                    <div class="hero-content text-center">
+                        <!-- Main Headline -->
+                        <div class="hero-header mb-5">
+                            <h1 class="main-headline">
+                                ATV ROBOT TRADING & 
+                                <span class="highlight-text">SIGNAL TRADING</span>
+                            </h1>
+                            <p class="sub-headline">
+                                AUTO TRADE VIP adalah platform robot trading yang kuat dan aman. 
+                                Dapat berjalan otomatis pada broker seperti Binomo, Olymp Trade, Stockity, 
+                                IQ Option, Quotex, dan Pocket Option. Robot ini menggunakan sinyal dari 
+                                indikator MetaTrader atau dari penyedia sinyal favorit Anda.
+                            </p>
+                        </div>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="cta-buttons mb-5">
+                            <a href="#packages" class="cta-btn primary">Coba Sekarang</a>
+                            <a href="#packages" class="cta-btn secondary">Lihat Paket</a>
+                            <a href="#contact" class="cta-btn accent">Gabung VIP</a>
+                        </div>
+                        
+                        <!-- Broker Carousel -->
+                        <div class="broker-carousel-section">
+                            <h3 class="carousel-title">Broker yang Didukung</h3>
+                            <div class="broker-carousel">
+                                <div class="broker-slider">
+                                    {% for broker in brokers %}
+                                    <div class="broker-item">
+                                        <div class="broker-logo">
+                                            <img src="{{ broker.logo }}" alt="{{ broker.name }}">
+                                        </div>
+                                        <span class="broker-label">{{ broker.name }}</span>
+                                    </div>
+                                    {% endfor %}
+                                    <!-- Duplicate for infinite scroll -->
+                                    {% for broker in brokers %}
+                                    <div class="broker-item">
+                                        <div class="broker-logo">
+                                            <img src="{{ broker.logo }}" alt="{{ broker.name }}">
+                                        </div>
+                                        <span class="broker-label">{{ broker.name }}</span>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                                {% endfor %}
-                                <!-- Duplicate for seamless scroll -->
-                                {% for broker in brokers %}
-                                <div class="broker-logo-item">
-                                    <img src="{{ broker.logo }}" alt="{{ broker.name }}" class="broker-logo-img">
-                                    <span class="broker-name">{{ broker.name }}</span>
-                                </div>
-                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -101,156 +99,92 @@
         </div>
     </section>
 
-    <!-- Packages Section -->
-    <section id="packages" class="packages-section">
+    <!-- Products Section -->
+    <section id="packages" class="products-section">
         <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="section-title">PRODUK & FITUR</h2>
-                    <p class="section-subtitle">Pilih paket robot trading berdasarkan broker favorit Anda</p>
-                </div>
+            <!-- Section Header -->
+            <div class="section-header text-center mb-5">
+                <h2 class="section-title">PRODUK & FITUR</h2>
+                <p class="section-description">Pilih paket robot trading berdasarkan broker favorit Anda</p>
             </div>
             
-            <div class="row justify-content-center align-items-stretch">
-                <!-- Package 1: Multi Platform -->
-                <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="product-card h-100">
-                        <div class="product-header">
-                            <div class="broker-badges mb-3">
-                                <span class="broker-badge">IQ Option</span>
-                                <span class="broker-badge">Olymptrade</span>
-                                <span class="broker-badge">Quotex</span>
-                                <span class="broker-badge">Pocket Option</span>
-                            </div>
-                            <h3 class="product-name">TRADING ROBOT – MULTI PLATFORM</h3>
-                            <div class="product-price">
-                                <span class="price-currency">$</span>
-                                <span class="price-amount">39.00</span>
-                                <span class="price-period">/ bulan</span>
-                            </div>
+            <!-- Products Grid -->
+            <div class="products-grid">
+                <!-- Package 1 -->
+                <div class="product-box">
+                    <div class="product-top">
+                        <div class="broker-tags">
+                            <span class="tag">IQ Option</span>
+                            <span class="tag">Olymptrade</span>
+                            <span class="tag">Quotex</span>
+                            <span class="tag">Pocket Option</span>
                         </div>
                         
-                        <div class="product-features">
-                            <div class="features-list">
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Auto trade via MetaTrader 4 (MT4) ke IQ Option</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Manual trade via MT4 ke IQ Option</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Akses Grup VIP Telegram</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Back-tester untuk strategi</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>MetaTrader 4 Platform</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>3 indikator eksklusif: 'Binary Profit', 'Golden Moment', dan 'Price Action'</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Konektor indikator dan input sinyal</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Fitur lengkap (Full Features+)</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Tutorial pengguna lengkap</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Update gratis selamanya</span>
-                                </div>
-                            </div>
-                        </div>
+                        <h3 class="product-title">TRADING ROBOT – MULTI PLATFORM</h3>
                         
-                        <div class="product-footer">
-                            <button class="btn btn-subscribe">
-                                <i class="fas fa-credit-card me-2"></i>
-                                Berlangganan Sekarang
-                            </button>
+                        <div class="price-box">
+                            <span class="currency">$</span>
+                            <span class="amount">39.00</span>
+                            <span class="period">/ bulan</span>
                         </div>
+                    </div>
+                    
+                    <div class="features-section">
+                        <h4 class="features-title">Fitur Utama:</h4>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check"></i>Auto trade via MetaTrader 4 (MT4) ke IQ Option</li>
+                            <li><i class="fas fa-check"></i>Manual trade via MT4 ke IQ Option</li>
+                            <li><i class="fas fa-check"></i>Akses Grup VIP Telegram</li>
+                            <li><i class="fas fa-check"></i>Back-tester untuk strategi</li>
+                            <li><i class="fas fa-check"></i>MetaTrader 4 Platform</li>
+                            <li><i class="fas fa-check"></i>3 indikator eksklusif: 'Binary Profit', 'Golden Moment', dan 'Price Action'</li>
+                            <li><i class="fas fa-check"></i>Konektor indikator dan input sinyal</li>
+                            <li><i class="fas fa-check"></i>Fitur lengkap (Full Features+)</li>
+                            <li><i class="fas fa-check"></i>Tutorial pengguna lengkap</li>
+                            <li><i class="fas fa-check"></i>Update gratis selamanya</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="product-bottom">
+                        <button class="subscribe-btn">Berlangganan Sekarang</button>
                     </div>
                 </div>
                 
-                <!-- Package 2: Binomo & Stockity -->
-                <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="product-card h-100">
-                        <div class="product-header">
-                            <div class="broker-badges mb-3">
-                                <span class="broker-badge">Binomo</span>
-                                <span class="broker-badge">Stockity</span>
-                            </div>
-                            <h3 class="product-name">TRADING ROBOT – BINOMO & STOCKITY</h3>
-                            <div class="product-price">
-                                <span class="price-currency">$</span>
-                                <span class="price-amount">46.00</span>
-                                <span class="price-period">/ bulan</span>
-                            </div>
+                <!-- Package 2 -->
+                <div class="product-box">
+                    <div class="product-top">
+                        <div class="broker-tags">
+                            <span class="tag">Binomo</span>
+                            <span class="tag">Stockity</span>
                         </div>
                         
-                        <div class="product-features">
-                            <div class="features-list">
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Auto trade via MetaTrader 4 (MT4) ke Binomo & Stockity</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Manual trade via MT4 ke Binomo & Stockity</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Akses Grup VIP Telegram</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Back-tester untuk strategi</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>MetaTrader 4 Platform</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>3 indikator eksklusif: 'Binary Profit', 'Golden Moment', dan 'Price Action'</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Konektor indikator dan input sinyal</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Fitur lengkap (Full Features+)</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Tutorial pengguna lengkap</span>
-                                </div>
-                                <div class="feature-item">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Update gratis selamanya</span>
-                                </div>
-                            </div>
-                        </div>
+                        <h3 class="product-title">TRADING ROBOT – BINOMO & STOCKITY</h3>
                         
-                        <div class="product-footer">
-                            <button class="btn btn-subscribe">
-                                <i class="fas fa-credit-card me-2"></i>
-                                Berlangganan Sekarang
-                            </button>
+                        <div class="price-box">
+                            <span class="currency">$</span>
+                            <span class="amount">46.00</span>
+                            <span class="period">/ bulan</span>
                         </div>
+                    </div>
+                    
+                    <div class="features-section">
+                        <h4 class="features-title">Fitur Utama:</h4>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check"></i>Auto trade via MetaTrader 4 (MT4) ke Binomo & Stockity</li>
+                            <li><i class="fas fa-check"></i>Manual trade via MT4 ke Binomo & Stockity</li>
+                            <li><i class="fas fa-check"></i>Akses Grup VIP Telegram</li>
+                            <li><i class="fas fa-check"></i>Back-tester untuk strategi</li>
+                            <li><i class="fas fa-check"></i>MetaTrader 4 Platform</li>
+                            <li><i class="fas fa-check"></i>3 indikator eksklusif: 'Binary Profit', 'Golden Moment', dan 'Price Action'</li>
+                            <li><i class="fas fa-check"></i>Konektor indikator dan input sinyal</li>
+                            <li><i class="fas fa-check"></i>Fitur lengkap (Full Features+)</li>
+                            <li><i class="fas fa-check"></i>Tutorial pengguna lengkap</li>
+                            <li><i class="fas fa-check"></i>Update gratis selamanya</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="product-bottom">
+                        <button class="subscribe-btn">Berlangganan Sekarang</button>
                     </div>
                 </div>
             </div>

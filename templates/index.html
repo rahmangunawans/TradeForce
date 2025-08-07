@@ -313,23 +313,35 @@
             
             const abbreviation = brokerLogos[brokerName] || brokerName.substring(0, 3).toUpperCase();
             
-            img.style.display = 'none';
-            img.parentElement.innerHTML = `<div class="logo-fallback">${abbreviation}</div>`;
+            // Safely hide image and replace with text fallback
+            if (img && img.parentElement) {
+                img.style.display = 'none';
+                img.parentElement.innerHTML = `<div class="logo-fallback">${abbreviation}</div>`;
+            }
         }
         
         // Additional image loading improvements
         document.addEventListener('DOMContentLoaded', function() {
             const images = document.querySelectorAll('.broker-logo img');
             images.forEach(img => {
+                if (!img) return; // Safety check
+                
                 // Set timeout for slow loading images
                 const timeout = setTimeout(() => {
                     if (!img.complete) {
-                        const brokerName = img.closest('.broker-item').dataset.broker;
+                        const brokerItem = img.closest('.broker-item');
+                        const brokerName = brokerItem ? brokerItem.dataset.broker : 'Unknown';
                         handleImageError(img, brokerName);
                     }
-                }, 5000); // 5 second timeout
+                }, 3000); // 3 second timeout
                 
                 img.onload = () => clearTimeout(timeout);
+                img.onerror = () => {
+                    clearTimeout(timeout);
+                    const brokerItem = img.closest('.broker-item');
+                    const brokerName = brokerItem ? brokerItem.dataset.broker : 'Unknown';
+                    handleImageError(img, brokerName);
+                };
             });
         });
     </script>

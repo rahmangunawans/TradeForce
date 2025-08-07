@@ -9,31 +9,31 @@ app.secret_key = os.environ.get("SESSION_SECRET", "auto-trade-vip-secret-key")
 def index():
     """Landing page for AUTO TRADE VIP"""
     
-    # Broker data for carousel - Using fallback strategy for reliable display
+    # Broker data for carousel - Using local downloaded images
     brokers = [
         {
             'name': 'Binomo',
-            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=BIN'
+            'logo': '/static/images/brokers/binomo.png'
         },
         {
             'name': 'Olymptrade', 
-            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=OLY'
+            'logo': '/static/images/brokers/olymptrade.png'
         },
         {
             'name': 'Stockity',
-            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=STK'
+            'logo': '/static/images/brokers/stockity.png'
         },
         {
             'name': 'IQ Option',
-            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=IQO'
+            'logo': '/static/images/brokers/iqoption.png'
         },
         {
             'name': 'Quotex',
-            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=QTX'
+            'logo': '/static/images/brokers/quotex.png'
         },
         {
             'name': 'Pocket Option',
-            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=PKT'
+            'logo': '/static/images/brokers/pocket-option.png'
         }
     ]
     
@@ -46,10 +46,10 @@ def index():
             'period': 'bulan',
             'brokers': ['IQ Option', 'Olymptrade', 'Quotex', 'Pocket Option'],
             'broker_logos': [
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbXua0ti3GfHAsXE-cvuwOVzES7I1RLQ_2Yl07lffsfxaoYfaDyULClRA&s=10',
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsUoKOR44xhomqsCSBhe-Vl8ouy_tPbQx21_ulOz5Hu8_H3pP9PcQCKk8&s=10',
-                'https://play-lh.googleusercontent.com/-ltphEmoRQ5Hf_XF9MWWQ6JHkUhtK1Idblgbe8zIEIcvlIkbUa1IAcNohSK4Bu7X9mGP=w240-h480-rw',
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMD00QA51sLIOjLHXYuHooNnoNbArzoaFu3Q&s'
+                '/static/images/brokers/iqoption.png',
+                '/static/images/brokers/olymptrade.png',
+                '/static/images/brokers/quotex.png',
+                '/static/images/brokers/pocket-option.png'
             ],
             'features': [
                 'Auto trade via MetaTrader 4 (MT4) ke IQ Option',
@@ -71,8 +71,8 @@ def index():
             'period': 'bulan',
             'brokers': ['Binomo', 'Stockity'],
             'broker_logos': [
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK4zylqyfITSoEkIeL8KEz9E-WZmiK4rSy_pYQw6CZfoWvC85vcBXiXwkU&s=10',
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRMgQ9EISDJH3P7RTavxp-7dA3MPetjfWtFbZcQCno5cUmkdAK96_KrN0&s=10'
+                '/static/images/brokers/binomo.png',
+                '/static/images/brokers/stockity.png'
             ],
             'features': [
                 'Auto trade via MetaTrader 4 (MT4) ke Binomo & Stockity',

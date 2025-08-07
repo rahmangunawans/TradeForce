@@ -215,6 +215,12 @@
     border-left: 4px solid #dc3545 !important;
 }
 
+.alert-info {
+    background: rgba(13, 202, 240, 0.15) !important;
+    color: #0dcaf0 !important;
+    border-left: 4px solid #0dcaf0 !important;
+}
+
 /* Form Animation */
 .form-container {
     animation: slideIn 0.4s ease-out;

@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Login Modal Functionality
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
+    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
     const toggleFormBtn = document.getElementById('toggleForm');
     const loginAlert = document.getElementById('loginAlert');
     let isRegisterMode = false;
@@ -105,10 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (toggleFormBtn) {
         toggleFormBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            loginForm.style.display = 'none';
-            registerForm.style.display = 'block';
-            document.querySelector('.modal-title').innerHTML = '<i class="fas fa-user-plus me-2"></i>Register to AUTO TRADE VIP';
-            hideAlert();
+            showRegisterForm();
         });
     }
 
@@ -116,11 +114,50 @@ document.addEventListener('DOMContentLoaded', function() {
     if (toggleFormBack) {
         toggleFormBack.addEventListener('click', function(e) {
             e.preventDefault();
-            loginForm.style.display = 'block';
-            registerForm.style.display = 'none';
-            document.querySelector('.modal-title').innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Login to AUTO TRADE VIP';
-            hideAlert();
+            showLoginForm();
         });
+    }
+
+    // Forgot Password functionality
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showForgotPasswordForm();
+        });
+    }
+
+    const backToLoginLink = document.getElementById('backToLoginLink');
+    if (backToLoginLink) {
+        backToLoginLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoginForm();
+        });
+    }
+
+    // Form display functions
+    function showLoginForm() {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        if (forgotPasswordForm) forgotPasswordForm.style.display = 'none';
+        document.querySelector('.modal-title').innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Login to AUTO TRADE VIP';
+        hideAlert();
+    }
+
+    function showRegisterForm() {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        if (forgotPasswordForm) forgotPasswordForm.style.display = 'none';
+        document.querySelector('.modal-title').innerHTML = '<i class="fas fa-user-plus me-2"></i>Register to AUTO TRADE VIP';
+        hideAlert();
+    }
+
+    function showForgotPasswordForm() {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'none';
+        if (forgotPasswordForm) forgotPasswordForm.style.display = 'block';
+        document.querySelector('.modal-title').innerHTML = '<i class="fas fa-key me-2"></i>Reset Password';
+        hideAlert();
     }
 
     // Handle login form submission
@@ -201,6 +238,36 @@ document.addEventListener('DOMContentLoaded', function() {
         loginAlert.className = `alert alert-${type}`;
         loginAlert.textContent = message;
         loginAlert.classList.remove('d-none');
+    }
+
+    // Handle forgot password form submission
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+
+            try {
+                showAlert('info', 'Sending reset instructions...');
+                
+                const response = await fetch('/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', data.message || 'Password reset instructions sent to your email');
+                } else {
+                    showAlert('danger', data.message || 'Email not found in our system');
+                }
+            } catch (error) {
+                showAlert('danger', 'An error occurred. Please try again.');
+            }
+        });
     }
 
     // Hide alert message

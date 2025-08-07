@@ -547,6 +547,11 @@
                                     <i class="fas fa-lock me-2"></i>Password
                                 </label>
                                 <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                                <div class="text-end mt-2">
+                                    <a href="#" id="forgotPasswordLink" class="toggle-form" style="font-size: 0.85rem;">
+                                        <i class="fas fa-key me-1"></i>Forgot Password?
+                                    </a>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 mb-4">
                                 <i class="fas fa-sign-in-alt me-2"></i>Sign In
@@ -557,6 +562,33 @@
                             <p class="mb-2" style="color: rgba(255, 255, 255, 0.7);">Don't have an account yet?</p>
                             <a href="#" id="toggleForm" class="toggle-form">Create New Account</a>
                         </div>
+                    </div>
+
+                    <!-- Forgot Password Form -->
+                    <div class="form-container">
+                        <form id="forgotPasswordForm" style="display: none;">
+                            <div class="form-group">
+                                <label for="forgotEmail" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                <input type="email" class="form-control" id="forgotEmail" placeholder="Enter your registered email" required>
+                                <div class="mt-2">
+                                    <small style="color: rgba(255, 255, 255, 0.6); font-size: 0.8rem;">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        We'll send password reset instructions to your email
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 mb-4">
+                                <i class="fas fa-paper-plane me-2"></i>Send Reset Link
+                            </button>
+                            
+                            <div class="text-center">
+                                <p class="mb-2" style="color: rgba(255, 255, 255, 0.7);">Remember your password?</p>
+                                <a href="#" id="backToLoginLink" class="toggle-form">Back to Login</a>
+                            </div>
+                        </form>
                     </div>
                     
                     <!-- Register Form -->

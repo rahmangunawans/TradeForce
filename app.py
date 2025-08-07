@@ -228,5 +228,33 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Email is required'})
+        
+        # Check if email exists in database
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            # In a production app, you would send an actual email here
+            # For demo purposes, we'll just return success
+            return jsonify({
+                'success': True, 
+                'message': f'Password reset instructions have been sent to {email}'
+            })
+        else:
+            return jsonify({
+                'success': False, 
+                'message': 'Email address not found in our system'
+            })
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': 'An error occurred'})
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

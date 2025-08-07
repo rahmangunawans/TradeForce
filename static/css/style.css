@@ -218,7 +218,7 @@ body {
 .broker-logo {
     width: 80px;
     height: 80px;
-    background: transparent;
+    background: white;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -226,6 +226,7 @@ body {
     margin-bottom: 0.8rem;
     box-shadow: var(--shadow-light);
     transition: transform 0.3s ease;
+    padding: 5px;
 }
 
 .broker-logo:hover {

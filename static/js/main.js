@@ -308,8 +308,47 @@ if ('IntersectionObserver' in window) {
     });
 }
 
-// Add loading animation for images
-document.querySelectorAll('img').forEach(img => {
+// Broker image error handling with fallback SVGs
+function createBrokerFallbackSVG(brokerName) {
+    const brokerConfigs = {
+        'Binomo': { color: '#00e676', letter: 'B' },
+        'Olymptrade': { color: '#1a237e', letter: 'OT' },
+        'Stockity': { color: '#ffd700', letter: 'S' },
+        'IQ Option': { color: '#00e676', letter: 'IQ' },
+        'Quotex': { color: '#1a237e', letter: 'Q' },
+        'Pocket Option': { color: '#ffd700', letter: 'PO' }
+    };
+    
+    const config = brokerConfigs[brokerName] || { color: '#00e676', letter: 'X' };
+    const textColor = config.color === '#ffd700' ? '#1a237e' : 'white';
+    
+    return `
+        <svg width="60" height="60" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="120" height="120" rx="25" fill="${config.color}"/>
+            <text x="60" y="70" text-anchor="middle" font-size="26" font-weight="bold" fill="${textColor}" font-family="Poppins, sans-serif">${config.letter}</text>
+        </svg>
+    `;
+}
+
+// Handle broker image loading
+document.querySelectorAll('.broker-logo img').forEach(img => {
+    img.addEventListener('load', function() {
+        this.style.opacity = '1';
+    });
+    
+    img.addEventListener('error', function() {
+        const brokerName = this.alt;
+        const fallbackSVG = createBrokerFallbackSVG(brokerName);
+        this.parentNode.innerHTML = fallbackSVG;
+    });
+    
+    // Set initial styles
+    img.style.opacity = '0';
+    img.style.transition = 'opacity 0.3s ease';
+});
+
+// Add loading animation for other images
+document.querySelectorAll('img:not(.broker-logo img)').forEach(img => {
     img.addEventListener('load', function() {
         this.style.opacity = '1';
     });

@@ -13,27 +13,27 @@ def index():
     brokers = [
         {
             'name': 'Binomo',
-            'logo': 'https://logos-world.net/wp-content/uploads/2021/03/Binomo-Logo.png'
+            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK4zylqyfITSoEkIeL8KEz9E-WZmiK4rSy_pYQw6CZfoWvC85vcBXiXwkU&s=10'
         },
         {
             'name': 'Olymptrade', 
-            'logo': 'https://olymptrade.com/themes/olymptrade/images/logo.svg'
+            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsUoKOR44xhomqsCSBhe-Vl8ouy_tPbQx21_ulOz5Hu8_H3pP9PcQCKk8&s=10'
         },
         {
             'name': 'Stockity',
-            'logo': 'https://stockity.com/img/logo.png'
+            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRMgQ9EISDJH3P7RTavxp-7dA3MPetjfWtFbZcQCno5cUmkdAK96_KrN0&s=10'
         },
         {
             'name': 'IQ Option',
-            'logo': 'https://logos-world.net/wp-content/uploads/2021/03/IQ-Option-Logo.png'
+            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbXua0ti3GfHAsXE-cvuwOVzES7I1RLQ_2Yl07lffsfxaoYfaDyULClRA&s=10'
         },
         {
             'name': 'Quotex',
-            'logo': 'https://quotex.io/themes/quotex/images/logo.svg'
+            'logo': 'https://play-lh.googleusercontent.com/-ltphEmoRQ5Hf_XF9MWWQ6JHkUhtK1Idblgbe8zIEIcvlIkbUa1IAcNohSK4Bu7X9mGP=w240-h480-rw'
         },
         {
             'name': 'Pocket Option',
-            'logo': 'https://po.cash/app/themes/po-cash/dist/images/logo.svg'
+            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMD00QA51sLIOjLHXYuHooNnoNbArzoaFu3Q&s'
         }
     ]
     

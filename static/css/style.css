@@ -884,13 +884,8 @@ html {
     transform: scale(1.1);
 }
 
-.feature-icon img {
-    filter: brightness(0) invert(1);
-}
-
 .feature-card:hover .feature-icon img {
     transform: scale(1.1);
-    filter: brightness(0) invert(0);
 }
 
 

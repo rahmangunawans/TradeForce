@@ -673,18 +673,32 @@ body {
         gap: 2rem;
     }
     
+    .broker-carousel {
+        padding: 2rem 1rem;
+    }
+    
+    .broker-slider {
+        gap: 2rem;
+        animation: slide 40s linear infinite;
+    }
+    
     .broker-item {
-        min-width: 120px;
+        min-width: 140px;
+        flex-shrink: 0;
     }
     
     .broker-logo {
-        width: 60px;
-        height: 60px;
+        width: 80px;
+        height: 80px;
     }
     
     .broker-logo img {
-        max-width: 40px;
-        max-height: 40px;
+        max-width: 60px;
+        max-height: 60px;
+    }
+    
+    .broker-label {
+        font-size: 0.9rem;
     }
     
     .amount {
@@ -715,7 +729,31 @@ body {
     }
     
     .broker-carousel {
-        margin: 0 1rem;
+        margin: 0 0.5rem;
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .broker-slider {
+        gap: 1.5rem;
+        animation: slide 45s linear infinite;
+    }
+    
+    .broker-item {
+        min-width: 120px;
+    }
+    
+    .broker-logo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .broker-logo img {
+        max-width: 50px;
+        max-height: 50px;
+    }
+    
+    .broker-label {
+        font-size: 0.8rem;
     }
 }
 

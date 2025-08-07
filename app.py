@@ -9,31 +9,31 @@ app.secret_key = os.environ.get("SESSION_SECRET", "auto-trade-vip-secret-key")
 def index():
     """Landing page for AUTO TRADE VIP"""
     
-    # Broker data for carousel
+    # Broker data for carousel - Using fallback strategy for reliable display
     brokers = [
         {
             'name': 'Binomo',
-            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK4zylqyfITSoEkIeL8KEz9E-WZmiK4rSy_pYQw6CZfoWvC85vcBXiXwkU&s=10'
+            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=BIN'
         },
         {
             'name': 'Olymptrade', 
-            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsUoKOR44xhomqsCSBhe-Vl8ouy_tPbQx21_ulOz5Hu8_H3pP9PcQCKk8&s=10'
+            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=OLY'
         },
         {
             'name': 'Stockity',
-            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRMgQ9EISDJH3P7RTavxp-7dA3MPetjfWtFbZcQCno5cUmkdAK96_KrN0&s=10'
+            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=STK'
         },
         {
             'name': 'IQ Option',
-            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbXua0ti3GfHAsXE-cvuwOVzES7I1RLQ_2Yl07lffsfxaoYfaDyULClRA&s=10'
+            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=IQO'
         },
         {
             'name': 'Quotex',
-            'logo': 'https://play-lh.googleusercontent.com/-ltphEmoRQ5Hf_XF9MWWQ6JHkUhtK1Idblgbe8zIEIcvlIkbUa1IAcNohSK4Bu7X9mGP=w240-h480-rw'
+            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=QTX'
         },
         {
             'name': 'Pocket Option',
-            'logo': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMD00QA51sLIOjLHXYuHooNnoNbArzoaFu3Q&s'
+            'logo': 'https://via.placeholder.com/100x100/1a237e/00e676?text=PKT'
         }
     ]
     

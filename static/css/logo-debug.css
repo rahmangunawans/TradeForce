@@ -1,24 +1,21 @@
-/* SINGLE LOGO STYLING - NO DUPLICATES */
+/* MINIMAL LOGO STYLING - FORCE VISIBILITY */
 .navbar-logo-single {
-    width: 45px !important;
-    height: 45px !important;
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 230, 118, 0.4) !important;
-    border-radius: 8px !important;
-    padding: 4px !important;
-    margin-right: 12px !important;
+    width: 42px !important;
+    height: 42px !important;
+    background-color: white !important;
+    border: 2px solid #00e676 !important;
+    border-radius: 6px !important;
+    padding: 3px !important;
+    margin-right: 10px !important;
     display: inline-block !important;
     object-fit: contain !important;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25) !important;
-    transition: all 0.3s ease !important;
-    vertical-align: middle !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    z-index: 1000 !important;
 }
 
-.navbar-logo-single:hover {
-    border-color: #00e676 !important;
-    transform: scale(1.02) !important;
-    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3) !important;
-}
+/* Remove any hover effects that might cause bugs */
 
 /* Force brand container */
 .navbar-brand {

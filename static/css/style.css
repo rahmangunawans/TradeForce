@@ -58,17 +58,7 @@ body {
     align-items: center;
 }
 
-.navbar-logo {
-    width: 42px;
-    height: 42px;
-    object-fit: contain;
-    background: white;
-    border-radius: 8px;
-    padding: 6px;
-    margin-right: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    flex-shrink: 0;
-}
+/* OLD LOGO CLASS REMOVED - USING navbar-logo-single INSTEAD */
 
 .brand-text {
     background: linear-gradient(135deg, var(--accent-green), var(--accent-gold));
@@ -78,9 +68,7 @@ body {
     font-weight: 700;
 }
 
-.navbar-brand:hover .navbar-logo {
-    transform: scale(1.05);
-}
+/* HOVER EFFECT REMOVED TO PREVENT LOGO BUGS */
 
 .navbar-brand:hover .brand-text {
     -webkit-text-fill-color: transparent;

@@ -15,6 +15,22 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar_clean.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/logo-debug.css') }}">
+    <style>
+        /* EMERGENCY LOGO FIX - INLINE TO PREVENT CONFLICTS */
+        .navbar-logo-single {
+            width: 42px !important;
+            height: 42px !important;
+            background: white !important;
+            border: 2px solid #00e676 !important;
+            border-radius: 6px !important;
+            padding: 3px !important;
+            margin-right: 10px !important;
+            display: inline-block !important;
+            object-fit: contain !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->

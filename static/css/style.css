@@ -837,55 +837,89 @@ body {
     }
     
     .products-carousel {
-        padding: 0 0.5rem;
-        gap: 0.75rem;
+        padding: 0 0.25rem;
+        gap: 0.5rem;
     }
     
     .product-box {
-        min-width: 260px;
-        padding: 1rem;
-        margin: 0 0.5rem;
+        min-width: 220px;
+        padding: 0.75rem;
+        margin: 0;
     }
     
     .product-title {
-        font-size: 0.9rem;
-        line-height: 1.2;
-        margin-bottom: 0.75rem;
+        font-size: 0.75rem;
+        line-height: 1.1;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
     }
     
     .price-box {
-        margin: 0.75rem 0;
-        padding: 0.75rem 1rem;
+        margin: 0.5rem 0;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .price-box.free {
+        padding: 0.6rem 0.75rem;
     }
     
     .free-text {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .currency {
+        font-size: 0.9rem;
+    }
+    
+    .amount {
+        font-size: 1.1rem;
+    }
+    
+    .period {
+        font-size: 0.7rem;
     }
     
     .features-title {
-        font-size: 0.95rem;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .features-list {
         margin-bottom: 0.75rem;
     }
     
     .features-list li {
-        font-size: 0.8rem;
-        margin-bottom: 0.4rem;
+        font-size: 0.65rem;
+        margin-bottom: 0.25rem;
+        line-height: 1.2;
+    }
+    
+    .features-list i {
+        font-size: 0.6rem;
+        margin-right: 0.4rem;
     }
     
     .subscribe-btn {
-        font-size: 0.85rem;
-        padding: 0.6rem 1rem;
+        font-size: 0.7rem;
+        padding: 0.5rem 0.75rem;
+        font-weight: 600;
     }
     
     .carousel-nav {
-        width: 35px;
-        height: 35px;
-        font-size: 0.9rem;
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .broker-tags {
+        margin-bottom: 0.5rem;
+        gap: 0.25rem;
     }
     
     .broker-tags .tag {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.6rem;
+        font-size: 0.55rem;
+        padding: 0.2rem 0.4rem;
+        border-radius: 8px;
     }
     
     .section-title {

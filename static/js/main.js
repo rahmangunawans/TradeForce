@@ -413,8 +413,16 @@ function initProductsCarousel() {
     
     // Scroll left
     navLeft.addEventListener('click', () => {
-        const isMobile = window.innerWidth <= 768;
-        const scrollDistance = isMobile ? 280 : 420; // Adjust for mobile
+        const isMobile = window.innerWidth <= 480;
+        const isTablet = window.innerWidth <= 768;
+        let scrollDistance = 420; // Desktop
+        
+        if (isMobile) {
+            scrollDistance = 230; // Mobile
+        } else if (isTablet) {
+            scrollDistance = 290; // Tablet
+        }
+        
         carousel.scrollBy({
             left: -scrollDistance,
             behavior: 'smooth'
@@ -423,8 +431,16 @@ function initProductsCarousel() {
     
     // Scroll right
     navRight.addEventListener('click', () => {
-        const isMobile = window.innerWidth <= 768;
-        const scrollDistance = isMobile ? 280 : 420; // Adjust for mobile
+        const isMobile = window.innerWidth <= 480;
+        const isTablet = window.innerWidth <= 768;
+        let scrollDistance = 420; // Desktop
+        
+        if (isMobile) {
+            scrollDistance = 230; // Mobile
+        } else if (isTablet) {
+            scrollDistance = 290; // Tablet
+        }
+        
         carousel.scrollBy({
             left: scrollDistance,
             behavior: 'smooth'

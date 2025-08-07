@@ -18,51 +18,77 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="AUTO TRADE VIP" class="navbar-logo me-2">
-                AUTO TRADE VIP
+            <!-- Brand/Logo -->
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#hero">
+                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="AUTO TRADE VIP Logo" class="navbar-logo me-2">
+                <span class="brand-text">AUTO TRADE VIP</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
+            <!-- Navbar Content -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <!-- Main Navigation Links -->
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#hero">Home</a>
+                        <a class="nav-link active" href="#hero">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
+                        <a class="nav-link" href="#features">
+                            <i class="fas fa-star me-1"></i>Features
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#packages">Packages</a>
+                        <a class="nav-link" href="#packages">
+                            <i class="fas fa-box me-1"></i>Packages
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
+                        <a class="nav-link" href="#contact">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
                     </li>
+                </ul>
+                
+                <!-- User Authentication -->
+                <ul class="navbar-nav ms-auto">
                     {% if not current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link btn-login-nav" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
                             <i class="fas fa-sign-in-alt me-2"></i>Login
                         </a>
                     </li>
-                    {% endif %}
-                </ul>
-                {% if current_user.is_authenticated %}
-                <ul class="navbar-nav ms-auto">
+                    {% else %}
                     <li class="nav-item dropdown user-dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-2"></i>{{ current_user.name or current_user.email }}
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar me-2">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <span class="user-name">{{ current_user.name or current_user.email }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li class="dropdown-header">
+                                <small class="text-muted">Selamat Datang</small><br>
+                                <strong>{{ current_user.name or current_user.email }}</strong>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
                             <li><a class="dropdown-item" href="#"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-download me-2"></i>Download Robot</a></li>
                             <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
                         </ul>
                     </li>
+                    {% endif %}
                 </ul>
-                {% endif %}
             </div>
         </div>
     </nav>

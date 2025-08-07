@@ -8,6 +8,13 @@ AUTO TRADE VIP is a Flask-based web application serving as a landing page for a 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+- **January 7, 2025**: Successfully migrated project from Replit Agent to standard Replit environment
+- **January 7, 2025**: Fixed MetaTrader4 and TradingView icon sizing inconsistencies (reduced from 48px to 36px)
+- **January 7, 2025**: Implemented consistent hover effects and color treatment for all feature icons
+- **January 7, 2025**: Enhanced feature icon styling with proper white color filtering and scaling animations
+
 ## System Architecture
 
 ### Frontend Architecture

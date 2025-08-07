@@ -666,11 +666,12 @@ body {
     font-size: 2rem;
     color: white;
     box-shadow: 0 10px 30px rgba(0, 230, 118, 0.3);
+    transition: all 0.3s ease;
 }
 
 .feature-card .feature-icon img {
-    width: 48px !important;
-    height: 48px !important;
+    width: 36px !important;
+    height: 36px !important;
     display: block !important;
     opacity: 1 !important;
     filter: brightness(0) invert(1);
@@ -679,7 +680,7 @@ body {
 
 .feature-card:hover .feature-icon {
     background: linear-gradient(135deg, var(--accent-green), var(--accent-gold));
-    transform: scale(1.05);
+    transform: scale(1.1);
     box-shadow: 0 15px 35px rgba(0, 230, 118, 0.4);
 }
 

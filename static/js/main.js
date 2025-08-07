@@ -413,16 +413,20 @@ function initProductsCarousel() {
     
     // Scroll left
     navLeft.addEventListener('click', () => {
+        const isMobile = window.innerWidth <= 768;
+        const scrollDistance = isMobile ? 280 : 420; // Adjust for mobile
         carousel.scrollBy({
-            left: -420, // Card width + gap
+            left: -scrollDistance,
             behavior: 'smooth'
         });
     });
     
     // Scroll right
     navRight.addEventListener('click', () => {
+        const isMobile = window.innerWidth <= 768;
+        const scrollDistance = isMobile ? 280 : 420; // Adjust for mobile
         carousel.scrollBy({
-            left: 420, // Card width + gap  
+            left: scrollDistance,
             behavior: 'smooth'
         });
     });

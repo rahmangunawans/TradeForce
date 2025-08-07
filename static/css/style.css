@@ -671,7 +671,8 @@ body {
 .feature-card .feature-icon img {
     width: 32px !important;
     height: 32px !important;
-    filter: brightness(0) invert(1) !important;
+    display: block !important;
+    opacity: 1 !important;
 }
 
 .feature-card .feature-title {
@@ -1026,7 +1027,8 @@ body {
     }
     
     .feature-card .feature-icon img {
-        filter: brightness(0) invert(1) !important;
+        display: block !important;
+        opacity: 1 !important;
     }
     
     .feature-card {

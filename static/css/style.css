@@ -236,9 +236,10 @@ body {
     }
     
     .btn-login-nav {
-        margin: 0.5rem 0 0 0;
-        width: 100%;
-        text-align: center;
+        margin: 0.5rem 0 0 0 !important;
+        width: 100% !important;
+        text-align: center !important;
+        border-radius: 6px !important;
     }
 }
 
@@ -264,18 +265,9 @@ body {
     border-color: var(--accent-gold);
 }
 
-/* Login nav link styling */
-.btn-login-nav {
-    background: linear-gradient(135deg, var(--accent-green), var(--accent-gold)) !important;
-    border-radius: 6px !important;
-    color: white !important;
-    font-weight: 600 !important;
-    transition: all 0.3s ease;
-}
+/* REMOVED - Using navbar_clean.css for login button */
 
-.btn-login-nav:hover {
-    background: linear-gradient(135deg, var(--accent-gold), var(--accent-green)) !important;
-    color: white !important;
+/* HOVER EFFECT REMOVED - HANDLED IN navbar_clean.css */
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 230, 118, 0.3);
 }

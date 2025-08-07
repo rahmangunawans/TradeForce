@@ -1,0 +1,59 @@
+# AUTO TRADE VIP
+
+## Overview
+
+AUTO TRADE VIP is a Flask-based web application serving as a landing page for a trading robot platform. The application markets automated trading solutions for various binary options brokers including Binomo, Olymptrade, IQ Option, Quotex, and Pocket Option. It's designed as a promotional website to showcase trading packages and facilitate customer contact.
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Frontend Architecture
+The application uses a traditional server-side rendered architecture with Flask serving HTML templates. The frontend is built with:
+
+- **Template Engine**: Jinja2 templates for dynamic content rendering
+- **UI Framework**: Bootstrap 5.3.0 for responsive design and component styling
+- **Styling**: Custom CSS with CSS variables for consistent theming and dark mode design
+- **Icons**: Font Awesome 6.4.0 for iconography
+- **Typography**: Google Fonts (Poppins) for consistent font styling
+- **JavaScript**: Vanilla JavaScript for interactive features like smooth scrolling and scroll effects
+
+The design follows a single-page application pattern with sections for hero, packages, and contact information.
+
+### Backend Architecture
+The backend is built using Flask with a minimal structure:
+
+- **Web Framework**: Flask for HTTP request handling and template rendering
+- **Session Management**: Flask sessions with environment-configurable secret key
+- **Data Structure**: Static data structures for broker and package information stored in Python dictionaries
+- **Routing**: Single route handler for the landing page
+
+### Design Patterns
+- **Static Data**: Broker and package information is hardcoded in the main route handler, indicating this is a promotional site with fixed content
+- **Environment Configuration**: Uses environment variables for sensitive configuration like session secrets
+- **Responsive Design**: Mobile-first approach with Bootstrap grid system
+
+### Hosting Configuration
+The application is configured for deployment with:
+- Host binding to 0.0.0.0 for container compatibility
+- Port 5000 for web traffic
+- Debug mode enabled for development
+
+## External Dependencies
+
+### Frontend Libraries
+- **Bootstrap 5.3.0**: UI framework via CDN for responsive design
+- **Font Awesome 6.4.0**: Icon library via CDN
+- **Google Fonts**: Poppins font family for typography
+
+### Python Dependencies
+- **Flask**: Web application framework
+- **Standard Library**: os module for environment variable access
+
+### Third-party Assets
+- **Broker Logos**: External image URLs from various sources (Google Images, Play Store) for broker branding
+- **CDN Dependencies**: All frontend libraries loaded from public CDNs
+
+The application currently has no database dependencies, authentication systems, or external API integrations, making it a lightweight promotional website focused on lead generation for trading services.

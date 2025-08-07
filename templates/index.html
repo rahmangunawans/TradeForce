@@ -39,9 +39,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
+                    {% if not current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link btn-login-nav" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
+                {% if current_user.is_authenticated %}
                 <ul class="navbar-nav ms-auto">
-                    {% if current_user.is_authenticated %}
                     <li class="nav-item dropdown user-dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-2"></i>{{ current_user.name or current_user.email }}
@@ -54,14 +61,8 @@
                             <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                         </ul>
                     </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <button class="btn btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </button>
-                    </li>
-                    {% endif %}
                 </ul>
+                {% endif %}
             </div>
         </div>
     </nav>

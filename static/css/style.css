@@ -71,6 +71,9 @@ body {
     height: 40px;
     object-fit: contain;
     transition: all 0.3s ease;
+    border-radius: 4px;
+    background: white;
+    padding: 2px;
 }
 
 .navbar-brand:hover .navbar-logo {
@@ -142,6 +145,26 @@ body {
 .user-dropdown .dropdown-toggle:hover {
     background: linear-gradient(135deg, rgba(0, 230, 118, 0.3), rgba(255, 215, 0, 0.3));
     border-color: var(--accent-gold);
+}
+
+/* Login nav link styling */
+.btn-login-nav {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-gold)) !important;
+    border-radius: 6px !important;
+    color: white !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease;
+}
+
+.btn-login-nav:hover {
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-green)) !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 230, 118, 0.3);
+}
+
+.btn-login-nav::after {
+    display: none !important;
 }
 
 .navbar-transparent {

@@ -456,6 +456,38 @@ body {
     margin-bottom: 1rem;
 }
 
+.price-box.free {
+    background: linear-gradient(135deg, #4caf50 0%, #00e676 100%);
+    padding: 1rem 1.5rem;
+    border-radius: 15px;
+    color: var(--primary-dark);
+    font-weight: bold;
+    animation: pulse-free 2s ease-in-out infinite alternate;
+    margin: 1rem 0;
+}
+
+.free-text {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+@keyframes pulse-free {
+    from {
+        box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        transform: scale(1);
+    }
+    to {
+        box-shadow: 0 15px 35px rgba(76, 175, 80, 0.6);
+        transform: scale(1.02);
+    }
+}
+
+.subscribe-btn.free {
+    background: linear-gradient(135deg, #4caf50 0%, #00e676 100%);
+    color: var(--primary-dark);
+    font-weight: bold;
+}
+
 .currency {
     font-size: 1.5rem;
     font-weight: 700;

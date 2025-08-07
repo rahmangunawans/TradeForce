@@ -40,6 +40,31 @@ def index():
     # Package data
     packages = [
         {
+            'id': 'free-demo',
+            'name': 'TRADING ROBOT – FREE DEMO',
+            'price': 'FREE',
+            'period': 'selamanya',
+            'brokers': ['Semua Broker', 'Demo Account Only'],
+            'broker_logos': [
+                '/static/images/brokers/binomo.png',
+                '/static/images/brokers/olymptrade.png',
+                '/static/images/brokers/iqoption.png',
+                '/static/images/brokers/quotex.png'
+            ],
+            'features': [
+                'Auto trade via MetaTrader 4 (MT4) - Demo Account',
+                'Manual trade via MT4 - Demo Account', 
+                'Akses Grup Telegram Public',
+                'Back-tester untuk strategi',
+                'MetaTrader 4 Platform',
+                '3 indikator eksklusif: \'Binary Profit\', \'Golden Moment\', dan \'Price Action\'',
+                'Konektor indikator dan input sinyal',
+                'Fitur lengkap (Full Features+) - Demo Only',
+                'Tutorial pengguna lengkap',
+                'Update gratis selamanya'
+            ]
+        },
+        {
             'id': 'multi-platform',
             'name': 'TRADING ROBOT – MULTI PLATFORM',
             'price': '$39.00',

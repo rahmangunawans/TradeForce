@@ -254,83 +254,50 @@
             
             <!-- Products Grid -->
             <div class="products-grid">
-                <!-- Package 1 -->
+                <!-- Dynamic Packages -->
+                {% for package in packages %}
                 <div class="product-box">
                     <div class="product-top">
                         <div class="broker-tags">
-                            <span class="tag">IQ Option</span>
-                            <span class="tag">Olymptrade</span>
-                            <span class="tag">Quotex</span>
-                            <span class="tag">Pocket Option</span>
+                            {% for broker in package.brokers %}
+                            <span class="tag">{{ broker }}</span>
+                            {% endfor %}
                         </div>
                         
-                        <h3 class="product-title">TRADING ROBOT – MULTI PLATFORM</h3>
+                        <h3 class="product-title">{{ package.name }}</h3>
                         
+                        {% if package.price == 'FREE' %}
+                        <div class="price-box free">
+                            <span class="amount free-text">{{ package.price }}</span>
+                            <span class="period">/ {{ package.period }}</span>
+                        </div>
+                        {% else %}
                         <div class="price-box">
                             <span class="currency">$</span>
-                            <span class="amount">39.00</span>
-                            <span class="period">/ bulan</span>
+                            <span class="amount">{{ package.price.replace('$', '') }}</span>
+                            <span class="period">/ {{ package.period }}</span>
                         </div>
+                        {% endif %}
                     </div>
                     
                     <div class="features-section">
                         <h4 class="features-title">Fitur Utama:</h4>
                         <ul class="features-list">
-                            <li><i class="fas fa-check"></i>Auto trade via MetaTrader 4 (MT4) ke IQ Option</li>
-                            <li><i class="fas fa-check"></i>Manual trade via MT4 ke IQ Option</li>
-                            <li><i class="fas fa-check"></i>Akses Grup VIP Telegram</li>
-                            <li><i class="fas fa-check"></i>Back-tester untuk strategi</li>
-                            <li><i class="fas fa-check"></i>MetaTrader 4 Platform</li>
-                            <li><i class="fas fa-check"></i>3 indikator eksklusif: 'Binary Profit', 'Golden Moment', dan 'Price Action'</li>
-                            <li><i class="fas fa-check"></i>Konektor indikator dan input sinyal</li>
-                            <li><i class="fas fa-check"></i>Fitur lengkap (Full Features+)</li>
-                            <li><i class="fas fa-check"></i>Tutorial pengguna lengkap</li>
-                            <li><i class="fas fa-check"></i>Update gratis selamanya</li>
+                            {% for feature in package.features %}
+                            <li><i class="fas fa-check"></i>{{ feature }}</li>
+                            {% endfor %}
                         </ul>
                     </div>
                     
                     <div class="product-bottom">
+                        {% if package.price == 'FREE' %}
+                        <button class="subscribe-btn free">Coba Gratis Sekarang</button>
+                        {% else %}
                         <button class="subscribe-btn">Berlangganan Sekarang</button>
+                        {% endif %}
                     </div>
                 </div>
-                
-                <!-- Package 2 -->
-                <div class="product-box">
-                    <div class="product-top">
-                        <div class="broker-tags">
-                            <span class="tag">Binomo</span>
-                            <span class="tag">Stockity</span>
-                        </div>
-                        
-                        <h3 class="product-title">TRADING ROBOT – BINOMO & STOCKITY</h3>
-                        
-                        <div class="price-box">
-                            <span class="currency">$</span>
-                            <span class="amount">46.00</span>
-                            <span class="period">/ bulan</span>
-                        </div>
-                    </div>
-                    
-                    <div class="features-section">
-                        <h4 class="features-title">Fitur Utama:</h4>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i>Auto trade via MetaTrader 4 (MT4) ke Binomo & Stockity</li>
-                            <li><i class="fas fa-check"></i>Manual trade via MT4 ke Binomo & Stockity</li>
-                            <li><i class="fas fa-check"></i>Akses Grup VIP Telegram</li>
-                            <li><i class="fas fa-check"></i>Back-tester untuk strategi</li>
-                            <li><i class="fas fa-check"></i>MetaTrader 4 Platform</li>
-                            <li><i class="fas fa-check"></i>3 indikator eksklusif: 'Binary Profit', 'Golden Moment', dan 'Price Action'</li>
-                            <li><i class="fas fa-check"></i>Konektor indikator dan input sinyal</li>
-                            <li><i class="fas fa-check"></i>Fitur lengkap (Full Features+)</li>
-                            <li><i class="fas fa-check"></i>Tutorial pengguna lengkap</li>
-                            <li><i class="fas fa-check"></i>Update gratis selamanya</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="product-bottom">
-                        <button class="subscribe-btn">Berlangganan Sekarang</button>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>

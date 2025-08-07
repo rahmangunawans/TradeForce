@@ -1,18 +1,21 @@
-/* LOGO DEBUG - FORCE DISPLAY */
+/* CLEAN LOGO STYLING */
 img.navbar-logo {
     width: 45px !important;
     height: 45px !important;
     background: #ffffff !important;
-    border: 2px solid #00e676 !important;
+    border: 1px solid rgba(0, 230, 118, 0.3) !important;
     border-radius: 8px !important;
     padding: 4px !important;
     margin-right: 12px !important;
     display: inline-block !important;
     object-fit: contain !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    z-index: 9999 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+img.navbar-logo:hover {
+    border-color: #00e676 !important;
+    transform: scale(1.05) !important;
 }
 
 /* Force brand container */

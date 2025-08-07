@@ -34,6 +34,7 @@
     font-weight: 700;
 }
 
+/* Navigation Links with Active State Control */
 .navbar-nav .nav-link {
     color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 500;
@@ -41,11 +42,46 @@
     margin: 0 0.2rem;
     border-radius: 8px;
     transition: all 0.3s ease;
+    position: relative;
+    border-bottom: 2px solid transparent;
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 50%;
+    background: linear-gradient(135deg, #00e676, #ffd700);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 2px;
 }
 
 .navbar-nav .nav-link:hover {
     color: white !important;
-    background: rgba(0, 230, 118, 0.15);
+    background: rgba(0, 230, 118, 0.12);
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 80%;
+}
+
+/* Active State - Only ONE at a time */
+.navbar-nav .nav-link.active {
+    color: #00e676 !important;
+    background: rgba(0, 230, 118, 0.1);
+    font-weight: 600;
+}
+
+.navbar-nav .nav-link.active::after {
+    width: 80%;
+}
+
+/* Remove all active states first, then add to current */
+.navbar-nav .nav-link:not(.active)::after {
+    width: 0;
 }
 
 .btn-login-nav {

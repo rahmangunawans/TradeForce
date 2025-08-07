@@ -40,6 +40,54 @@ document.addEventListener('DOMContentLoaded', function() {
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
     });
 
+    // Active Menu Management - Ensure only ONE active menu
+    function setActiveMenu() {
+        // Get all navigation links
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.btn-login-nav)');
+        const sections = ['hero', 'features', 'packages', 'contact'];
+        
+        // Remove all active states first
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Determine current section based on scroll position
+        let currentSection = 'hero'; // default
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const sectionTop = section.offsetTop - 100; // offset for navbar
+                if (scrollTop >= sectionTop) {
+                    currentSection = sectionId;
+                }
+            }
+        });
+        
+        // Set active state to current section link
+        const activeLink = document.querySelector(`a[href="#${currentSection}"]`);
+        if (activeLink && activeLink.classList.contains('nav-link')) {
+            activeLink.classList.add('active');
+        }
+    }
+    
+    // Set initial active state
+    setActiveMenu();
+    
+    // Update active state on scroll
+    window.addEventListener('scroll', setActiveMenu);
+    
+    // Handle nav link clicks
+    document.querySelectorAll('.navbar-nav .nav-link:not(.btn-login-nav)').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Remove active from all links
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(l => l.classList.remove('active'));
+            // Add active to clicked link
+            this.classList.add('active');
+        });
+    });
+
     // Login Modal Functionality
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');

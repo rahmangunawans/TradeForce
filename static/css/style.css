@@ -218,7 +218,7 @@ body {
 .broker-logo {
     width: 80px;
     height: 80px;
-    background: white;
+    background: transparent;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -236,6 +236,13 @@ body {
     max-width: 60px;
     max-height: 60px;
     object-fit: contain;
+}
+
+.broker-text {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--accent-green);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .broker-label {

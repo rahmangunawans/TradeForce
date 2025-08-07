@@ -842,6 +842,59 @@ body {
         gap: 1rem;
     }
     
+    /* Feature icons responsive sizing for mobile */
+    .feature-card .feature-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .feature-card .feature-icon img {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .feature-card .feature-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .feature-card .feature-description {
+        font-size: 0.9rem;
+    }
+    
+    .product-box {
+        min-width: 280px;
+        padding: 1.5rem;
+    }
+    
+    .product-title {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    /* Feature icons responsive sizing for mobile */
+    .feature-card .feature-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .feature-card .feature-icon img {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .feature-card .feature-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .feature-card .feature-description {
+        font-size: 0.9rem;
+    }
+}
+    
     .product-box {
         min-width: 280px;
         padding: 1.5rem;
@@ -1038,14 +1091,16 @@ body {
         top: 40%;
     }
     
-    /* Protect feature icons from mobile CSS conflicts */
-    .feature-card .feature-icon,
-    .feature-card .feature-icon img {
+    /* Mobile feature icon adjustments */
+    .feature-card .feature-icon {
         width: 60px !important;
         height: 60px !important;
+        font-size: 1.5rem !important;
     }
     
     .feature-card .feature-icon img {
+        width: 24px !important;
+        height: 24px !important;
         display: block !important;
         opacity: 1 !important;
     }

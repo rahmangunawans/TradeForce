@@ -14,6 +14,7 @@ Preferred communication style: Simple, everyday language.
 - **January 7, 2025**: Fixed MetaTrader4 and TradingView icon sizing inconsistencies (reduced from 48px to 36px)
 - **January 7, 2025**: Implemented consistent hover effects and color treatment for all feature icons
 - **January 7, 2025**: Enhanced feature icon styling with proper white color filtering and scaling animations
+- **January 7, 2025**: Fixed hover effect for MetaTrader4 and TradingView icons to turn black on click/hover like Automated Trade icon
 
 ## System Architecture
 

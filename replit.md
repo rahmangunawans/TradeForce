@@ -17,6 +17,9 @@ Preferred communication style: Simple, everyday language.
 - **January 7, 2025**: Fixed hover effect for MetaTrader4 and TradingView icons to turn black on click/hover like Automated Trade icon
 - **January 7, 2025**: Added dynamic transparent navbar effect - becomes more transparent when scrolling with enhanced blur effects
 - **January 7, 2025**: Implemented scroll progress bar (reading progress indicator) at the top of the page with gradient colors
+- **January 7, 2025**: Added integrated login system with modal interface - users can login/register without leaving landing page
+- **January 7, 2025**: Implemented Flask-Login authentication with PostgreSQL database for user management
+- **January 7, 2025**: Added user dropdown menu in navbar for logged-in users with profile and logout options
 
 ## System Architecture
 
@@ -33,12 +36,15 @@ The application uses a traditional server-side rendered architecture with Flask 
 The design follows a single-page application pattern with sections for hero, packages, and contact information.
 
 ### Backend Architecture
-The backend is built using Flask with a minimal structure:
+The backend is built using Flask with authentication capabilities:
 
 - **Web Framework**: Flask for HTTP request handling and template rendering
+- **Database**: PostgreSQL with SQLAlchemy ORM for data persistence
+- **Authentication**: Flask-Login for session management and user authentication
 - **Session Management**: Flask sessions with environment-configurable secret key
 - **Data Structure**: Static data structures for broker and package information stored in Python dictionaries
-- **Routing**: Single route handler for the landing page
+- **API Endpoints**: REST endpoints for login, register, and logout functionality
+- **Security**: Password hashing using Werkzeug security utilities
 
 ### Design Patterns
 - **Static Data**: Broker and package information is hardcoded in the main route handler, indicating this is a promotional site with fixed content
@@ -60,6 +66,9 @@ The application is configured for deployment with:
 
 ### Python Dependencies
 - **Flask**: Web application framework
+- **Flask-SQLAlchemy**: Database ORM for PostgreSQL integration
+- **Flask-Login**: User session management and authentication
+- **Werkzeug**: Security utilities for password hashing
 - **Standard Library**: os module for environment variable access
 
 ### Third-party Assets

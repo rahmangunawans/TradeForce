@@ -39,6 +39,105 @@ document.addEventListener('DOMContentLoaded', function() {
         
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
     });
+
+    // Login Modal Functionality
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const toggleFormBtn = document.getElementById('toggleForm');
+    const loginAlert = document.getElementById('loginAlert');
+    let isRegisterMode = false;
+
+    // Toggle between login and register forms
+    toggleFormBtn.addEventListener('click', function() {
+        isRegisterMode = !isRegisterMode;
+        if (isRegisterMode) {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            toggleFormBtn.textContent = 'Sudah punya akun? Login di sini';
+            document.querySelector('.modal-title').innerHTML = 
+                '<i class="fas fa-user-plus me-2 text-accent"></i>Daftar ke AUTO TRADE VIP';
+        } else {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            toggleFormBtn.textContent = 'Daftar akun baru';
+            document.querySelector('.modal-title').innerHTML = 
+                '<i class="fas fa-sign-in-alt me-2 text-accent"></i>Login ke AUTO TRADE VIP';
+        }
+        hideAlert();
+    });
+
+    // Handle login form submission
+    loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert('success', data.message);
+                setTimeout(() => {
+                    location.reload(); // Refresh to show logged in state
+                }, 1500);
+            } else {
+                showAlert('danger', data.message);
+            }
+        } catch (error) {
+            showAlert('danger', 'Terjadi kesalahan. Silakan coba lagi.');
+        }
+    });
+
+    // Handle register form submission
+    registerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('registerUsername').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert('success', data.message);
+                setTimeout(() => {
+                    location.reload(); // Refresh to show logged in state
+                }, 1500);
+            } else {
+                showAlert('danger', data.message);
+            }
+        } catch (error) {
+            showAlert('danger', 'Terjadi kesalahan. Silakan coba lagi.');
+        }
+    });
+
+    // Show alert message
+    function showAlert(type, message) {
+        loginAlert.className = `alert alert-${type}`;
+        loginAlert.textContent = message;
+        loginAlert.classList.remove('d-none');
+    }
+
+    // Hide alert message
+    function hideAlert() {
+        loginAlert.classList.add('d-none');
+    }
     
     // Smooth scrolling for anchor links
     const anchorLinks = document.querySelectorAll('a[href^="#"]');

@@ -36,6 +36,25 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Kontak</a>
                     </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-2"></i>{{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Pengaturan</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -445,6 +464,66 @@
             </div>
         </div>
     </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-light">
+                <div class="modal-header border-bottom border-light">
+                    <h5 class="modal-title text-light">
+                        <i class="fas fa-sign-in-alt me-2 text-accent"></i>Login ke AUTO TRADE VIP
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loginAlert" class="alert d-none" role="alert"></div>
+                    
+                    <!-- Login Form -->
+                    <form id="loginForm" class="mb-3">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label text-light">Username</label>
+                            <input type="text" class="form-control bg-darker text-light border-light" id="loginUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label text-light">Password</label>
+                            <input type="password" class="form-control bg-darker text-light border-light" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-accent w-100 mb-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+                    
+                    <hr class="border-light">
+                    <p class="text-center text-muted">Belum punya akun?</p>
+                    
+                    <!-- Register Form -->
+                    <form id="registerForm" style="display: none;">
+                        <div class="mb-3">
+                            <label for="registerUsername" class="form-label text-light">Username</label>
+                            <input type="text" class="form-control bg-darker text-light border-light" id="registerUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label text-light">Email</label>
+                            <input type="email" class="form-control bg-darker text-light border-light" id="registerEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label text-light">Password</label>
+                            <input type="password" class="form-control bg-darker text-light border-light" id="registerPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Daftar Akun
+                        </button>
+                    </form>
+                    
+                    <div class="text-center">
+                        <button id="toggleForm" class="btn btn-link text-accent">
+                            Daftar akun baru
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

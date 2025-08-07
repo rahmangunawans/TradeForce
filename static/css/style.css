@@ -84,6 +84,55 @@ body {
     border-radius: 0 2px 2px 0;
 }
 
+/* ===== LOGIN MODAL STYLES ===== */
+.modal-content.bg-dark {
+    background-color: rgba(26, 31, 46, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+}
+
+.form-control.bg-darker {
+    background-color: rgba(13, 20, 33, 0.8) !important;
+    border: 1px solid var(--border-color);
+}
+
+.form-control.bg-darker:focus {
+    background-color: rgba(13, 20, 33, 0.9) !important;
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 230, 118, 0.25);
+    color: white;
+}
+
+.btn-accent {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-gold));
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-accent:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 230, 118, 0.3);
+    color: white;
+}
+
+.dropdown-menu {
+    background-color: rgba(26, 31, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-item {
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(0, 230, 118, 0.1);
+    color: var(--accent-green);
+}
+
 .navbar-brand {
     font-size: 1.5rem;
     font-weight: 700;

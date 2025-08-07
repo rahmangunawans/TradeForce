@@ -16,13 +16,15 @@
 }
 
 .navbar-logo {
-    width: 42px;
-    height: 42px;
-    background: white;
+    width: 42px !important;
+    height: 42px !important;
+    background: white !important;
     border-radius: 8px;
     padding: 6px;
     margin-right: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: block !important;
+    object-fit: contain;
 }
 
 .brand-text {

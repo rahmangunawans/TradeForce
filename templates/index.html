@@ -14,6 +14,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar_clean.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/logo-debug.css') }}">
 </head>
 <body>
     <!-- Navigation -->
@@ -21,7 +22,11 @@
         <div class="container">
             <!-- Brand/Logo -->
             <a class="navbar-brand" href="#hero">
-                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="AUTO TRADE VIP" class="navbar-logo">
+                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" 
+                     alt="AUTO TRADE VIP Logo" 
+                     class="navbar-logo"
+                     onerror="console.error('Logo failed to load:', this.src); this.style.border='2px solid red';"
+                     onload="console.log('Logo loaded successfully:', this.src);">
                 <span class="brand-text">AUTO TRADE VIP</span>
             </a>
             

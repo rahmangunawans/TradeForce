@@ -13,14 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar_clean.css') }}">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <!-- Brand/Logo -->
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="#hero">
-                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="AUTO TRADE VIP Logo" class="navbar-logo me-2">
+            <a class="navbar-brand" href="#hero">
+                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="AUTO TRADE VIP" class="navbar-logo">
                 <span class="brand-text">AUTO TRADE VIP</span>
             </a>
             

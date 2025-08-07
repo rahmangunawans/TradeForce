@@ -418,7 +418,7 @@ function initProductsCarousel() {
         let scrollDistance = 420; // Desktop
         
         if (isMobile) {
-            scrollDistance = 230; // Mobile
+            scrollDistance = 170; // Mobile ultra compact
         } else if (isTablet) {
             scrollDistance = 290; // Tablet
         }
@@ -436,7 +436,7 @@ function initProductsCarousel() {
         let scrollDistance = 420; // Desktop
         
         if (isMobile) {
-            scrollDistance = 230; // Mobile
+            scrollDistance = 170; // Mobile ultra compact
         } else if (isTablet) {
             scrollDistance = 290; // Tablet
         }

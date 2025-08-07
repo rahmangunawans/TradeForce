@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 
 # Create the Flask app
 app = Flask(__name__)
@@ -9,31 +9,31 @@ app.secret_key = os.environ.get("SESSION_SECRET", "auto-trade-vip-secret-key")
 def index():
     """Landing page for AUTO TRADE VIP"""
     
-    # Broker data for carousel - Using local downloaded images
+    # Broker data for carousel - Using local downloaded images with Flask url_for
     brokers = [
         {
             'name': 'Binomo',
-            'logo': '/static/images/brokers/binomo.png'
+            'logo': url_for('static', filename='images/brokers/binomo.png')
         },
         {
             'name': 'Olymptrade', 
-            'logo': '/static/images/brokers/olymptrade.png'
+            'logo': url_for('static', filename='images/brokers/olymptrade.png')
         },
         {
             'name': 'Stockity',
-            'logo': '/static/images/brokers/stockity.png'
+            'logo': url_for('static', filename='images/brokers/stockity.png')
         },
         {
             'name': 'IQ Option',
-            'logo': '/static/images/brokers/iqoption.png'
+            'logo': url_for('static', filename='images/brokers/iqoption.png')
         },
         {
             'name': 'Quotex',
-            'logo': '/static/images/brokers/quotex.png'
+            'logo': url_for('static', filename='images/brokers/quotex.png')
         },
         {
             'name': 'Pocket Option',
-            'logo': '/static/images/brokers/pocket-option.png'
+            'logo': url_for('static', filename='images/brokers/pocket-option.png')
         }
     ]
     
@@ -46,10 +46,10 @@ def index():
             'period': 'bulan',
             'brokers': ['IQ Option', 'Olymptrade', 'Quotex', 'Pocket Option'],
             'broker_logos': [
-                '/static/images/brokers/iqoption.png',
-                '/static/images/brokers/olymptrade.png',
-                '/static/images/brokers/quotex.png',
-                '/static/images/brokers/pocket-option.png'
+                url_for('static', filename='images/brokers/iqoption.png'),
+                url_for('static', filename='images/brokers/olymptrade.png'),
+                url_for('static', filename='images/brokers/quotex.png'),
+                url_for('static', filename='images/brokers/pocket-option.png')
             ],
             'features': [
                 'Auto trade via MetaTrader 4 (MT4) ke IQ Option',
@@ -71,8 +71,8 @@ def index():
             'period': 'bulan',
             'brokers': ['Binomo', 'Stockity'],
             'broker_logos': [
-                '/static/images/brokers/binomo.png',
-                '/static/images/brokers/stockity.png'
+                url_for('static', filename='images/brokers/binomo.png'),
+                url_for('static', filename='images/brokers/stockity.png')
             ],
             'features': [
                 'Auto trade via MetaTrader 4 (MT4) ke Binomo & Stockity',

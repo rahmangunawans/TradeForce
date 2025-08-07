@@ -1,0 +1,249 @@
+/* Professional Login Modal Styling - Consistent Theme */
+.modal-content {
+    background: linear-gradient(145deg, #1a1f2e, #0f1419) !important;
+    border: 1px solid rgba(0, 230, 118, 0.2) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 230, 118, 0.1) !important;
+    backdrop-filter: blur(20px) !important;
+    overflow: hidden !important;
+}
+
+/* Modal Header */
+.modal-header {
+    background: linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 230, 118, 0.05)) !important;
+    border-bottom: 1px solid rgba(0, 230, 118, 0.2) !important;
+    padding: 1.5rem 2rem !important;
+    position: relative !important;
+}
+
+.modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00e676, #00c965, #00e676);
+    animation: glow-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+.modal-title {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 1.4rem !important;
+    text-shadow: 0 2px 8px rgba(0, 230, 118, 0.3) !important;
+}
+
+.btn-close {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    opacity: 0.8 !important;
+    width: 32px !important;
+    height: 32px !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-close:hover {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    transform: rotate(90deg) scale(1.1) !important;
+    opacity: 1 !important;
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 2rem !important;
+    background: transparent !important;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem !important;
+    position: relative !important;
+}
+
+.form-label {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* Modern Input Styling */
+.form-control {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    backdrop-filter: blur(10px) !important;
+    position: relative !important;
+}
+
+.form-control:focus {
+    background: rgba(0, 230, 118, 0.05) !important;
+    border-color: #00e676 !important;
+    box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.15) !important;
+    outline: none !important;
+    transform: translateY(-2px) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-style: italic !important;
+}
+
+.form-select {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    padding: 0.8rem 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-select:focus {
+    background: rgba(0, 230, 118, 0.05) !important;
+    border-color: #00e676 !important;
+    box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.15) !important;
+}
+
+.form-select option {
+    background-color: #1a1f2e !important;
+    color: #ffffff !important;
+}
+
+/* Professional Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #00e676, #00c965) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.8rem 2rem !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    color: #1a1f2e !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #00ff88, #00e676) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(0, 230, 118, 0.4) !important;
+    color: #0a0e1a !important;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:active {
+    transform: translateY(0) scale(1) !important;
+    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3) !important;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 10px !important;
+    padding: 0.6rem 1.5rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Toggle Link */
+.toggle-form {
+    color: #00e676 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+}
+
+.toggle-form:hover {
+    color: #00ff88 !important;
+    text-decoration: underline !important;
+    transform: scale(1.02) !important;
+}
+
+/* Alert Styling */
+.alert {
+    border-radius: 10px !important;
+    border: none !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.alert-success {
+    background: rgba(0, 230, 118, 0.15) !important;
+    color: #00ff88 !important;
+    border-left: 4px solid #00e676 !important;
+}
+
+.alert-danger {
+    background: rgba(220, 53, 69, 0.15) !important;
+    color: #ff6b6b !important;
+    border-left: 4px solid #dc3545 !important;
+}
+
+/* Form Animation */
+.form-container {
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .modal-body {
+        padding: 1.5rem !important;
+    }
+    
+    .form-control, .form-select {
+        padding: 0.7rem 0.8rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .btn-primary {
+        padding: 0.7rem 1.5rem !important;
+        font-size: 0.9rem !important;
+    }
+}

@@ -66,10 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Set active state to current section link
-        if (currentSection) {
-            const activeLink = document.querySelector(`a[href="#${currentSection}"]`);
-            if (activeLink && activeLink.classList.contains('nav-link')) {
-                activeLink.classList.add('active');
+        if (currentSection && currentSection !== '') {
+            try {
+                const activeLink = document.querySelector(`a[href="#${currentSection}"]`);
+                if (activeLink && activeLink.classList.contains('nav-link')) {
+                    activeLink.classList.add('active');
+                }
+            } catch (e) {
+                console.warn('Invalid selector for section:', currentSection);
             }
         }
     }
@@ -98,23 +102,26 @@ document.addEventListener('DOMContentLoaded', function() {
     let isRegisterMode = false;
 
     // Toggle between login and register forms
-    toggleFormBtn.addEventListener('click', function() {
-        isRegisterMode = !isRegisterMode;
-        if (isRegisterMode) {
+    if (toggleFormBtn) {
+        toggleFormBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             loginForm.style.display = 'none';
             registerForm.style.display = 'block';
-            toggleFormBtn.textContent = 'Already have an account? Login here';
-            document.querySelector('.modal-title').innerHTML = 
-                '<i class="fas fa-user-plus me-2 text-accent"></i>Register to AUTO TRADE VIP';
-        } else {
+            document.querySelector('.modal-title').innerHTML = '<i class="fas fa-user-plus me-2"></i>Register to AUTO TRADE VIP';
+            hideAlert();
+        });
+    }
+
+    const toggleFormBack = document.getElementById('toggleFormBack');
+    if (toggleFormBack) {
+        toggleFormBack.addEventListener('click', function(e) {
+            e.preventDefault();
             loginForm.style.display = 'block';
             registerForm.style.display = 'none';
-            toggleFormBtn.textContent = 'Create new account';
-            document.querySelector('.modal-title').innerHTML = 
-                '<i class="fas fa-sign-in-alt me-2 text-accent"></i>Login to AUTO TRADE VIP';
-        }
-        hideAlert();
-    });
+            document.querySelector('.modal-title').innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Login to AUTO TRADE VIP';
+            hideAlert();
+        });
+    }
 
     // Handle login form submission
     loginForm.addEventListener('submit', async function(e) {

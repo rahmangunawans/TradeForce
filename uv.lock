@@ -234,6 +234,12 @@ wheels = [
 ]
 
 [[package]]
+name = "iqoptionapi"
+version = "0.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/e5/9d7ecf1c519b7ae587ffad7ff6c26b0cbf0eef54ecc19ea5d6188a7d15f6/iqoptionapi-0.5.tar.gz", hash = "sha256:7c24146400b67122bf4a18df89ca17de2033148708d6169137bcd0d99ba932b3", size = 7053 }
+
+[[package]]
 name = "itsdangerous"
 version = "2.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -383,9 +389,11 @@ dependencies = [
     { name = "flask-login" },
     { name = "flask-sqlalchemy" },
     { name = "gunicorn" },
+    { name = "iqoptionapi" },
     { name = "oauthlib" },
     { name = "psycopg2-binary" },
     { name = "pyjwt" },
+    { name = "requests" },
     { name = "sqlalchemy" },
     { name = "websocket-client" },
     { name = "werkzeug" },
@@ -399,9 +407,11 @@ requires-dist = [
     { name = "flask-login", specifier = ">=0.6.3" },
     { name = "flask-sqlalchemy", specifier = ">=3.1.1" },
     { name = "gunicorn", specifier = ">=23.0.0" },
+    { name = "iqoptionapi", specifier = ">=0.5" },
     { name = "oauthlib", specifier = ">=3.3.1" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pyjwt", specifier = ">=2.10.1" },
+    { name = "requests", specifier = ">=2.32.4" },
     { name = "sqlalchemy", specifier = ">=2.0.42" },
     { name = "websocket-client", specifier = "==0.56" },
     { name = "werkzeug", specifier = ">=3.1.3" },

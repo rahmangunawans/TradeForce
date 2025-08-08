@@ -761,7 +761,15 @@
                 hour12: false
             }) + ' UTC';
             
-            document.getElementById('localTime').textContent = localTime.toLocaleString();
+            document.getElementById('localTime').textContent = localTime.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'numeric', 
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
             document.getElementById('userTimezone').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
             
             // Get current UTC hour

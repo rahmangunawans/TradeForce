@@ -73,6 +73,7 @@ class BotSetting(db.Model):
     asset = db.Column(db.String(50), default='EURUSD-OTC')
     strategy = db.Column(db.String(50), default='martingale')
     signal_type = db.Column(db.String(100), default='mt4_next_signal')  # Signal source type
+    signal_content = db.Column(db.Text)  # Content for manual signal input
     max_consecutive_losses = db.Column(db.Integer, default=3)
     
     # Trading Session Configuration
@@ -393,6 +394,7 @@ def save_bot_settings():
         settings.martingale_multiple = float(data.get('martingale_multiple', 2.2))
         
         settings.signal_type = data.get('signal_type', 'mt4_next_signal')
+        settings.signal_content = data.get('signal_content', '')  # Save signal content for manual input
         
         # Trading Session Configuration
         settings.start_time = data.get('start_time', '09:00')

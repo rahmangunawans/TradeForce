@@ -44,6 +44,9 @@ class IQTradingRobot:
         
         # Signal Settings
         self.signal_type = "mt4_next_signal"  # Signal source type
+        self.signal_content = ""  # Manual signal content
+        self.parsed_signals = []  # Parsed signal list
+        self.current_signal_index = 0  # Current signal index for processing
         
         # Trade History
         self.trades_history = []
@@ -52,6 +55,71 @@ class IQTradingRobot:
         
         print("🤖 IQ Option Trading Robot v1.0")
         print("=" * 50)
+    
+    def parse_signal_content(self):
+        """
+        Parse signal content in format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
+        """
+        self.parsed_signals = []
+        if not self.signal_content:
+            return
+            
+        lines = self.signal_content.strip().split('\n')
+        for line_num, line in enumerate(lines, 1):
+            line = line.strip()
+            if not line or line.startswith('#'):  # Skip empty lines and comments
+                continue
+                
+            try:
+                parts = [part.strip() for part in line.split(',')]
+                if len(parts) >= 4:
+                    timestamp_str, pair, direction, timeframe = parts[0], parts[1], parts[2], parts[3]
+                    
+                    # Parse timestamp
+                    signal_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+                    
+                    # Validate direction
+                    direction = direction.upper()
+                    if direction not in ['CALL', 'PUT']:
+                        print(f"⚠️ Invalid direction '{direction}' on line {line_num}, skipping")
+                        continue
+                    
+                    # Parse timeframe
+                    timeframe = int(timeframe)
+                    
+                    signal = {
+                        'time': signal_time,
+                        'pair': pair.upper(),
+                        'direction': direction,
+                        'timeframe': timeframe,
+                        'processed': False
+                    }
+                    self.parsed_signals.append(signal)
+                else:
+                    print(f"⚠️ Invalid signal format on line {line_num}: {line}")
+                    
+            except ValueError as e:
+                print(f"⚠️ Error parsing line {line_num}: {line} - {e}")
+                
+        print(f"📊 Parsed {len(self.parsed_signals)} signals from content")
+    
+    def get_next_signal(self):
+        """
+        Get the next signal that should be executed based on current time
+        """
+        if self.signal_type != "manual_input" or not self.parsed_signals:
+            return None
+            
+        current_time = datetime.now()
+        
+        # Find signals that are ready to be executed (time has passed)
+        for i, signal in enumerate(self.parsed_signals):
+            if not signal['processed'] and signal['time'] <= current_time:
+                # Mark as processed and return
+                signal['processed'] = True
+                return signal
+                
+        return None
     
     def configure_from_settings(self, settings):
         """
@@ -67,6 +135,12 @@ class IQTradingRobot:
             self.asset = settings.asset
             self.strategy = settings.strategy
             self.max_consecutive_losses = settings.max_consecutive_losses
+            self.signal_type = settings.signal_type
+            self.signal_content = settings.signal_content or ""
+            
+            # Parse signal content if manual_input is selected
+            if self.signal_type == "manual_input" and self.signal_content:
+                self.parse_signal_content()
             
             print(f"⚙️ Configuration loaded:")
             print(f"   Amount: ${self.trading_amount}")
@@ -77,6 +151,9 @@ class IQTradingRobot:
                 print(f"   Multiple: {self.martingale_multiple}")
             print(f"   Asset: {self.asset}")
             print(f"   Strategy: {self.strategy}")
+            print(f"   Signal Type: {self.signal_type}")
+            if self.signal_type == "manual_input":
+                print(f"   Parsed Signals: {len(self.parsed_signals)}")
     
     def connect(self):
         """Koneksi ke IQ Option dengan session clearing"""
@@ -203,8 +280,20 @@ class IQTradingRobot:
     
     def should_trade(self, candles):
         """
-        Logika untuk menentukan apakah harus trade
+        Logika untuk menentukan apakah harus trade berdasarkan signal type
         """
+        # Handle manual signal input
+        if self.signal_type == "manual_input":
+            signal = self.get_next_signal()
+            if signal:
+                print(f"🎯 Signal ditemukan: {signal['pair']} - {signal['direction']} pada {signal['time']}")
+                # Update asset untuk signal ini
+                self.asset = signal['pair']
+                return True, signal['direction'].lower()
+            else:
+                return False, None
+        
+        # Original candle-based analysis for other signal types
         if not candles:
             return False, None
         
@@ -351,7 +440,7 @@ class IQTradingRobot:
                     time.sleep(5)
                     continue
                 
-                # Analisis apakah harus trade
+                # Analisis apakah harus trade berdasarkan signal type
                 should_trade, direction = self.should_trade(candles)
                 
                 if should_trade:

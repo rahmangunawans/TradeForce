@@ -266,7 +266,22 @@ def register():
 @app.route('/logout')
 @login_required
 def logout():
-    """Handle logout"""
+    """Handle logout and clear user sessions"""
+    user_id = current_user.id
+    
+    # Stop and clean up any active bot sessions for this user
+    if user_id in active_bots:
+        try:
+            # Stop the bot if it's running
+            if active_bots[user_id].is_trading:
+                active_bots[user_id].stop_trading()
+            # Disconnect and clean up
+            active_bots[user_id].disconnect()
+            del active_bots[user_id]
+        except:
+            # Handle any cleanup errors silently
+            pass
+    
     logout_user()
     return redirect(url_for('index'))
 
@@ -403,6 +418,15 @@ def test_connection():
         iq_email = data['iq_email']
         iq_password = data['iq_password']
         account_type = data['account_type']
+        
+        # Clear any existing session for this user before testing
+        user_id = current_user.id
+        if user_id in active_bots:
+            try:
+                active_bots[user_id].disconnect()
+                del active_bots[user_id]
+            except:
+                pass
         
         # Create temporary robot instance for testing
         test_robot = IQTradingRobot(iq_email, iq_password)

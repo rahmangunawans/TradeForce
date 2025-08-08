@@ -79,9 +79,18 @@ class IQTradingRobot:
             print(f"   Strategy: {self.strategy}")
     
     def connect(self):
-        """Koneksi ke IQ Option"""
+        """Koneksi ke IQ Option dengan session clearing"""
         print("🔄 Menghubungkan ke IQ Option...")
         try:
+            # Clear any existing connection first
+            if self.api:
+                try:
+                    self.api.api.close()
+                except:
+                    pass
+                self.api = None
+            
+            # Create fresh connection
             self.api = IQ_Option(self.email, self.password)
             check, reason = self.api.connect()
             

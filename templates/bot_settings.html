@@ -754,7 +754,7 @@
                                 <i class="fas fa-envelope me-2"></i>IQ Option Email
                             </label>
                             <input type="email" class="form-control" id="iqEmail" name="iq_email" 
-                                   value="{% if settings %}{{ settings.iq_email }}{% endif %}" required>
+                                   value="{% if settings %}{{ settings.iq_email }}{% endif %}" required placeholder="Enter your IQ Option email">
                             <small class="form-text text-muted">Your IQ Option account email</small>
                         </div>
                     </div>
@@ -764,7 +764,7 @@
                             <label for="iqPassword" class="form-label">
                                 <i class="fas fa-lock me-2"></i>IQ Option Password
                             </label>
-                            <input type="password" class="form-control" id="iqPassword" name="iq_password" required>
+                            <input type="password" class="form-control" id="iqPassword" name="iq_password" required placeholder="Enter your IQ Option password">
                             <small class="form-text text-muted">Your IQ Option account password</small>
                         </div>
                     </div>
@@ -931,6 +931,27 @@
         const balanceInfo = document.getElementById('balanceInfo');
         const balanceAmount = document.getElementById('balanceAmount');
         const accountTypeBadge = document.getElementById('accountTypeBadge');
+
+        // Clear session data when page loads for fresh start
+        function clearBotSession() {
+            // Reset status indicators
+            statusIndicator.className = 'status-indicator status-disconnected';
+            statusText.textContent = 'Disconnected';
+            balanceInfo.style.display = 'none';
+            
+            // Disable bot control buttons
+            startBotBtn.disabled = true;
+            stopBotBtn.disabled = true;
+            
+            // Clear any stored session data
+            sessionStorage.removeItem('iqBotSession');
+            localStorage.removeItem('iqBotSession');
+        }
+
+        // Initialize clean session on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            clearBotSession();
+        });
 
 
         // Test Connection

@@ -49,10 +49,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Close sidebar on mobile after navigation
             if (window.innerWidth <= 991) {
                 // Hide sidebar on mobile/tablet after menu selection
-                sidebar.style.transform = 'translateX(-100%)';
-                sidebar.classList.add('hidden');
-                mainContent.style.marginLeft = '0';
-                sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                if (sidebar) {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    sidebar.classList.add('hidden');
+                }
+                if (mainContent) {
+                    mainContent.style.marginLeft = '0';
+                }
+                if (sidebarToggle) {
+                    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
             }
         });
     });
@@ -388,18 +394,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (isScrolling) return;
                 
                 const diffX = e.changedTouches[0].clientX - startX;
-                const sidebar = document.querySelector('.sidebar');
-                
-                const sidebar = document.querySelector('.modern-sidebar');
+                const sidebarElement = document.getElementById('sidebar');
                 
                 // Swipe right from left edge to open sidebar
-                if (startX < 50 && diffX > 100 && !sidebar.classList.contains('mobile-open')) {
-                    document.querySelector('.mobile-toggle').click();
+                if (startX < 50 && diffX > 100 && sidebarElement && sidebarElement.style.transform === 'translateX(-100%)') {
+                    if (sidebarToggle) sidebarToggle.click();
                 }
                 
                 // Swipe left on sidebar to close
-                if (startX > 50 && diffX < -100 && sidebar.classList.contains('mobile-open')) {
-                    document.querySelector('.mobile-toggle').click();
+                if (startX > 50 && diffX < -100 && sidebarElement && sidebarElement.style.transform === 'translateX(0px)') {
+                    if (sidebarToggle) sidebarToggle.click();
                 }
                 
                 startX = 0;

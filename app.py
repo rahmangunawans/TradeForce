@@ -457,7 +457,7 @@ def test_connection():
             # Get balance after switching
             balance = test_robot.get_balance()
             
-            # Save balance info to database
+            # Save balance info and password to database
             settings = BotSetting.query.filter_by(user_id=current_user.id).first()
             if settings:
                 balance_info = {
@@ -467,6 +467,9 @@ def test_connection():
                     'status': 'connected'
                 }
                 settings.balance_info = json.dumps(balance_info)
+                # Save encrypted password for later use
+                from werkzeug.security import generate_password_hash
+                settings.iq_password = generate_password_hash(iq_password)
                 db.session.commit()
             
             # Don't disconnect - keep connection alive for potential bot start
@@ -539,11 +542,22 @@ def start_bot():
                 'message': 'Bot settings not found. Please configure bot settings first.'
             })
         
-        # Get the last test connection data to use password
+        # Get password from request or try stored password
         data = request.get_json() or {}
         iq_password = data.get('iq_password')
         
+        # If no password in request, try to get it from settings
         if not iq_password:
+            # Check if we have stored balance info with connection status
+            if settings.balance_info:
+                balance_data = json.loads(settings.balance_info)
+                if balance_data.get('status') == 'connected':
+                    # For security, we'll ask the user to provide password each time
+                    return jsonify({
+                        'success': False,
+                        'message': 'Please enter your IQ Option password to start the bot.'
+                    })
+            
             return jsonify({
                 'success': False,
                 'message': 'Password required to start bot. Please test connection first.'

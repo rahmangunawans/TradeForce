@@ -394,6 +394,7 @@ def save_bot_settings():
         settings.step_martingale = int(data.get('step_martingale', 3))
         settings.martingale_multiple = float(data.get('martingale_multiple', 2.2))
         
+        settings.asset = data.get('asset', 'EURUSD')  # Trading asset
         settings.signal_type = data.get('signal_type', 'manual_input')  # Default ke manual input
         settings.signal_content = data.get('signal_content', '')  # Save signal content for manual input
         

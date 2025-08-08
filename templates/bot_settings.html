@@ -935,9 +935,9 @@
                     </div>
                 </div>
                 
-                <!-- Row 2: Signal Type -->
+                <!-- Row 2: Signal Type & Asset -->
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="signalType" class="form-label">
                                 <i class="fas fa-signal me-1"></i>Signal Type Feature
@@ -949,6 +949,18 @@
                                 <!-- SEMUA STRATEGI LAIN DIHAPUS - FOKUS MANUAL INPUT SAJA -->
                             </select>
                             <small class="form-text text-muted">Hanya menggunakan Manual Signal Input - semua strategi lain sudah dihapus</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="asset" class="form-label">
+                                <i class="fas fa-coins me-1"></i>Asset/Pair
+                            </label>
+                            <input type="text" class="form-control" id="asset" name="asset" 
+                                   value="{% if settings %}{{ settings.asset }}{% else %}EURUSD{% endif %}"
+                                   placeholder="EURUSD" required>
+                            <small class="form-text text-muted">Trading asset (e.g., EURUSD)</small>
                         </div>
                     </div>
                 </div>
@@ -995,7 +1007,7 @@ Atau format lengkap:
 2025-08-08 16:30:00,EURUSD,CALL,1
 2025-08-08 16:35:00,GBPUSD,PUT,1"
                                         rows="8"
-                                    ></textarea>
+                                    >{% if settings and settings.signal_content %}{{ settings.signal_content }}{% endif %}</textarea>
                                     <small class="form-text text-muted">
                                         <strong>3 Format yang didukung:</strong><br>
                                         • <code>CALL</code> atau <code>PUT</code> (sederhana, eksekusi segera)<br>

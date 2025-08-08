@@ -68,52 +68,40 @@ class IQTradingRobot:
             return
             
         lines = self.signal_content.strip().split('\n')
-        signal_delay = 0  # For immediate execution with slight delays
         
         for line_num, line in enumerate(lines, 1):
             line = line.strip()
-            if not line or line.startswith('#'):  # Skip empty lines and comments
+            if not line or line.startswith('#'):
                 continue
                 
             try:
                 parts = [part.strip() for part in line.split(',')]
                 
-                # Handle different formats
                 if len(parts) >= 4:
-                    # Full format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
+                    # Format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
                     timestamp_str, pair, direction, timeframe = parts[0], parts[1], parts[2], parts[3]
-                    
-                    # Parse timestamp
                     signal_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
                     pair = pair.upper()
                     timeframe = int(timeframe)
-                    
                 elif len(parts) >= 2:
-                    # Simple format: CALL/PUT,TIMEFRAME
+                    # Format: CALL/PUT,TIMEFRAME
                     direction, timeframe = parts[0], parts[1]
-                    pair = self.asset  # Use current configured asset
-                    # Execute immediately with small delay
-                    signal_time = datetime.now() + timedelta(seconds=signal_delay)
-                    signal_delay += 30  # Add 30 seconds delay between signals
+                    pair = self.asset
+                    signal_time = datetime.now()  # LANGSUNG SEKARANG
                     timeframe = int(timeframe)
-                    
                 elif len(parts) == 1:
-                    # Very simple format: CALL or PUT
+                    # Format: CALL or PUT
                     direction = parts[0]
-                    pair = self.asset  # Use current configured asset
-                    timeframe = 1  # Default 1 minute
-                    # Execute immediately with small delay
-                    signal_time = datetime.now() + timedelta(seconds=signal_delay)
-                    signal_delay += 30  # Add 30 seconds delay between signals
-                    
+                    pair = self.asset
+                    timeframe = 1
+                    signal_time = datetime.now()  # LANGSUNG SEKARANG
                 else:
-                    print(f"⚠️ Invalid signal format on line {line_num}: {line}")
+                    print(f"⚠️ Invalid signal: {line}")
                     continue
                 
-                # Validate direction
                 direction = direction.upper()
                 if direction not in ['CALL', 'PUT']:
-                    print(f"⚠️ Invalid direction '{direction}' on line {line_num}, skipping")
+                    print(f"⚠️ Invalid direction: {direction}")
                     continue
                 
                 signal = {
@@ -124,32 +112,26 @@ class IQTradingRobot:
                     'processed': False
                 }
                 self.parsed_signals.append(signal)
-                print(f"📊 Signal {line_num}: {direction} {pair} at {signal_time.strftime('%H:%M:%S')} ({timeframe}m)")
+                print(f"📊 Signal {line_num}: {direction} {pair} - SIAP EKSEKUSI")
                     
-            except ValueError as e:
+            except Exception as e:
                 print(f"⚠️ Error parsing line {line_num}: {line} - {e}")
                 
-        print(f"📊 Parsed {len(self.parsed_signals)} signals from content")
+        print(f"📊 Parsed {len(self.parsed_signals)} signals - SIAP LANGSUNG TRADE")
     
     def get_next_signal(self):
         """
-        Get the next signal that should be executed based on current time
+        Ambil signal berikutnya yang belum diproses - LANGSUNG EKSEKUSI
         """
         if self.signal_type != "manual_input" or not self.parsed_signals:
             return None
             
-        current_time = datetime.now()
-        
-        # Find signals that are ready to be executed (time has passed or very close)
-        for i, signal in enumerate(self.parsed_signals):
+        # Cari signal pertama yang belum diproses - LANGSUNG RETURN
+        for signal in self.parsed_signals:
             if not signal['processed']:
-                time_diff = (signal['time'] - current_time).total_seconds()
-                # Execute if time has passed or within 5 seconds
-                if time_diff <= 5:
-                    # Mark as processed and return
-                    signal['processed'] = True
-                    print(f"🎯 Executing signal: {signal['direction']} {signal['pair']} (scheduled for {signal['time'].strftime('%H:%M:%S')})")
-                    return signal
+                signal['processed'] = True
+                print(f"🎯 EKSEKUSI SIGNAL LANGSUNG: {signal['direction']} {signal['pair']}")
+                return signal
                 
         return None
     
@@ -185,7 +167,7 @@ class IQTradingRobot:
             print(f"   Strategy: {self.strategy}")
             print(f"   Signal Type: {self.signal_type}")
             if self.signal_type == "manual_input":
-                print(f"   Parsed Signals: {len(self.parsed_signals)}")
+                print(f"   Parsed Signals: {len(self.parsed_signals)} - SIAP EKSEKUSI LANGSUNG")
     
     def connect(self):
         """Koneksi ke IQ Option dengan session clearing"""
@@ -264,87 +246,17 @@ class IQTradingRobot:
                 return False
         return False
     
-    def get_candle_data(self, asset, timeframe=1, count=10):
-        """Ambil data candle"""
-        if not self.api or not self.is_connected:
-            print("❌ Not connected to IQ Option")
-            return None
-            
-        try:
-            candles = self.api.get_candles(asset, timeframe * 60, count, time.time())
-            return candles
-        except Exception as e:
-            print(f"❌ Error mengambil data candle: {e}")
-            return None
+    # SEMUA ANALISIS TEKNIKAL DIHAPUS - HANYA SIGNAL INPUT
     
-    def analyze_trend(self, candles):
+    def should_trade(self):
         """
-        Analisis trend sederhana berdasarkan candle
-        Return: 'call' untuk naik, 'put' untuk turun, 'sideways' untuk sideways
+        HANYA SIGNAL MANUAL - TIDAK ADA ANALISIS APAPUN
         """
-        if not candles or len(candles) < 3:
-            return "sideways"
-        
-        # Ambil 3 candle terakhir
-        last_candles = candles[-3:]
-        closes = [candle['close'] for candle in last_candles]
-        
-        # Trend naik jika close naik terus
-        if closes[0] < closes[1] < closes[2]:
-            return "call"
-        # Trend turun jika close turun terus  
-        elif closes[0] > closes[1] > closes[2]:
-            return "put"
-        else:
-            return "sideways"
-    
-    def rsi_analysis(self, candles, period=14):
-        """
-        Analisis RSI sederhana
-        """
-        if not candles or len(candles) < period + 1:
-            return 50
-        
-        closes = [candle['close'] for candle in candles[-period-1:]]
-        gains = []
-        losses = []
-        
-        for i in range(1, len(closes)):
-            change = closes[i] - closes[i-1]
-            if change > 0:
-                gains.append(change)
-                losses.append(0)
-            else:
-                gains.append(0)
-                losses.append(abs(change))
-        
-        avg_gain = sum(gains) / period
-        avg_loss = sum(losses) / period
-        
-        if avg_loss == 0:
-            return 100
-        
-        rs = avg_gain / avg_loss
-        rsi = 100 - (100 / (1 + rs))
-        return rsi
-    
-    def should_trade(self, candles):
-        """
-        Fokus hanya pada signal manual input - tidak ada strategi lain
-        """
-        # Hanya handle manual signal input
-        if self.signal_type == "manual_input":
-            signal = self.get_next_signal()
-            if signal:
-                print(f"🎯 Signal ditemukan: {signal['pair']} - {signal['direction']} pada {signal['time']}")
-                # Update asset untuk signal ini
-                self.asset = signal['pair']
-                return True, signal['direction'].lower()
-            else:
-                return False, None
-        
-        # Tidak ada strategi lain - hanya signal manual
-        print("⚠️ Bot hanya mendukung signal manual input. Set signal_type ke 'manual_input'")
+        signal = self.get_next_signal()
+        if signal:
+            print(f"🎯 SIGNAL READY: {signal['direction']} {signal['pair']}")
+            self.asset = signal['pair']  # Update asset
+            return True, signal['direction'].lower()
         return False, None
     
     def place_order(self, direction, amount):
@@ -434,70 +346,48 @@ class IQTradingRobot:
     
     def trading_loop(self):
         """
-        Loop utama trading
+        LOOP TRADING SEDERHANA - HANYA SIGNAL EKSEKUSI
         """
-        print("🚀 Memulai trading...")
+        print("🚀 MEMULAI TRADING DENGAN SIGNAL INPUT SAJA")
         print(f"📊 Asset: {self.asset}")
         print(f"💰 Amount: ${self.trading_amount}")
-        print(f"📈 Strategy: {self.strategy}")
-        if self.strategy == "martingale":
-            print(f"🔄 Martingale Steps: {self.step_martingale}")
-            print(f"✖️ Multiple: {self.martingale_multiple}")
         print(f"🏆 Stop Win: ${self.stop_win}")
         print(f"🛑 Stop Loss: ${self.stop_loss}")
         print("=" * 50)
         
-        # Set start balance for tracking
         self.start_balance = self.balance
         
         while self.is_trading and self.is_connected:
             try:
-                # Cek balance
+                # Update balance
                 try:
                     if self.api and self.is_connected:
                         current_balance = self.api.get_balance()
                         if current_balance and current_balance != self.balance:
                             self.balance = current_balance
-                            print(f"💰 Balance update: ${self.balance}")
+                            print(f"💰 Balance: ${self.balance}")
                 except:
                     pass
                 
                 # Cek stop conditions
-                if self.consecutive_losses >= self.max_consecutive_losses:
-                    print(f"⚠️ Mencapai maksimal loss berturut-turut ({self.max_consecutive_losses}). Berhenti trading.")
-                    break
-                
-                # Cek stop win
                 if self.profit_total >= self.stop_win:
-                    print(f"🎉 Stop Win tercapai! Profit: ${self.profit_total:.2f}. Berhenti trading.")
+                    print(f"🎉 STOP WIN! Profit: ${self.profit_total:.2f}")
                     break
-                    
-                # Cek stop loss
                 if self.profit_total <= -self.stop_loss:
-                    print(f"❌ Stop Loss tercapai! Loss: ${abs(self.profit_total):.2f}. Berhenti trading.")
+                    print(f"❌ STOP LOSS! Loss: ${abs(self.profit_total):.2f}")
                     break
                 
-                # Untuk signal manual, tidak perlu candle data
-                candles = None
-                if self.signal_type != "manual_input":
-                    candles = self.get_candle_data(self.asset, self.timeframe)
-                    if not candles:
-                        print("⚠️ Tidak bisa ambil data candle. Mencoba lagi...")
-                        time.sleep(5)
-                        continue
-                
-                # Analisis apakah harus trade - fokus signal manual
-                should_trade, direction = self.should_trade(candles)
+                # CEK SIGNAL DAN TRADE LANGSUNG
+                should_trade, direction = self.should_trade()
                 
                 if should_trade:
-                    # Place order
+                    print(f"🎯 TRADING SEKARANG: {direction.upper()} {self.asset}")
                     success, order_id = self.place_order(direction, self.trading_amount)
                     
                     if success:
-                        # Tunggu hasil
                         result, amount = self.wait_for_result(order_id)
                         
-                        # Simpan ke history
+                        # Simpan history
                         trade_data = {
                             'timestamp': datetime.now().isoformat(),
                             'asset': self.asset,
@@ -508,27 +398,18 @@ class IQTradingRobot:
                             'balance_after': self.balance
                         }
                         self.trades_history.append(trade_data)
-                        
-                        # Update trading amount berdasarkan strategy
                         self.update_trading_amount(result)
                 else:
-                    print("📊 Tidak ada signal trading. Menunggu...")
-                    # Untuk signal manual, tunggu lebih singkat
-                    if self.signal_type == "manual_input":
-                        print("⏳ Menunggu signal manual berikutnya (10 detik)...")
-                        print(f"📊 Current Status: Step {self.current_step}/{self.step_martingale}, Amount: ${self.trading_amount:.2f}")
-                        time.sleep(10)  # Tunggu 10 detik untuk signal manual
-                    else:
-                        # Tunggu sebelum analisis berikutnya
-                        print(f"⏳ Menunggu {self.timeframe} menit untuk analisis berikutnya...")
-                        print(f"📊 Current Status: Step {self.current_step}/{self.step_martingale}, Amount: ${self.trading_amount:.2f}")
-                        time.sleep(self.timeframe * 60)  # Tunggu sesuai timeframe
+                    print("📊 Tidak ada signal. Menunggu...")
+                    print("⏳ Menunggu signal baru (5 detik)...")
+                    print(f"📊 Status: Step {self.current_step}/{self.step_martingale}, Amount: ${self.trading_amount:.2f}")
+                    time.sleep(5)
                 
             except KeyboardInterrupt:
-                print("\n🛑 Trading dihentikan oleh user")
+                print("\n🛑 Trading dihentikan")
                 break
             except Exception as e:
-                print(f"❌ Error dalam trading loop: {e}")
+                print(f"❌ Error: {e}")
                 time.sleep(5)
         
         self.is_trading = False

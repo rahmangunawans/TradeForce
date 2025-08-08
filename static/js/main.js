@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         sections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
-            if (section && sectionId) {
+            if (section && sectionId && sectionId.trim() !== '') {
                 const sectionTop = section.offsetTop - 100; // offset for navbar
                 if (scrollTop >= sectionTop) {
                     currentSection = sectionId;

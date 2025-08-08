@@ -276,71 +276,170 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== MOBILE RESPONSIVE SIDEBAR =====
     function initMobileMenu() {
         // Create mobile menu toggle button if not exists
-        let mobileToggle = document.querySelector('.mobile-sidebar-toggle');
+        let mobileToggle = document.querySelector('.mobile-toggle');
         
-        if (!mobileToggle && window.innerWidth <= 991) {
-            mobileToggle = document.createElement('button');
-            mobileToggle.className = 'mobile-sidebar-toggle';
-            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            mobileToggle.style.cssText = `
-                position: fixed;
-                top: 85px;
-                left: 15px;
-                z-index: 1050;
-                background: var(--accent-green);
-                border: none;
-                color: white;
-                width: 45px;
-                height: 45px;
-                border-radius: 50%;
-                box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
-                transition: all 0.3s ease;
-            `;
+        if (window.innerWidth <= 991) {
+            if (!mobileToggle) {
+                mobileToggle = document.createElement('button');
+                mobileToggle.className = 'mobile-toggle';
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                mobileToggle.setAttribute('aria-label', 'Toggle Sidebar');
+                document.body.appendChild(mobileToggle);
+            }
             
-            document.body.appendChild(mobileToggle);
+            // Remove any existing event listeners
+            const newToggle = mobileToggle.cloneNode(true);
+            mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+            mobileToggle = newToggle;
             
             mobileToggle.addEventListener('click', function() {
                 const sidebar = document.querySelector('.sidebar');
-                sidebar.classList.toggle('show');
-                
-                // Add overlay
                 let overlay = document.querySelector('.sidebar-overlay');
-                if (!overlay) {
-                    overlay = document.createElement('div');
-                    overlay.className = 'sidebar-overlay';
-                    overlay.style.cssText = `
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0, 0, 0, 0.5);
-                        z-index: 1030;
-                        opacity: 0;
-                        transition: opacity 0.3s ease;
-                    `;
-                    document.body.appendChild(overlay);
-                    
-                    overlay.addEventListener('click', function() {
-                        sidebar.classList.remove('show');
-                        this.style.opacity = '0';
-                        setTimeout(() => this.remove(), 300);
-                    });
-                }
                 
-                if (sidebar.classList.contains('show')) {
-                    overlay.style.opacity = '1';
+                // Toggle sidebar
+                sidebar.classList.toggle('mobile-open');
+                this.classList.toggle('active');
+                
+                // Update button icon
+                const icon = this.querySelector('i');
+                if (sidebar.classList.contains('mobile-open')) {
+                    icon.className = 'fas fa-times';
+                    
+                    // Create overlay if doesn't exist
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.className = 'sidebar-overlay';
+                        document.body.appendChild(overlay);
+                    }
+                    
+                    overlay.classList.add('show');
+                    
+                    // Close sidebar when clicking overlay
+                    overlay.addEventListener('click', closeSidebar);
                 } else {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => overlay.remove(), 300);
+                    icon.className = 'fas fa-bars';
+                    if (overlay) {
+                        overlay.classList.remove('show');
+                        setTimeout(() => {
+                            if (overlay && overlay.parentNode) {
+                                overlay.remove();
+                            }
+                        }, 300);
+                    }
                 }
             });
+            
+            function closeSidebar() {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                const toggle = document.querySelector('.mobile-toggle');
+                
+                sidebar.classList.remove('mobile-open');
+                toggle.classList.remove('active');
+                toggle.querySelector('i').className = 'fas fa-bars';
+                
+                if (overlay) {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        if (overlay && overlay.parentNode) {
+                            overlay.remove();
+                        }
+                    }, 300);
+                }
+            }
+            
+            // Close sidebar when clicking sidebar links on mobile
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 991) {
+                        setTimeout(closeSidebar, 100);
+                    }
+                });
+            });
+            
+        } else {
+            // Remove mobile toggle on desktop
+            if (mobileToggle) {
+                mobileToggle.remove();
+            }
+            
+            // Remove overlay on desktop
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+            
+            // Ensure sidebar is visible on desktop
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.remove('mobile-open');
         }
     }
     
     // Initialize mobile menu on load and resize
     initMobileMenu();
-    window.addEventListener('resize', initMobileMenu);
+    window.addEventListener('resize', debounce(initMobileMenu, 250));
+    
+    // Debounce function for resize events
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    // ===== TOUCH GESTURES FOR MOBILE =====
+    function initTouchGestures() {
+        if (window.innerWidth <= 991) {
+            let startX = 0;
+            let startY = 0;
+            let isScrolling = false;
+            
+            document.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isScrolling = false;
+            }, { passive: true });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (!startX || !startY) return;
+                
+                const diffX = Math.abs(e.touches[0].clientX - startX);
+                const diffY = Math.abs(e.touches[0].clientY - startY);
+                
+                if (diffY > diffX) {
+                    isScrolling = true;
+                }
+            }, { passive: true });
+            
+            document.addEventListener('touchend', function(e) {
+                if (isScrolling) return;
+                
+                const diffX = e.changedTouches[0].clientX - startX;
+                const sidebar = document.querySelector('.sidebar');
+                
+                // Swipe right from left edge to open sidebar
+                if (startX < 50 && diffX > 100 && !sidebar.classList.contains('mobile-open')) {
+                    document.querySelector('.mobile-toggle').click();
+                }
+                
+                // Swipe left on sidebar to close
+                if (startX > 50 && diffX < -100 && sidebar.classList.contains('mobile-open')) {
+                    document.querySelector('.mobile-toggle').click();
+                }
+                
+                startX = 0;
+                startY = 0;
+            }, { passive: true });
+        }
+    }
+    
+    initTouchGestures();
     
     // ===== LOADING STATES =====
     function addLoadingStates() {

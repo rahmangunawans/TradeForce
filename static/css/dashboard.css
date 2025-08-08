@@ -6,6 +6,7 @@
     min-height: 100vh;
     background: var(--primary-dark);
     padding-top: 70px; /* Account for fixed navbar */
+    position: relative;
 }
 
 /* ===== TOP NAVBAR ===== */
@@ -489,6 +490,53 @@
     color: #ffc107;
 }
 
+/* ===== MOBILE TOGGLE BUTTON ===== */
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 85px;
+    left: 15px;
+    z-index: 1050;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-gold));
+    border: none;
+    color: var(--primary-dark);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.mobile-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 230, 118, 0.5);
+}
+
+.mobile-toggle.active {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1025;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1199.98px) {
     .sidebar {
@@ -501,44 +549,335 @@
 }
 
 @media (max-width: 991.98px) {
-    .sidebar {
-        transform: translateX(-100%);
-        z-index: 1040;
+    .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    .sidebar.show {
+    .sidebar {
+        width: 280px;
+        transform: translateX(-100%);
+        z-index: 1030;
+        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+    
+    .sidebar.mobile-open {
         transform: translateX(0);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
     }
     
     .main-content {
         margin-left: 0;
         padding: 1.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
     
     .stats-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .dashboard-navbar .container-fluid {
+        padding-left: 70px; /* Space for mobile toggle */
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        padding: 1rem 0.75rem;
+    }
+    
+    .section-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        text-align: center;
+    }
+    
+    .section-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .dashboard-card .card-body {
+        padding: 1.25rem;
+    }
+    
+    .stats-card {
+        padding: 1.25rem;
         margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .stats-content h3 {
+        font-size: 1.6rem;
+    }
+    
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .stats-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .activity-item {
+        padding: 0.75rem 0;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    
+    .activity-icon {
+        width: 35px;
+        height: 35px;
+        margin-right: 0.75rem;
+        margin-bottom: 0.5rem;
+        align-self: center;
+    }
+    
+    .activity-content {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .activity-value {
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+    
+    .robot-status {
+        padding: 1.5rem;
+    }
+    
+    .robot-status i {
+        font-size: 2.5rem;
+    }
+    
+    .robot-controls .btn {
+        margin: 0.25rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Mobile Card Stacking */
+    .row .col-lg-8,
+    .row .col-lg-4,
+    .row .col-lg-6 {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Mobile friendly notifications */
+    .notification-item {
+        text-align: center;
+        padding: 1rem 0;
+    }
+    
+    .notification-icon {
+        margin: 0 auto 0.5rem;
     }
 }
 
 @media (max-width: 575.98px) {
+    .mobile-toggle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+        top: 82px;
+        left: 10px;
+    }
+    
     .main-content {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .dashboard-navbar .container-fluid {
+        padding-left: 65px;
+    }
+    
+    .dashboard-navbar .navbar-logo {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .dashboard-navbar .brand-text {
+        font-size: 1rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .section-header p {
+        font-size: 0.9rem;
+    }
+    
+    .stats-card {
         padding: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .stats-content h3 {
+        font-size: 1.4rem;
+    }
+    
+    .stats-content p {
+        font-size: 0.85rem;
+    }
+    
+    .dashboard-card .card-header {
+        padding: 1rem 1.25rem;
+    }
+    
+    .dashboard-card .card-header h4 {
+        font-size: 1rem;
     }
     
     .dashboard-card .card-body {
         padding: 1rem;
     }
     
+    .activity-content h5 {
+        font-size: 0.9rem;
+    }
+    
+    .activity-content p {
+        font-size: 0.8rem;
+    }
+    
+    .notification-item {
+        padding: 0.6rem 0;
+    }
+    
+    .robot-status {
+        padding: 1.25rem;
+    }
+    
+    .robot-status h3 {
+        font-size: 1.25rem;
+    }
+    
+    .robot-status i {
+        font-size: 2rem;
+    }
+    
+    .robot-controls {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .robot-controls .btn {
+        width: 100%;
+        margin: 0;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .user-dropdown-top {
+        padding: 0.4rem 0.8rem !important;
+    }
+    
+    .user-dropdown-top .user-name {
+        display: none;
+    }
+    
+    .user-avatar i {
+        font-size: 1.2rem;
+    }
+    
+    .sidebar {
+        width: 260px;
+    }
+    
+    .sidebar-nav .nav-link {
+        padding: 0.7rem 1.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .sidebar-nav .nav-link i {
+        font-size: 1rem;
+        margin-right: 0.7rem;
+    }
+    
+    .sidebar-header {
+        padding: 1.25rem;
+    }
+    
+    .sidebar-header h5 {
+        font-size: 1rem;
+    }
+    
+    .sidebar-footer {
+        padding: 1.25rem;
+    }
+    
+    .sidebar-footer .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ===== LANDSCAPE MOBILE ===== */
+@media (max-width: 991.98px) and (orientation: landscape) {
     .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .robot-status {
         padding: 1rem;
     }
     
+    .robot-controls {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+    
+    .robot-controls .btn {
+        flex: 1;
+        max-width: 150px;
+    }
+}
+
+/* ===== ULTRA SMALL SCREENS ===== */
+@media (max-width: 360px) {
+    .main-content {
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .stats-card {
+        padding: 0.75rem;
+    }
+    
     .stats-content h3 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .stats-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .dashboard-card .card-body {
+        padding: 0.75rem;
     }
     
     .section-header h2 {
-        font-size: 1.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .mobile-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
     }
 }
 

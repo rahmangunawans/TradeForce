@@ -532,9 +532,281 @@
             <section id="analytics" class="content-section">
                 <div class="section-header">
                     <h2><i class="fas fa-chart-bar me-2"></i>Analytics</h2>
-                    <p class="text-muted">Detailed performance analytics and reports.</p>
+                    <p class="text-muted">Detailed performance analytics and reports for your trading activities.</p>
                 </div>
-                <!-- Analytics content here -->
+
+                <!-- Performance Summary Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>72.5%</h3>
+                                <p>Average Win Rate</p>
+                                <span class="stats-change positive">+3.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>$1,247.50</h3>
+                                <p>Total Profit</p>
+                                <span class="stats-change positive">+$320.25</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>1,425</h3>
+                                <p>Total Trades</p>
+                                <span class="stats-change positive">+85</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>6.2h</h3>
+                                <p>Avg Daily Activity</p>
+                                <span class="stats-change positive">+1.3h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Analytics -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-8">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4><i class="fas fa-chart-area me-2"></i>Profit & Loss Chart</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-placeholder">
+                                    <div class="chart-info">
+                                        <i class="fas fa-chart-line chart-icon"></i>
+                                        <h5>Trading Performance</h5>
+                                        <p>Profit and loss tracking over the last 30 days</p>
+                                        <div class="chart-stats">
+                                            <div class="stat-item">
+                                                <span class="stat-label">Best Day:</span>
+                                                <span class="stat-value text-success">+$89.50</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">Worst Day:</span>
+                                                <span class="stat-value text-danger">-$23.75</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">Average Daily:</span>
+                                                <span class="stat-value">+$41.58</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4><i class="fas fa-pie-chart me-2"></i>Broker Distribution</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="broker-analytics">
+                                    <div class="broker-stat-item">
+                                        <div class="broker-info">
+                                            <img src="{{ url_for('static', filename='images/brokers/binomo.png') }}" alt="Binomo" class="broker-mini-icon">
+                                            <span class="broker-name">Binomo</span>
+                                        </div>
+                                        <div class="broker-percentage">
+                                            <span class="percentage">28%</span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 28%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="broker-stat-item">
+                                        <div class="broker-info">
+                                            <img src="{{ url_for('static', filename='images/brokers/olymptrade.png') }}" alt="Olymp Trade" class="broker-mini-icon">
+                                            <span class="broker-name">Olymp Trade</span>
+                                        </div>
+                                        <div class="broker-percentage">
+                                            <span class="percentage">24%</span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 24%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="broker-stat-item">
+                                        <div class="broker-info">
+                                            <img src="{{ url_for('static', filename='images/brokers/pocketoption.png') }}" alt="Pocket Option" class="broker-mini-icon">
+                                            <span class="broker-name">Pocket Option</span>
+                                        </div>
+                                        <div class="broker-percentage">
+                                            <span class="percentage">22%</span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 22%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="broker-stat-item">
+                                        <div class="broker-info">
+                                            <img src="{{ url_for('static', filename='images/brokers/stockity.png') }}" alt="Stockity" class="broker-mini-icon">
+                                            <span class="broker-name">Stockity</span>
+                                        </div>
+                                        <div class="broker-percentage">
+                                            <span class="percentage">18%</span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 18%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="broker-stat-item">
+                                        <div class="broker-info">
+                                            <img src="{{ url_for('static', filename='images/brokers/iqoption.png') }}" alt="IQ Option" class="broker-mini-icon">
+                                            <span class="broker-name">IQ Option</span>
+                                        </div>
+                                        <div class="broker-percentage">
+                                            <span class="percentage">8%</span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 8%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analytics Tables -->
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4><i class="fas fa-trophy me-2"></i>Top Performing Strategies</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="strategy-performance">
+                                    <div class="performance-item">
+                                        <div class="strategy-info">
+                                            <h6>Binary Profit Strategy</h6>
+                                            <p class="text-muted">High-frequency EURUSD trading</p>
+                                        </div>
+                                        <div class="performance-stats">
+                                            <span class="win-rate text-success">78% Win</span>
+                                            <span class="profit text-success">+$425.30</span>
+                                        </div>
+                                    </div>
+                                    <div class="performance-item">
+                                        <div class="strategy-info">
+                                            <h6>Golden Moment Strategy</h6>
+                                            <p class="text-muted">Momentum-based trading</p>
+                                        </div>
+                                        <div class="performance-stats">
+                                            <span class="win-rate text-success">71% Win</span>
+                                            <span class="profit text-success">+$312.80</span>
+                                        </div>
+                                    </div>
+                                    <div class="performance-item">
+                                        <div class="strategy-info">
+                                            <h6>Trend Following Pro</h6>
+                                            <p class="text-muted">Long-term trend analysis</p>
+                                        </div>
+                                        <div class="performance-stats">
+                                            <span class="win-rate text-success">69% Win</span>
+                                            <span class="profit text-success">+$298.45</span>
+                                        </div>
+                                    </div>
+                                    <div class="performance-item">
+                                        <div class="strategy-info">
+                                            <h6>Price Action Master</h6>
+                                            <p class="text-muted">Technical analysis based</p>
+                                        </div>
+                                        <div class="performance-stats">
+                                            <span class="win-rate text-warning">65% Win</span>
+                                            <span class="profit text-success">+$210.95</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4><i class="fas fa-calendar-alt me-2"></i>Recent Trading Sessions</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="session-list">
+                                    <div class="session-item">
+                                        <div class="session-date">
+                                            <span class="date">Today</span>
+                                            <span class="time">14:30 - 16:45</span>
+                                        </div>
+                                        <div class="session-stats">
+                                            <span class="trades">23 trades</span>
+                                            <span class="result text-success">+$89.50</span>
+                                        </div>
+                                    </div>
+                                    <div class="session-item">
+                                        <div class="session-date">
+                                            <span class="date">Yesterday</span>
+                                            <span class="time">09:15 - 17:30</span>
+                                        </div>
+                                        <div class="session-stats">
+                                            <span class="trades">47 trades</span>
+                                            <span class="result text-success">+$156.25</span>
+                                        </div>
+                                    </div>
+                                    <div class="session-item">
+                                        <div class="session-date">
+                                            <span class="date">2 days ago</span>
+                                            <span class="time">10:00 - 15:20</span>
+                                        </div>
+                                        <div class="session-stats">
+                                            <span class="trades">31 trades</span>
+                                            <span class="result text-success">+$72.80</span>
+                                        </div>
+                                    </div>
+                                    <div class="session-item">
+                                        <div class="session-date">
+                                            <span class="date">3 days ago</span>
+                                            <span class="time">11:45 - 16:00</span>
+                                        </div>
+                                        <div class="session-stats">
+                                            <span class="trades">28 trades</span>
+                                            <span class="result text-danger">-$23.75</span>
+                                        </div>
+                                    </div>
+                                    <div class="session-item">
+                                        <div class="session-date">
+                                            <span class="date">4 days ago</span>
+                                            <span class="time">08:30 - 14:15</span>
+                                        </div>
+                                        <div class="session-stats">
+                                            <span class="trades">39 trades</span>
+                                            <span class="result text-success">+$134.60</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <section id="strategies" class="content-section">

@@ -750,18 +750,23 @@
         // Trading Session Functions
         function updateTradingSessionInfo() {
             const now = new Date();
-            const utcTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
-            const localTime = now;
             
-            // Update current times
-            document.getElementById('currentTime').textContent = utcTime.toLocaleString('en-US', {
+            // Get UTC time properly - create new Date with explicit UTC values
+            const realUTCHour = now.getUTCHours();
+            const realUTCMinutes = now.getUTCMinutes();
+            const realUTCSeconds = now.getUTCSeconds();
+            const utcDay = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+            
+            // Update current times using UTC timezone conversion
+            document.getElementById('currentTime').textContent = now.toLocaleString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
-                hour12: false
+                hour12: false,
+                timeZone: 'UTC'
             }) + ' UTC';
             
-            document.getElementById('localTime').textContent = localTime.toLocaleString('en-US', {
+            document.getElementById('localTime').textContent = now.toLocaleString('en-US', {
                 year: 'numeric',
                 month: 'numeric', 
                 day: 'numeric',
@@ -772,15 +777,14 @@
             });
             document.getElementById('userTimezone').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
             
-            // Get current UTC hour
-            const utcHour = utcTime.getUTCHours();
-            const utcDay = utcTime.getUTCDay(); // 0 = Sunday, 6 = Saturday
-            
             // Debug: log current time info
-            console.log('Debug Trading Session:', {
-                utcHour: utcHour,
+            console.log('DEBUG UPDATED - Trading Session:', {
+                realUTCHour: realUTCHour,
                 utcDay: utcDay,
-                currentTime: utcTime.toISOString()
+                serverTimeUTC: now.toUTCString(),
+                displayTime: now.toLocaleString('en-US', {timeZone: 'UTC'}),
+                localTimeShowing: now.toLocaleString(),
+                timestamp: Date.now()
             });
             
             // Check if market is open (Monday 00:00 UTC to Friday 22:00 UTC)
@@ -800,8 +804,8 @@
                 marketStatusEl.textContent = 'Market Closed';
             }
             
-            // Update current active session
-            updateCurrentActiveSession(utcHour);
+            // Update current active session with real UTC hour
+            updateCurrentActiveSession(realUTCHour);
         }
         
         function updateCurrentActiveSession(utcHour) {
@@ -837,7 +841,7 @@
             let currentSession = null;
             
             // Clear logic: check each session in sequence with NO overlaps
-            // UTC 9 = 9 AM UTC should be London Session (7-16 UTC)
+            // UTC 9 = 9 AM UTC should be London Session (8-17 UTC)
             console.log('Checking sessions for UTC hour:', utcHour);
             
             if (utcHour >= 0 && utcHour < 8) {

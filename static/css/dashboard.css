@@ -718,6 +718,119 @@
     margin-left: 0;
 }
 
+/* ===== BROKER CARDS ===== */
+.broker-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+.broker-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 230, 118, 0.15);
+    border-color: #00e676;
+}
+
+.broker-logo {
+    margin-bottom: 1rem;
+}
+
+.broker-image {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.broker-info {
+    flex: 1;
+    margin-bottom: 1rem;
+}
+
+.broker-info h5 {
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.broker-info p {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
+.broker-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.broker-status.active {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.broker-status.paused {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.broker-status.inactive {
+    background: #fecaca;
+    color: #dc2626;
+}
+
+.broker-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.broker-controls .btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+}
+
+/* ===== TRADING STATISTICS ===== */
+.trading-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.trading-stat:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
 /* ===== UTILITY CLASSES ===== */
 .text-success {
     color: #16a34a !important;
@@ -729,6 +842,10 @@
 
 .text-info {
     color: #2563eb !important;
+}
+
+.text-danger {
+    color: #dc2626 !important;
 }
 
 .bg-success-light {

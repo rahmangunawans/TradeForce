@@ -287,27 +287,175 @@
             <section id="trading" class="content-section">
                 <div class="section-header">
                     <h2><i class="fas fa-robot me-2"></i>Trading Robot</h2>
-                    <p class="text-muted">Manage your automated trading settings and strategies.</p>
+                    <p class="text-muted">Manage your automated trading settings and strategies across multiple brokers.</p>
                 </div>
 
+                <!-- Trading Brokers -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4><i class="fas fa-chart-line me-2"></i>Available Trading Brokers</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="broker-card">
+                                            <div class="broker-logo">
+                                                <img src="{{ url_for('static', filename='images/brokers/binomo.png') }}" alt="Binomo" class="broker-image">
+                                            </div>
+                                            <div class="broker-info">
+                                                <h5>Binomo</h5>
+                                                <p class="text-muted">Binary Options Trading</p>
+                                                <div class="broker-status active">
+                                                    <i class="fas fa-circle"></i> Active
+                                                </div>
+                                            </div>
+                                            <div class="broker-controls">
+                                                <button class="btn btn-success btn-sm me-1">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="broker-card">
+                                            <div class="broker-logo">
+                                                <img src="{{ url_for('static', filename='images/brokers/stockity.png') }}" alt="Stockity" class="broker-image">
+                                            </div>
+                                            <div class="broker-info">
+                                                <h5>Stockity</h5>
+                                                <p class="text-muted">Stock & Binary Trading</p>
+                                                <div class="broker-status active">
+                                                    <i class="fas fa-circle"></i> Active
+                                                </div>
+                                            </div>
+                                            <div class="broker-controls">
+                                                <button class="btn btn-success btn-sm me-1">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="broker-card">
+                                            <div class="broker-logo">
+                                                <img src="{{ url_for('static', filename='images/brokers/iqoption.png') }}" alt="IQ Option" class="broker-image">
+                                            </div>
+                                            <div class="broker-info">
+                                                <h5>IQ Option</h5>
+                                                <p class="text-muted">Binary & Digital Options</p>
+                                                <div class="broker-status paused">
+                                                    <i class="fas fa-pause-circle"></i> Paused
+                                                </div>
+                                            </div>
+                                            <div class="broker-controls">
+                                                <button class="btn btn-warning btn-sm me-1">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="broker-card">
+                                            <div class="broker-logo">
+                                                <img src="{{ url_for('static', filename='images/brokers/olymptrade.png') }}" alt="Olymp Trade" class="broker-image">
+                                            </div>
+                                            <div class="broker-info">
+                                                <h5>Olymp Trade</h5>
+                                                <p class="text-muted">Fixed Time Trades</p>
+                                                <div class="broker-status active">
+                                                    <i class="fas fa-circle"></i> Active
+                                                </div>
+                                            </div>
+                                            <div class="broker-controls">
+                                                <button class="btn btn-success btn-sm me-1">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="broker-card">
+                                            <div class="broker-logo">
+                                                <img src="{{ url_for('static', filename='images/brokers/quotex.png') }}" alt="Quotex" class="broker-image">
+                                            </div>
+                                            <div class="broker-info">
+                                                <h5>Quotex</h5>
+                                                <p class="text-muted">Digital Options Trading</p>
+                                                <div class="broker-status inactive">
+                                                    <i class="fas fa-stop-circle"></i> Stopped
+                                                </div>
+                                            </div>
+                                            <div class="broker-controls">
+                                                <button class="btn btn-outline-success btn-sm me-1">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="broker-card">
+                                            <div class="broker-logo">
+                                                <img src="{{ url_for('static', filename='images/brokers/pocket-option.png') }}" alt="Pocket Option" class="broker-image">
+                                            </div>
+                                            <div class="broker-info">
+                                                <h5>Pocket Option</h5>
+                                                <p class="text-muted">Binary Options Platform</p>
+                                                <div class="broker-status active">
+                                                    <i class="fas fa-circle"></i> Active
+                                                </div>
+                                            </div>
+                                            <div class="broker-controls">
+                                                <button class="btn btn-success btn-sm me-1">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-cog"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Robot Status Summary -->
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="dashboard-card">
                             <div class="card-header">
-                                <h4>Robot Status</h4>
+                                <h4>Overall Robot Status</h4>
                             </div>
                             <div class="card-body text-center">
                                 <div class="robot-status active">
                                     <i class="fas fa-robot"></i>
-                                    <h3>ACTIVE</h3>
-                                    <p>Trading robot is currently running</p>
+                                    <h3>4 BROKERS ACTIVE</h3>
+                                    <p>Trading robots are currently running on multiple platforms</p>
                                 </div>
                                 <div class="robot-controls">
                                     <button class="btn btn-danger me-2">
-                                        <i class="fas fa-stop"></i> Stop Robot
+                                        <i class="fas fa-stop"></i> Stop All
                                     </button>
                                     <button class="btn btn-secondary">
-                                        <i class="fas fa-cog"></i> Settings
+                                        <i class="fas fa-cog"></i> Global Settings
                                     </button>
                                 </div>
                             </div>
@@ -316,23 +464,28 @@
                     <div class="col-lg-6">
                         <div class="dashboard-card">
                             <div class="card-header">
-                                <h4>Active Strategies</h4>
+                                <h4>Trading Statistics Today</h4>
                             </div>
                             <div class="card-body">
-                                <div class="strategy-item">
-                                    <h5>Binary Profit Strategy</h5>
-                                    <p class="text-muted">High-frequency trading on EURUSD</p>
-                                    <div class="strategy-status active">Active</div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Total Trades:</span>
+                                    <span class="stat-value">47</span>
                                 </div>
-                                <div class="strategy-item">
-                                    <h5>Golden Moment Strategy</h5>
-                                    <p class="text-muted">Momentum-based trading</p>
-                                    <div class="strategy-status active">Active</div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Successful Trades:</span>
+                                    <span class="stat-value text-success">32 (68%)</span>
                                 </div>
-                                <div class="strategy-item">
-                                    <h5>Price Action Strategy</h5>
-                                    <p class="text-muted">Technical analysis based</p>
-                                    <div class="strategy-status paused">Paused</div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Failed Trades:</span>
+                                    <span class="stat-value text-danger">15 (32%)</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Profit Today:</span>
+                                    <span class="stat-value text-success">+$247.50</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Active Brokers:</span>
+                                    <span class="stat-value">4 / 6</span>
                                 </div>
                             </div>
                         </div>

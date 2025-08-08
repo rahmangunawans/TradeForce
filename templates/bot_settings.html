@@ -833,7 +833,8 @@
             }
             
             // Update session statuses
-            updateSessionStatus('asianSession', utcHour >= 21 || utcHour < 6);
+            updateSessionStatus('sydneySession', utcHour >= 21 || utcHour < 6);
+            updateSessionStatus('tokyoSession', utcHour >= 23 || utcHour < 8);
             updateSessionStatus('londonSession', utcHour >= 7 && utcHour < 16);
             updateSessionStatus('newYorkSession', utcHour >= 12 && utcHour < 21);
         }

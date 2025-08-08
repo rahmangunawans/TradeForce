@@ -149,10 +149,19 @@ class IQTradingRobot:
                     timeframe = int(parts[1].strip())
                 elif len(parts) == 4:
                     # Format: 2025-08-08 16:45:00,EURUSD,CALL,1
+                    timestamp_str = parts[0].strip()  # Waktu eksekusi
                     asset = parts[1].strip().upper()  # Asset dari signal
                     direction = parts[2].strip()  # CALL atau PUT ada di posisi ke-3
                     timeframe = int(parts[3].strip()) if parts[3].strip().isdigit() else 1
-                    print(f"🎯 Signal dengan asset: {asset}")
+                    print(f"🎯 Signal dengan asset: {asset} pada {timestamp_str}")
+                    
+                    # Parse timestamp untuk eksekusi terjadwal
+                    from datetime import datetime
+                    try:
+                        execution_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+                    except:
+                        execution_time = None
+                        print(f"⚠️ Format timestamp salah: {timestamp_str}")
                 else:
                     print(f"⚠️ Format signal salah: {line}")
                     continue
@@ -165,6 +174,7 @@ class IQTradingRobot:
                     'asset': asset,  # Asset dari signal (bisa None jika format simple)
                     'direction': direction,
                     'timeframe': timeframe,
+                    'execution_time': locals().get('execution_time', None),  # Waktu eksekusi terjadwal
                     'processed': False
                 }
                 self.parsed_signals.append(signal)
@@ -174,19 +184,48 @@ class IQTradingRobot:
                 print(f"❌ Error parsing line {line_num}: {line} - {e}")
                 
         print(f"📊 Total {len(self.parsed_signals)} signals siap untuk trading")
+        
+        # Tampilkan jadwal eksekusi jika ada
+        scheduled_signals = [s for s in self.parsed_signals if s.get('execution_time')]
+        if scheduled_signals:
+            print("⏰ JADWAL EKSEKUSI:")
+            for i, signal in enumerate(scheduled_signals, 1):
+                print(f"   {i}. {signal['execution_time']} - {signal['direction']} {signal.get('asset', self.config.asset)}")
+        else:
+            print("⚡ Semua signal akan dieksekusi langsung")
     
     def get_next_signal(self):
         """
-        Ambil signal berikutnya yang belum diproses
+        Ambil signal berikutnya yang belum diproses dan sudah waktunya eksekusi
         """
+        from datetime import datetime
+        current_time = datetime.now()
+        
         for signal in self.parsed_signals:
             if not signal['processed']:
-                signal['processed'] = True
-                if signal.get('asset'):
-                    print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {signal['asset']}")
+                # Cek apakah ada waktu eksekusi terjadwal
+                if signal.get('execution_time'):
+                    if current_time >= signal['execution_time']:
+                        signal['processed'] = True
+                        print(f"⏰ WAKTU EKSEKUSI TIBA: {signal['direction']} pada {signal['execution_time']}")
+                        if signal.get('asset'):
+                            print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {signal['asset']}")
+                        else:
+                            print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
+                        return signal
+                    else:
+                        # Belum waktunya eksekusi
+                        time_left = signal['execution_time'] - current_time
+                        print(f"⏳ Menunggu eksekusi {signal['direction']} dalam {time_left}")
+                        continue
                 else:
-                    print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
-                return signal
+                    # Signal tanpa timestamp, eksekusi langsung
+                    signal['processed'] = True
+                    if signal.get('asset'):
+                        print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {signal['asset']}")
+                    else:
+                        print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
+                    return signal
         return None
     
     def configure_from_settings(self, settings):
@@ -443,8 +482,19 @@ class IQTradingRobot:
                         }
                         self.trades_history.append(trade_data)
                 else:
-                    print("⏳ Menunggu signal input...")
-                    time.sleep(10)  # Tunggu 10 detik untuk signal baru
+                    # Cek apakah ada signal yang menunggu waktu eksekusi
+                    waiting_signals = [s for s in self.parsed_signals if not s['processed'] and s.get('execution_time')]
+                    if waiting_signals:
+                        next_signal = min(waiting_signals, key=lambda x: x['execution_time'])
+                        time_left = next_signal['execution_time'] - datetime.now()
+                        if time_left.total_seconds() > 0:
+                            print(f"⏳ Menunggu signal {next_signal['direction']} dalam {time_left}")
+                            time.sleep(min(30, time_left.total_seconds()))  # Tunggu maksimal 30 detik
+                        else:
+                            time.sleep(1)  # Cek lagi dalam 1 detik
+                    else:
+                        print("⏳ Menunggu signal input...")
+                        time.sleep(10)  # Tunggu 10 detik untuk signal baru
                 
             except KeyboardInterrupt:
                 print("\n🛑 Trading dihentikan")

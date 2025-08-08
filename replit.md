@@ -94,6 +94,8 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Completed migration with comprehensive settings save functionality
 - **August 8, 2025**: Fixed signal parsing to extract and use asset from signal content format "timestamp,asset,direction,timeframe"
 - **August 8, 2025**: Enhanced trading system to prioritize asset from signal content over form asset field
+- **August 8, 2025**: Fixed scheduled execution - trading robot now properly waits for timestamp in signal format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME"
+- **August 8, 2025**: Added execution scheduler that checks timestamps and only executes signals when time arrives
 
 ## System Architecture
 

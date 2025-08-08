@@ -155,10 +155,12 @@ class IQTradingRobot:
                     timeframe = int(parts[3].strip()) if parts[3].strip().isdigit() else 1
                     print(f"🎯 Signal dengan asset: {asset} pada {timestamp_str}")
                     
-                    # Parse timestamp untuk eksekusi terjadwal
+                    # Parse timestamp untuk eksekusi terjadwal (assume local timezone)
                     from datetime import datetime
                     try:
+                        # Parse sebagai local time (bukan UTC)
                         execution_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+                        print(f"⏰ Akan eksekusi pada: {execution_time} (local time)")
                     except:
                         execution_time = None
                         print(f"⚠️ Format timestamp salah: {timestamp_str}")
@@ -216,7 +218,10 @@ class IQTradingRobot:
                     else:
                         # Belum waktunya eksekusi
                         time_left = signal['execution_time'] - current_time
-                        print(f"⏳ Menunggu eksekusi {signal['direction']} dalam {time_left}")
+                        hours = int(time_left.total_seconds() // 3600)
+                        minutes = int((time_left.total_seconds() % 3600) // 60)
+                        seconds = int(time_left.total_seconds() % 60)
+                        print(f"⏳ Menunggu eksekusi {signal['direction']} dalam {hours:02d}:{minutes:02d}:{seconds:02d}")
                         continue
                 else:
                     # Signal tanpa timestamp, eksekusi langsung
@@ -488,7 +493,10 @@ class IQTradingRobot:
                         next_signal = min(waiting_signals, key=lambda x: x['execution_time'])
                         time_left = next_signal['execution_time'] - datetime.now()
                         if time_left.total_seconds() > 0:
-                            print(f"⏳ Menunggu signal {next_signal['direction']} dalam {time_left}")
+                            hours = int(time_left.total_seconds() // 3600)
+                            minutes = int((time_left.total_seconds() % 3600) // 60)
+                            seconds = int(time_left.total_seconds() % 60)
+                            print(f"⏳ Menunggu signal {next_signal['direction']} dalam {hours:02d}:{minutes:02d}:{seconds:02d}")
                             time.sleep(min(30, time_left.total_seconds()))  # Tunggu maksimal 30 detik
                         else:
                             time.sleep(1)  # Cek lagi dalam 1 detik

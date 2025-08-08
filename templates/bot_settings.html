@@ -937,7 +937,7 @@
                 
                 <!-- Row 2: Signal Type & Asset -->
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="signalType" class="form-label">
                                 <i class="fas fa-signal me-1"></i>Signal Type Feature
@@ -948,21 +948,11 @@
                                 </option>
                                 <!-- SEMUA STRATEGI LAIN DIHAPUS - FOKUS MANUAL INPUT SAJA -->
                             </select>
-                            <small class="form-text text-muted">Hanya menggunakan Manual Signal Input - semua strategi lain sudah dihapus</small>
+                            <small class="form-text text-muted">Asset akan diambil dari signal content - tidak perlu setting manual</small>
                         </div>
                     </div>
                     
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="asset" class="form-label">
-                                <i class="fas fa-coins me-1"></i>Asset/Pair
-                            </label>
-                            <input type="text" class="form-control" id="asset" name="asset" 
-                                   value="{% if settings %}{{ settings.asset }}{% else %}EURUSD{% endif %}"
-                                   placeholder="EURUSD" required>
-                            <small class="form-text text-muted">Trading asset (e.g., EURUSD)</small>
-                        </div>
-                    </div>
+
                 </div>
                 
                 <!-- Signal Input File Upload Section (shows when manual_input is selected) -->

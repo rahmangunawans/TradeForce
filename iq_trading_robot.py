@@ -286,16 +286,56 @@ class IQTradingRobot:
             
             print(f"📊 Trading: {direction.upper()} {self.config.asset} - ${amount}")
             
-            success, order_id = self.api.buy(
-                amount, self.config.asset, direction, expiration
-            )
+            # Coba beberapa format asset
+            asset_variants = [
+                self.config.asset,
+                f"{self.config.asset}-OTC",
+                "EURUSD-OTC", 
+                "EURUSD"
+            ]
             
-            if success:
-                print(f"✅ Order berhasil! ID: {order_id}")
-                return True, order_id
-            else:
-                print("❌ Order gagal")
-                return False, None
+            success = False
+            order_id = None
+            
+            # Cek status pasar dan instrumen terlebih dahulu
+            try:
+                all_open_time = self.api.get_all_open_time()
+                print(f"📅 Status pasar: {all_open_time}")
+            except:
+                print("⚠️ Tidak bisa mengecek status pasar")
+            
+            for asset in asset_variants:
+                try:
+                    print(f"🔍 Mencoba asset: {asset}")
+                    
+                    # Cek apakah asset terbuka untuk trading
+                    try:
+                        asset_open = self.api.get_all_open_time()
+                        if asset_open and isinstance(asset_open, dict):
+                            asset_status = asset_open.get('binary', {}).get(asset.upper())
+                            print(f"📊 Status {asset}: {asset_status}")
+                    except Exception as status_err:
+                        print(f"⚠️ Tidak bisa cek status {asset}: {status_err}")
+                    
+                    success, order_id = self.api.buy(amount, asset, direction, expiration)
+                    print(f"🔄 Hasil API buy: success={success}, order_id={order_id}")
+                    
+                    if success and order_id:
+                        print(f"✅ Order berhasil! Asset: {asset}, ID: {order_id}")
+                        # Update config dengan asset yang berhasil
+                        self.config.asset = asset
+                        return True, order_id
+                    else:
+                        print(f"❌ Gagal dengan asset: {asset} - success: {success}, order_id: {order_id}")
+                        
+                except Exception as asset_error:
+                    print(f"❌ Error dengan asset {asset}: {asset_error}")
+                    import traceback
+                    print(f"📋 Traceback: {traceback.format_exc()}")
+                    continue
+            
+            print("❌ Semua variasi asset gagal")
+            return False, None
                 
         except Exception as e:
             print(f"❌ Error order: {e}")
@@ -420,7 +460,6 @@ class IQTradingRobot:
                 {
                     'direction': 'CALL',
                     'timeframe': 1,
-                    'asset': self.config.asset,
                     'processed': False
                 }
             ]

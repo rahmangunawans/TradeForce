@@ -60,7 +60,14 @@ class BotSetting(db.Model):
     iq_email = db.Column(db.String(120), nullable=False)
     iq_password = db.Column(db.String(256), nullable=False)  # Encrypted
     account_type = db.Column(db.String(10), nullable=False, default='demo')  # demo or real
+    
+    # Trading Configuration
     trading_amount = db.Column(db.Float, default=1.0)
+    stop_win = db.Column(db.Float, default=10.0)  # Stop trading when profit reaches this
+    stop_loss = db.Column(db.Float, default=10.0)  # Stop trading when loss reaches this
+    step_martingale = db.Column(db.Integer, default=3)  # Number of martingale steps
+    martingale_multiple = db.Column(db.Float, default=2.2)  # Martingale multiplier
+    
     asset = db.Column(db.String(50), default='EURUSD-OTC')
     strategy = db.Column(db.String(50), default='martingale')
     max_consecutive_losses = db.Column(db.Integer, default=3)
@@ -352,7 +359,14 @@ def save_bot_settings():
         settings.iq_email = data['iq_email']
         settings.iq_password = generate_password_hash(data['iq_password'])  # Encrypt password
         settings.account_type = data['account_type']
+        
+        # Trading Configuration
         settings.trading_amount = float(data.get('trading_amount', 1.0))
+        settings.stop_win = float(data.get('stop_win', 10.0))
+        settings.stop_loss = float(data.get('stop_loss', 10.0))
+        settings.step_martingale = int(data.get('step_martingale', 3))
+        settings.martingale_multiple = float(data.get('martingale_multiple', 2.2))
+        
         settings.asset = data.get('asset', 'EURUSD-OTC')
         settings.strategy = data.get('strategy', 'martingale')
         settings.max_consecutive_losses = int(data.get('max_consecutive_losses', 3))
@@ -379,6 +393,15 @@ def test_connection():
         # Create temporary robot instance for testing
         test_robot = IQTradingRobot(iq_email, iq_password)
         test_robot.api = None  # Reset to ensure fresh connection
+        
+        # Configure robot with current form data for testing
+        test_robot.trading_amount = float(data.get('trading_amount', 1.0))
+        test_robot.stop_win = float(data.get('stop_win', 10.0))
+        test_robot.stop_loss = float(data.get('stop_loss', 10.0))
+        test_robot.step_martingale = int(data.get('step_martingale', 3))
+        test_robot.martingale_multiple = float(data.get('martingale_multiple', 2.2))
+        test_robot.asset = data.get('asset', 'EURUSD-OTC')
+        test_robot.strategy = data.get('strategy', 'martingale')
         
         # Try to connect
         success = test_robot.connect()

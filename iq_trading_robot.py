@@ -26,21 +26,54 @@ class IQTradingRobot:
         
         # Trading Settings
         self.trading_amount = 1  # Jumlah trading dalam USD
+        self.initial_amount = 1  # Amount awal untuk reset
         self.asset = "EURUSD-OTC"  # Asset yang akan di trade
         self.timeframe = 1  # Timeframe dalam menit
+        
+        # Stop Settings
+        self.stop_win = 10.0  # Stop trading saat profit mencapai ini
+        self.stop_loss = 10.0  # Stop trading saat loss mencapai ini
+        
+        # Martingale Settings
+        self.strategy = "martingale"  # Strategy yang digunakan
+        self.step_martingale = 3  # Jumlah step martingale
+        self.martingale_multiple = 2.2  # Multiplier martingale
+        self.current_step = 0  # Current martingale step
         self.max_consecutive_losses = 3  # Maksimal loss berturut-turut
         self.consecutive_losses = 0
-        
-        # Strategy Settings
-        self.strategy = "martingale"  # Strategy yang digunakan
-        self.martingale_multiplier = 2.2
         
         # Trade History
         self.trades_history = []
         self.profit_total = 0
+        self.start_balance = 0
         
         print("🤖 IQ Option Trading Robot v1.0")
         print("=" * 50)
+    
+    def configure_from_settings(self, settings):
+        """
+        Configure robot from database settings
+        """
+        if settings:
+            self.trading_amount = settings.trading_amount
+            self.initial_amount = settings.trading_amount
+            self.stop_win = settings.stop_win
+            self.stop_loss = settings.stop_loss
+            self.step_martingale = settings.step_martingale
+            self.martingale_multiple = settings.martingale_multiple
+            self.asset = settings.asset
+            self.strategy = settings.strategy
+            self.max_consecutive_losses = settings.max_consecutive_losses
+            
+            print(f"⚙️ Configuration loaded:")
+            print(f"   Amount: ${self.trading_amount}")
+            print(f"   Stop Win: ${self.stop_win}")
+            print(f"   Stop Loss: ${self.stop_loss}")
+            if self.strategy == "martingale":
+                print(f"   Martingale Steps: {self.step_martingale}")
+                print(f"   Multiple: {self.martingale_multiple}")
+            print(f"   Asset: {self.asset}")
+            print(f"   Strategy: {self.strategy}")
     
     def connect(self):
         """Koneksi ke IQ Option"""
@@ -234,10 +267,22 @@ class IQTradingRobot:
         """
         Update jumlah trading berdasarkan strategy
         """
-        if self.strategy == "martingale" and result == "loss":
-            self.trading_amount = float(self.trading_amount) * float(self.martingale_multiplier)
-        elif result == "win":
-            self.trading_amount = 1.0  # Reset ke amount awal
+        if self.strategy == "martingale":
+            if result == "loss":
+                self.current_step += 1
+                if self.current_step <= self.step_martingale:
+                    self.trading_amount = float(self.trading_amount) * float(self.martingale_multiple)
+                else:
+                    # Reset setelah mencapai max step
+                    self.trading_amount = self.initial_amount
+                    self.current_step = 0
+            elif result == "win":
+                # Reset ke amount awal setelah win
+                self.trading_amount = self.initial_amount
+                self.current_step = 0
+        elif self.strategy == "fixed":
+            # Fixed amount selalu sama
+            self.trading_amount = self.initial_amount
         
         # Pastikan tidak melebihi balance
         if self.balance and self.trading_amount > float(self.balance) * 0.1:  # Maksimal 10% dari balance
@@ -251,7 +296,15 @@ class IQTradingRobot:
         print(f"📊 Asset: {self.asset}")
         print(f"💰 Amount: ${self.trading_amount}")
         print(f"📈 Strategy: {self.strategy}")
+        if self.strategy == "martingale":
+            print(f"🔄 Martingale Steps: {self.step_martingale}")
+            print(f"✖️ Multiple: {self.martingale_multiple}")
+        print(f"🏆 Stop Win: ${self.stop_win}")
+        print(f"🛑 Stop Loss: ${self.stop_loss}")
         print("=" * 50)
+        
+        # Set start balance for tracking
+        self.start_balance = self.balance
         
         while self.is_trading and self.is_connected:
             try:
@@ -264,9 +317,19 @@ class IQTradingRobot:
                 except:
                     pass
                 
-                # Cek consecutive losses
+                # Cek stop conditions
                 if self.consecutive_losses >= self.max_consecutive_losses:
                     print(f"⚠️ Mencapai maksimal loss berturut-turut ({self.max_consecutive_losses}). Berhenti trading.")
+                    break
+                
+                # Cek stop win
+                if self.profit_total >= self.stop_win:
+                    print(f"🎉 Stop Win tercapai! Profit: ${self.profit_total:.2f}. Berhenti trading.")
+                    break
+                    
+                # Cek stop loss
+                if self.profit_total <= -self.stop_loss:
+                    print(f"❌ Stop Loss tercapai! Loss: ${abs(self.profit_total):.2f}. Berhenti trading.")
                     break
                 
                 # Ambil data candle
@@ -306,6 +369,7 @@ class IQTradingRobot:
                 
                 # Tunggu sebelum analisis berikutnya
                 print(f"⏳ Menunggu {self.timeframe} menit untuk analisis berikutnya...")
+                print(f"📊 Current Status: Step {self.current_step}/{self.step_martingale}, Amount: ${self.trading_amount:.2f}")
                 time.sleep(self.timeframe * 60)  # Tunggu sesuai timeframe
                 
             except KeyboardInterrupt:

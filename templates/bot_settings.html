@@ -357,40 +357,103 @@
                     </div>
                 </div>
 
-                <!-- Basic Trading Settings -->
+                <!-- Trading Configuration -->
                 <div class="section-divider">
                     <h5><i class="fas fa-chart-line me-2"></i>Trading Configuration</h5>
                 </div>
                 
+                <!-- Basic Settings -->
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="tradingAmount" class="form-label">Trading Amount ($)</label>
+                            <label for="tradingAmount" class="form-label">
+                                <i class="fas fa-dollar-sign me-1"></i>Amount ($)
+                            </label>
                             <input type="number" class="form-control" id="tradingAmount" name="trading_amount" 
                                    value="{% if settings %}{{ settings.trading_amount }}{% else %}1{% endif %}" 
-                                   min="1" max="1000" step="0.1">
+                                   min="0.1" max="1000" step="0.1">
+                            <small class="form-text text-muted">Initial trading amount</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="stopWin" class="form-label">
+                                <i class="fas fa-trophy me-1"></i>Stop Win ($)
+                            </label>
+                            <input type="number" class="form-control" id="stopWin" name="stop_win" 
+                                   value="{% if settings %}{{ settings.stop_win }}{% else %}10{% endif %}" 
+                                   min="1" max="10000" step="0.1">
+                            <small class="form-text text-muted">Stop when profit reaches</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="stopLoss" class="form-label">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Stop Loss ($)
+                            </label>
+                            <input type="number" class="form-control" id="stopLoss" name="stop_loss" 
+                                   value="{% if settings %}{{ settings.stop_loss }}{% else %}10{% endif %}" 
+                                   min="1" max="10000" step="0.1">
+                            <small class="form-text text-muted">Stop when loss reaches</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="strategy" class="form-label">
+                                <i class="fas fa-brain me-1"></i>Strategy
+                            </label>
+                            <select class="form-control" id="strategy" name="strategy">
+                                <option value="martingale" {% if settings and settings.strategy == 'martingale' %}selected{% endif %}>Martingale</option>
+                                <option value="fixed" {% if settings and settings.strategy == 'fixed' %}selected{% endif %}>Fixed Amount</option>
+                            </select>
+                            <small class="form-text text-muted">Trading strategy</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Martingale Settings -->
+                <div class="row" id="martingaleSettings">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="stepMartingale" class="form-label">
+                                <i class="fas fa-step-forward me-1"></i>Step Martingale
+                            </label>
+                            <input type="number" class="form-control" id="stepMartingale" name="step_martingale" 
+                                   value="{% if settings %}{{ settings.step_martingale }}{% else %}3{% endif %}" 
+                                   min="1" max="10" step="1">
+                            <small class="form-text text-muted">Number of martingale steps</small>
                         </div>
                     </div>
                     
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="asset" class="form-label">Asset</label>
+                            <label for="martingaleMultiple" class="form-label">
+                                <i class="fas fa-times me-1"></i>Multiple
+                            </label>
+                            <input type="number" class="form-control" id="martingaleMultiple" name="martingale_multiple" 
+                                   value="{% if settings %}{{ settings.martingale_multiple }}{% else %}2.2{% endif %}" 
+                                   min="1.1" max="10" step="0.1">
+                            <small class="form-text text-muted">Martingale multiplier</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="asset" class="form-label">
+                                <i class="fas fa-coins me-1"></i>Asset
+                            </label>
                             <select class="form-control" id="asset" name="asset">
                                 <option value="EURUSD-OTC" {% if settings and settings.asset == 'EURUSD-OTC' %}selected{% endif %}>EUR/USD (OTC)</option>
                                 <option value="GBPUSD-OTC" {% if settings and settings.asset == 'GBPUSD-OTC' %}selected{% endif %}>GBP/USD (OTC)</option>
                                 <option value="USDJPY-OTC" {% if settings and settings.asset == 'USDJPY-OTC' %}selected{% endif %}>USD/JPY (OTC)</option>
                                 <option value="AUDUSD-OTC" {% if settings and settings.asset == 'AUDUSD-OTC' %}selected{% endif %}>AUD/USD (OTC)</option>
+                                <option value="USDCAD-OTC" {% if settings and settings.asset == 'USDCAD-OTC' %}selected{% endif %}>USD/CAD (OTC)</option>
+                                <option value="NZDUSD-OTC" {% if settings and settings.asset == 'NZDUSD-OTC' %}selected{% endif %}>NZD/USD (OTC)</option>
                             </select>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="strategy" class="form-label">Strategy</label>
-                            <select class="form-control" id="strategy" name="strategy">
-                                <option value="martingale" {% if settings and settings.strategy == 'martingale' %}selected{% endif %}>Martingale</option>
-                                <option value="fixed" {% if settings and settings.strategy == 'fixed' %}selected{% endif %}>Fixed Amount</option>
-                            </select>
+                            <small class="form-text text-muted">Trading pair</small>
                         </div>
                     </div>
                 </div>
@@ -481,6 +544,23 @@
                 '<i class="fas fa-cog me-2"></i>Hide Advanced Settings' : 
                 '<i class="fas fa-cog me-2"></i>Show Advanced Settings';
         });
+        
+        // Toggle Martingale Settings based on Strategy
+        const strategySelect = document.getElementById('strategy');
+        const martingaleSettings = document.getElementById('martingaleSettings');
+        
+        function toggleMartingaleSettings() {
+            if (strategySelect.value === 'martingale') {
+                martingaleSettings.style.display = 'block';
+            } else {
+                martingaleSettings.style.display = 'none';
+            }
+        }
+        
+        strategySelect.addEventListener('change', toggleMartingaleSettings);
+        
+        // Initialize martingale settings visibility
+        toggleMartingaleSettings();
 
         // Test Connection
         testConnectionBtn.addEventListener('click', function() {

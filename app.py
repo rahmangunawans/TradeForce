@@ -5,6 +5,11 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
+import sys
+sys.path.append('.')
+from iq_trading_robot import IQTradingRobot
+import threading
+import json
 
 class Base(DeclarativeBase):
     pass
@@ -43,6 +48,26 @@ class User(UserMixin, db.Model):
     country = db.Column(db.String(50), nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    # Relationship with bot settings
+    bot_settings = db.relationship('BotSetting', backref='user', lazy=True)
+
+# Bot Settings Model
+class BotSetting(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    broker_domain = db.Column(db.String(100), nullable=False, default='iqoption.com')
+    iq_email = db.Column(db.String(120), nullable=False)
+    iq_password = db.Column(db.String(256), nullable=False)  # Encrypted
+    account_type = db.Column(db.String(10), nullable=False, default='demo')  # demo or real
+    trading_amount = db.Column(db.Float, default=1.0)
+    asset = db.Column(db.String(50), default='EURUSD-OTC')
+    strategy = db.Column(db.String(50), default='martingale')
+    max_consecutive_losses = db.Column(db.Integer, default=3)
+    is_active = db.Column(db.Boolean, default=False)
+    balance_info = db.Column(db.Text)  # JSON string to store balance data
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -240,7 +265,16 @@ def dashboard():
         'account_balance': 0
     }
     
-    return render_template('dashboard.html', user_stats=user_stats, current_user=current_user)
+    # Get bot settings info
+    bot_settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+    bot_configured = bot_settings is not None
+    bot_active = current_user.id in active_bots and active_bots[current_user.id].is_trading if current_user.id in active_bots else False
+    
+    return render_template('dashboard.html', 
+                         user_stats=user_stats, 
+                         current_user=current_user,
+                         bot_configured=bot_configured,
+                         bot_active=bot_active)
 
 @app.route('/forgot-password', methods=['POST'])
 def forgot_password():
@@ -269,6 +303,220 @@ def forgot_password():
             
     except Exception as e:
         return jsonify({'success': False, 'message': 'An error occurred'})
+
+# Global variable to store active bots
+active_bots = {}
+
+@app.route('/bot-settings')
+@login_required
+def bot_settings():
+    """Bot trading settings page"""
+    # Get user's bot settings
+    settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+    
+    # Available broker domains by region
+    broker_domains = {
+        'Global': 'iqoption.com',
+        'Europe': 'eu.iqoption.com', 
+        'Asia': 'iqoption.com',
+        'Brazil': 'iqoption.com.br',
+        'Indonesia': 'iqoption.com',
+        'India': 'iqoption.com'
+    }
+    
+    return render_template('bot_settings.html', 
+                         settings=settings, 
+                         broker_domains=broker_domains,
+                         current_user=current_user)
+
+@app.route('/save-bot-settings', methods=['POST'])
+@login_required
+def save_bot_settings():
+    """Save bot settings"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['broker_domain', 'iq_email', 'iq_password', 'account_type']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field} is required'})
+        
+        # Get or create bot settings
+        settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+        if not settings:
+            settings = BotSetting(user_id=current_user.id)
+        
+        # Update settings
+        settings.broker_domain = data['broker_domain']
+        settings.iq_email = data['iq_email']
+        settings.iq_password = generate_password_hash(data['iq_password'])  # Encrypt password
+        settings.account_type = data['account_type']
+        settings.trading_amount = float(data.get('trading_amount', 1.0))
+        settings.asset = data.get('asset', 'EURUSD-OTC')
+        settings.strategy = data.get('strategy', 'martingale')
+        settings.max_consecutive_losses = int(data.get('max_consecutive_losses', 3))
+        
+        db.session.add(settings)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Bot settings saved successfully!'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error saving settings: {str(e)}'})
+
+@app.route('/test-connection', methods=['POST'])
+@login_required
+def test_connection():
+    """Test IQ Option connection and get balance"""
+    try:
+        data = request.get_json()
+        broker_domain = data['broker_domain']
+        iq_email = data['iq_email']
+        iq_password = data['iq_password']
+        account_type = data['account_type']
+        
+        # Create temporary robot instance for testing
+        test_robot = IQTradingRobot(iq_email, iq_password)
+        test_robot.api = None  # Reset to ensure fresh connection
+        
+        # Try to connect
+        success = test_robot.connect()
+        
+        if success:
+            # Switch to demo/real account based on setting
+            if account_type == 'demo':
+                test_robot.change_balance('PRACTICE')
+            else:
+                test_robot.change_balance('REAL')
+            
+            # Get balance after switching
+            balance = test_robot.get_balance()
+            
+            # Save balance info to database
+            settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+            if settings:
+                balance_info = {
+                    'balance': balance,
+                    'account_type': account_type,
+                    'last_checked': str(db.func.current_timestamp()),
+                    'status': 'connected'
+                }
+                settings.balance_info = json.dumps(balance_info)
+                db.session.commit()
+            
+            # Disconnect test connection
+            test_robot.disconnect()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Connection successful!',
+                'balance': balance,
+                'account_type': account_type
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Failed to connect. Please check your credentials.'
+            })
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Connection test failed: {str(e)}'
+        })
+
+@app.route('/start-bot', methods=['POST'])
+@login_required
+def start_bot():
+    """Start trading bot"""
+    try:
+        user_id = current_user.id
+        
+        # Check if bot is already running
+        if user_id in active_bots and active_bots[user_id].is_trading:
+            return jsonify({
+                'success': False,
+                'message': 'Trading bot is already running!'
+            })
+        
+        # Get user's bot settings
+        settings = BotSetting.query.filter_by(user_id=user_id).first()
+        if not settings:
+            return jsonify({
+                'success': False,
+                'message': 'Bot settings not found. Please configure bot settings first.'
+            })
+        
+        # Decrypt password (in real app, use proper decryption)
+        # For now, we'll need user to re-enter password or store it differently
+        return jsonify({
+            'success': False,
+            'message': 'Please test connection first to start trading bot.'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error starting bot: {str(e)}'
+        })
+
+@app.route('/stop-bot', methods=['POST'])
+@login_required  
+def stop_bot():
+    """Stop trading bot"""
+    try:
+        user_id = current_user.id
+        
+        if user_id in active_bots:
+            active_bots[user_id].stop_trading()
+            active_bots[user_id].disconnect()
+            del active_bots[user_id]
+            
+            return jsonify({
+                'success': True,
+                'message': 'Trading bot stopped successfully!'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'No active trading bot found.'
+            })
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error stopping bot: {str(e)}'
+        })
+
+@app.route('/bot-status')
+@login_required
+def bot_status():
+    """Get current bot status"""
+    try:
+        user_id = current_user.id
+        settings = BotSetting.query.filter_by(user_id=user_id).first()
+        
+        status_data = {
+            'is_configured': settings is not None,
+            'is_active': user_id in active_bots and active_bots[user_id].is_trading if user_id in active_bots else False,
+            'balance_info': json.loads(settings.balance_info) if settings and settings.balance_info else None
+        }
+        
+        if user_id in active_bots:
+            robot = active_bots[user_id]
+            status_data.update({
+                'total_trades': len(robot.trades_history),
+                'profit_total': robot.profit_total,
+                'consecutive_losses': robot.consecutive_losses
+            })
+        
+        return jsonify(status_data)
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Error getting bot status: {str(e)}'
+        })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -98,9 +98,9 @@
                                     <img src="{{ url_for('static', filename='images/brokers/stockity.png') }}" alt="Stockity" class="broker-submenu-icon">
                                     Stockity
                                 </a></li>
-                                <li><a href="#" data-section="iqoption" class="submenu-link">
+                                <li><a href="{{ url_for('bot_settings') }}" class="submenu-link">
                                     <img src="{{ url_for('static', filename='images/brokers/iqoption.png') }}" alt="IQ Option" class="broker-submenu-icon">
-                                    IQ Option
+                                    IQ Option Bot
                                 </a></li>
                                 <li><a href="#" data-section="olymptrade" class="submenu-link">
                                     <img src="{{ url_for('static', filename='images/brokers/olymptrade.png') }}" alt="Olymp Trade" class="broker-submenu-icon">
@@ -222,6 +222,40 @@
                                 <h3>${{ user_stats.account_balance }}</h3>
                                 <p>Account Balance</p>
                                 <span class="stats-change positive">+$250</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IQ Option Bot Quick Access -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="dashboard-card bot-settings-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h4><i class="fas fa-robot me-2"></i>IQ Option Trading Bot</h4>
+                                        <p class="mb-2">Automated trading bot for IQ Option platform with advanced strategies</p>
+                                        <div class="bot-status-indicators">
+                                            {% if bot_configured %}
+                                                <span class="badge bg-success me-2"><i class="fas fa-check"></i> Configured</span>
+                                            {% else %}
+                                                <span class="badge bg-warning me-2"><i class="fas fa-exclamation-triangle"></i> Not Configured</span>
+                                            {% endif %}
+                                            
+                                            {% if bot_active %}
+                                                <span class="badge bg-info"><i class="fas fa-play"></i> Running</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary"><i class="fas fa-stop"></i> Stopped</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <a href="{{ url_for('bot_settings') }}" class="btn btn-light btn-lg">
+                                            <i class="fas fa-cog me-2"></i>Configure Bot
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -73,6 +73,29 @@ class IQTradingRobot:
             self.is_connected = False
             print("📡 Koneksi terputus")
     
+    def get_balance(self):
+        """Get current balance"""
+        if self.api and self.is_connected:
+            try:
+                balance = self.api.get_balance()
+                return balance if balance is not None else 0
+            except Exception as e:
+                print(f"⚠️ Error getting balance: {e}")
+                return 0
+        return 0
+    
+    def change_balance(self, balance_type='PRACTICE'):
+        """Change balance type (PRACTICE/REAL)"""
+        if self.api and self.is_connected:
+            try:
+                self.api.change_balance(balance_type)
+                time.sleep(1)  # Wait for balance change
+                return True
+            except Exception as e:
+                print(f"⚠️ Error changing balance: {e}")
+                return False
+        return False
+    
     def get_candle_data(self, asset, timeframe=1, count=10):
         """Ambil data candle"""
         try:

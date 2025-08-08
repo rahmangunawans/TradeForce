@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Trading Settings - AUTO TRADE VIP</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
+    <style>
+        .bot-settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .settings-card {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .settings-header {
+            border-bottom: 2px solid #f8f9fa;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .settings-header h2 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .settings-header p {
+            color: #6c757d;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .balance-info {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+        
+        .account-type-badge {
+            background: #007bff;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .status-connected {
+            background-color: #28a745;
+        }
+        
+        .status-disconnected {
+            background-color: #dc3545;
+        }
+        
+        .advanced-settings {
+            display: none;
+        }
+        
+        .show-advanced {
+            display: block;
+        }
+        
+        .section-divider {
+            border-top: 1px solid #e9ecef;
+            margin: 2rem 0;
+            padding-top: 2rem;
+        }
+        
+        .alert-custom {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #2c3e50, #3498db);">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV Logo" style="height: 40px; margin-right: 10px;">
+                <strong>AUTO TRADE VIP</strong>
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-dashboard"></i> Dashboard
+                </a>
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bot-settings-container">
+        
+        <!-- Page Header -->
+        <div class="settings-card">
+            <div class="settings-header">
+                <h2><i class="fas fa-robot me-3"></i>IQ Option Trading Bot Settings</h2>
+                <p>Configure your automated trading bot for IQ Option platform</p>
+            </div>
+            
+            <!-- Connection Status -->
+            <div class="connection-status" id="connectionStatus">
+                <div class="status-indicator status-disconnected" id="statusIndicator"></div>
+                <span id="statusText">Not Connected</span>
+            </div>
+            
+            <!-- Balance Information -->
+            <div class="balance-info" id="balanceInfo" style="display: none;">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="balance-amount" id="balanceAmount">$0.00</div>
+                        <small class="text-muted">Current Balance</small>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <span class="account-type-badge" id="accountTypeBadge">Demo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bot Configuration Form -->
+        <div class="settings-card">
+            <form id="botSettingsForm">
+                
+                <!-- Broker Settings -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="brokerDomain" class="form-label">
+                                <i class="fas fa-globe me-2"></i>Broker Domain (Region)
+                            </label>
+                            <select class="form-control" id="brokerDomain" name="broker_domain" required>
+                                {% for region, domain in broker_domains.items() %}
+                                <option value="{{ domain }}" {% if settings and settings.broker_domain == domain %}selected{% endif %}>
+                                    {{ region }} - {{ domain }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">Select your region's IQ Option domain</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="accountType" class="form-label">
+                                <i class="fas fa-user-tag me-2"></i>Account Type
+                            </label>
+                            <select class="form-control" id="accountType" name="account_type" required>
+                                <option value="demo" {% if settings and settings.account_type == 'demo' %}selected{% endif %}>Demo Account</option>
+                                <option value="real" {% if settings and settings.account_type == 'real' %}selected{% endif %}>Real Account</option>
+                            </select>
+                            <small class="form-text text-muted">Choose demo for practice or real for live trading</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IQ Option Credentials -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="iqEmail" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>IQ Option Email
+                            </label>
+                            <input type="email" class="form-control" id="iqEmail" name="iq_email" 
+                                   value="{% if settings %}{{ settings.iq_email }}{% endif %}" required>
+                            <small class="form-text text-muted">Your IQ Option account email</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="iqPassword" class="form-label">
+                                <i class="fas fa-lock me-2"></i>IQ Option Password
+                            </label>
+                            <input type="password" class="form-control" id="iqPassword" name="iq_password" required>
+                            <small class="form-text text-muted">Your IQ Option account password</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Trading Settings -->
+                <div class="section-divider">
+                    <h5><i class="fas fa-chart-line me-2"></i>Trading Configuration</h5>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="tradingAmount" class="form-label">Trading Amount ($)</label>
+                            <input type="number" class="form-control" id="tradingAmount" name="trading_amount" 
+                                   value="{% if settings %}{{ settings.trading_amount }}{% else %}1{% endif %}" 
+                                   min="1" max="1000" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="asset" class="form-label">Asset</label>
+                            <select class="form-control" id="asset" name="asset">
+                                <option value="EURUSD-OTC" {% if settings and settings.asset == 'EURUSD-OTC' %}selected{% endif %}>EUR/USD (OTC)</option>
+                                <option value="GBPUSD-OTC" {% if settings and settings.asset == 'GBPUSD-OTC' %}selected{% endif %}>GBP/USD (OTC)</option>
+                                <option value="USDJPY-OTC" {% if settings and settings.asset == 'USDJPY-OTC' %}selected{% endif %}>USD/JPY (OTC)</option>
+                                <option value="AUDUSD-OTC" {% if settings and settings.asset == 'AUDUSD-OTC' %}selected{% endif %}>AUD/USD (OTC)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="strategy" class="form-label">Strategy</label>
+                            <select class="form-control" id="strategy" name="strategy">
+                                <option value="martingale" {% if settings and settings.strategy == 'martingale' %}selected{% endif %}>Martingale</option>
+                                <option value="fixed" {% if settings and settings.strategy == 'fixed' %}selected{% endif %}>Fixed Amount</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Settings Toggle -->
+                <div class="text-center mb-3">
+                    <button type="button" class="btn btn-outline-primary" id="toggleAdvanced">
+                        <i class="fas fa-cog me-2"></i>Show Advanced Settings
+                    </button>
+                </div>
+                
+                <!-- Advanced Settings -->
+                <div class="advanced-settings" id="advancedSettings">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="maxLosses" class="form-label">Max Consecutive Losses</label>
+                                <input type="number" class="form-control" id="maxLosses" name="max_consecutive_losses" 
+                                       value="{% if settings %}{{ settings.max_consecutive_losses }}{% else %}3{% endif %}" 
+                                       min="1" max="10">
+                                <small class="form-text text-muted">Bot will stop after this many consecutive losses</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 justify-content-center mt-4">
+                    <button type="button" class="btn btn-primary" id="testConnectionBtn">
+                        <i class="fas fa-plug me-2"></i>Test Connection & Get Balance
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bot Control Panel -->
+        <div class="settings-card">
+            <div class="settings-header">
+                <h4><i class="fas fa-play me-2"></i>Bot Control Panel</h4>
+                <p>Start or stop your automated trading bot</p>
+            </div>
+            
+            <div class="text-center">
+                <button class="btn btn-success btn-lg me-3" id="startBotBtn" disabled>
+                    <i class="fas fa-play me-2"></i>Start Trading Bot
+                </button>
+                <button class="btn btn-danger btn-lg" id="stopBotBtn" disabled>
+                    <i class="fas fa-stop me-2"></i>Stop Trading Bot
+                </button>
+            </div>
+            
+            <div class="mt-4" id="botStatus" style="display: none;">
+                <div class="alert alert-info alert-custom">
+                    <h6><i class="fas fa-info-circle me-2"></i>Bot Status</h6>
+                    <div id="botStatusContent">
+                        <!-- Bot status will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // DOM Elements
+        const form = document.getElementById('botSettingsForm');
+        const testConnectionBtn = document.getElementById('testConnectionBtn');
+        const startBotBtn = document.getElementById('startBotBtn');
+        const stopBotBtn = document.getElementById('stopBotBtn');
+        const toggleAdvancedBtn = document.getElementById('toggleAdvanced');
+        const advancedSettings = document.getElementById('advancedSettings');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const balanceInfo = document.getElementById('balanceInfo');
+        const balanceAmount = document.getElementById('balanceAmount');
+        const accountTypeBadge = document.getElementById('accountTypeBadge');
+
+        // Toggle Advanced Settings
+        toggleAdvancedBtn.addEventListener('click', function() {
+            advancedSettings.classList.toggle('show-advanced');
+            const isVisible = advancedSettings.classList.contains('show-advanced');
+            this.innerHTML = isVisible ? 
+                '<i class="fas fa-cog me-2"></i>Hide Advanced Settings' : 
+                '<i class="fas fa-cog me-2"></i>Show Advanced Settings';
+        });
+
+        // Test Connection
+        testConnectionBtn.addEventListener('click', function() {
+            const btn = this;
+            const originalHTML = btn.innerHTML;
+            
+            // Show loading
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Testing...';
+            btn.disabled = true;
+            
+            // Get form data
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            fetch('/test-connection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // Update status
+                    statusIndicator.className = 'status-indicator status-connected';
+                    statusText.textContent = 'Connected';
+                    
+                    // Show balance info
+                    balanceAmount.textContent = `$${result.balance.toFixed(2)}`;
+                    accountTypeBadge.textContent = result.account_type.charAt(0).toUpperCase() + result.account_type.slice(1);
+                    balanceInfo.style.display = 'block';
+                    
+                    // Enable start bot button
+                    startBotBtn.disabled = false;
+                    
+                    showAlert('success', result.message);
+                } else {
+                    showAlert('danger', result.message);
+                    // Update status
+                    statusIndicator.className = 'status-indicator status-disconnected';
+                    statusText.textContent = 'Connection Failed';
+                    balanceInfo.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred while testing connection');
+            })
+            .finally(() => {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            });
+        });
+
+        // Save Settings
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            fetch('/save-bot-settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showAlert('success', result.message);
+                } else {
+                    showAlert('danger', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred while saving settings');
+            });
+        });
+
+        // Start Bot
+        startBotBtn.addEventListener('click', function() {
+            const btn = this;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
+            btn.disabled = true;
+            
+            fetch('/start-bot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    btn.innerHTML = '<i class="fas fa-play me-2"></i>Bot Running';
+                    stopBotBtn.disabled = false;
+                    showAlert('success', result.message);
+                } else {
+                    btn.innerHTML = '<i class="fas fa-play me-2"></i>Start Trading Bot';
+                    btn.disabled = false;
+                    showAlert('danger', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btn.innerHTML = '<i class="fas fa-play me-2"></i>Start Trading Bot';
+                btn.disabled = false;
+                showAlert('danger', 'An error occurred while starting bot');
+            });
+        });
+
+        // Stop Bot
+        stopBotBtn.addEventListener('click', function() {
+            const btn = this;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Stopping...';
+            
+            fetch('/stop-bot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    btn.innerHTML = '<i class="fas fa-stop me-2"></i>Stop Trading Bot';
+                    btn.disabled = true;
+                    startBotBtn.innerHTML = '<i class="fas fa-play me-2"></i>Start Trading Bot';
+                    startBotBtn.disabled = false;
+                    showAlert('success', result.message);
+                } else {
+                    showAlert('danger', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred while stopping bot');
+            })
+            .finally(() => {
+                btn.innerHTML = '<i class="fas fa-stop me-2"></i>Stop Trading Bot';
+            });
+        });
+
+        // Show Alert
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-custom`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Insert at top of container
+            document.querySelector('.bot-settings-container').insertBefore(alertDiv, document.querySelector('.settings-card'));
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Load bot status on page load
+        window.addEventListener('load', function() {
+            fetch('/bot-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.balance_info) {
+                        balanceAmount.textContent = `$${data.balance_info.balance.toFixed(2)}`;
+                        accountTypeBadge.textContent = data.balance_info.account_type.charAt(0).toUpperCase() + data.balance_info.account_type.slice(1);
+                        balanceInfo.style.display = 'block';
+                        statusIndicator.className = 'status-indicator status-connected';
+                        statusText.textContent = 'Connected';
+                        startBotBtn.disabled = false;
+                    }
+                    
+                    if (data.is_active) {
+                        startBotBtn.innerHTML = '<i class="fas fa-play me-2"></i>Bot Running';
+                        startBotBtn.disabled = true;
+                        stopBotBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading bot status:', error);
+                });
+        });
+    </script>
+</body>
+</html>

@@ -70,6 +70,9 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Enhanced signal processing to support multiple formats: simple format "CALL,1" or "CALL", and full format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME" 
 - **August 8, 2025**: Fixed trading signal execution issue - bot now recognizes and executes signals immediately for manual input instead of waiting for specific timestamps
 - **August 8, 2025**: Updated bot settings UI to show all 3 supported signal formats with examples and clear documentation
+- **August 8, 2025**: Simplified IQ_trading_robot.py to focus only on manual signal input strategy - removed all technical analysis and other trading strategies per user request
+- **August 8, 2025**: Optimized signal execution timing - reduced wait time from 1 minute to 10 seconds for manual signals
+- **August 8, 2025**: Set default signal_type to 'manual_input' and removed candle data dependency for signal-based trading
 
 ## System Architecture
 

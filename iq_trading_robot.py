@@ -42,8 +42,8 @@ class IQTradingRobot:
         self.max_consecutive_losses = 3  # Maksimal loss berturut-turut
         self.consecutive_losses = 0
         
-        # Signal Settings
-        self.signal_type = "mt4_next_signal"  # Signal source type
+        # Signal Settings - FOKUS HANYA PADA MANUAL INPUT
+        self.signal_type = "manual_input"  # Hanya signal manual input
         self.signal_content = ""  # Manual signal content
         self.parsed_signals = []  # Parsed signal list
         self.current_signal_index = 0  # Current signal index for processing
@@ -330,9 +330,9 @@ class IQTradingRobot:
     
     def should_trade(self, candles):
         """
-        Logika untuk menentukan apakah harus trade berdasarkan signal type
+        Fokus hanya pada signal manual input - tidak ada strategi lain
         """
-        # Handle manual signal input
+        # Hanya handle manual signal input
         if self.signal_type == "manual_input":
             signal = self.get_next_signal()
             if signal:
@@ -343,23 +343,8 @@ class IQTradingRobot:
             else:
                 return False, None
         
-        # Original candle-based analysis for other signal types
-        if not candles:
-            return False, None
-        
-        trend = self.analyze_trend(candles)
-        rsi = self.rsi_analysis(candles)
-        
-        # Trading signal berdasarkan RSI dan trend
-        if rsi < 30 and trend != "put":  # Oversold + tidak downtrend
-            return True, "call"
-        elif rsi > 70 and trend != "call":  # Overbought + tidak uptrend
-            return True, "put"
-        elif trend == "call" and rsi < 60:  # Strong uptrend
-            return True, "call"  
-        elif trend == "put" and rsi > 40:  # Strong downtrend
-            return True, "put"
-        
+        # Tidak ada strategi lain - hanya signal manual
+        print("⚠️ Bot hanya mendukung signal manual input. Set signal_type ke 'manual_input'")
         return False, None
     
     def place_order(self, direction, amount):
@@ -492,14 +477,16 @@ class IQTradingRobot:
                     print(f"❌ Stop Loss tercapai! Loss: ${abs(self.profit_total):.2f}. Berhenti trading.")
                     break
                 
-                # Ambil data candle
-                candles = self.get_candle_data(self.asset, self.timeframe)
-                if not candles:
-                    print("⚠️ Tidak bisa ambil data candle. Mencoba lagi...")
-                    time.sleep(5)
-                    continue
+                # Untuk signal manual, tidak perlu candle data
+                candles = None
+                if self.signal_type != "manual_input":
+                    candles = self.get_candle_data(self.asset, self.timeframe)
+                    if not candles:
+                        print("⚠️ Tidak bisa ambil data candle. Mencoba lagi...")
+                        time.sleep(5)
+                        continue
                 
-                # Analisis apakah harus trade berdasarkan signal type
+                # Analisis apakah harus trade - fokus signal manual
                 should_trade, direction = self.should_trade(candles)
                 
                 if should_trade:
@@ -526,11 +513,16 @@ class IQTradingRobot:
                         self.update_trading_amount(result)
                 else:
                     print("📊 Tidak ada signal trading. Menunggu...")
-                
-                # Tunggu sebelum analisis berikutnya
-                print(f"⏳ Menunggu {self.timeframe} menit untuk analisis berikutnya...")
-                print(f"📊 Current Status: Step {self.current_step}/{self.step_martingale}, Amount: ${self.trading_amount:.2f}")
-                time.sleep(self.timeframe * 60)  # Tunggu sesuai timeframe
+                    # Untuk signal manual, tunggu lebih singkat
+                    if self.signal_type == "manual_input":
+                        print("⏳ Menunggu signal manual berikutnya (10 detik)...")
+                        print(f"📊 Current Status: Step {self.current_step}/{self.step_martingale}, Amount: ${self.trading_amount:.2f}")
+                        time.sleep(10)  # Tunggu 10 detik untuk signal manual
+                    else:
+                        # Tunggu sebelum analisis berikutnya
+                        print(f"⏳ Menunggu {self.timeframe} menit untuk analisis berikutnya...")
+                        print(f"📊 Current Status: Step {self.current_step}/{self.step_martingale}, Amount: ${self.trading_amount:.2f}")
+                        time.sleep(self.timeframe * 60)  # Tunggu sesuai timeframe
                 
             except KeyboardInterrupt:
                 print("\n🛑 Trading dihentikan oleh user")

@@ -1330,6 +1330,13 @@
         // Start Bot
         startBotBtn.addEventListener('click', function() {
             const btn = this;
+            const passwordInput = document.getElementById('iq_password');
+            
+            if (!passwordInput || !passwordInput.value) {
+                showAlert('danger', 'Password is required to start bot. Please enter your IQ Option password and test connection first.');
+                return;
+            }
+            
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
             btn.disabled = true;
             
@@ -1337,7 +1344,10 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                body: JSON.stringify({
+                    iq_password: passwordInput.value
+                })
             })
             .then(response => response.json())
             .then(result => {

@@ -537,12 +537,49 @@ def start_bot():
                 'message': 'Bot settings not found. Please configure bot settings first.'
             })
         
-        # Decrypt password (in real app, use proper decryption)
-        # For now, we'll need user to re-enter password or store it differently
-        return jsonify({
-            'success': False,
-            'message': 'Please test connection first to start trading bot.'
-        })
+        # Create new robot instance
+        robot = IQTradingRobot(settings.iq_email, "")  # Password will be set during connection
+        robot.configure_from_settings(settings)
+        
+        # Get the last test connection data to use password
+        data = request.get_json() or {}
+        iq_password = data.get('iq_password')
+        
+        if not iq_password:
+            return jsonify({
+                'success': False,
+                'message': 'Password required to start bot. Please test connection first.'
+            })
+        
+        # Set password and connect
+        robot.password = iq_password
+        
+        if not robot.connect():
+            return jsonify({
+                'success': False,
+                'message': 'Failed to connect to IQ Option. Please check your credentials.'
+            })
+        
+        # Switch to correct account type
+        if settings.account_type == 'demo':
+            robot.change_balance('PRACTICE')
+        else:
+            robot.change_balance('REAL')
+        
+        # Start trading
+        if robot.start_trading():
+            active_bots[user_id] = robot
+            return jsonify({
+                'success': True,
+                'message': 'Trading bot started successfully!',
+                'balance': robot.get_balance()
+            })
+        else:
+            robot.disconnect()
+            return jsonify({
+                'success': False,
+                'message': 'Failed to start trading bot.'
+            })
         
     except Exception as e:
         return jsonify({

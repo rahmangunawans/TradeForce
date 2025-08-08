@@ -173,15 +173,28 @@ class IQTradingRobot:
             
             if check:
                 self.is_connected = True
-                self.balance = self.api.get_balance()
-                print(f"✅ Berhasil terhubung!")
-                print(f"💰 Saldo: ${self.balance}")
-                return True
+                
+                # Get initial balance
+                try:
+                    self.balance = self.api.get_balance()
+                    print(f"✅ Berhasil terhubung!")
+                    print(f"💰 Saldo: ${self.balance}")
+                    
+                    # Keep connection stable
+                    time.sleep(1)
+                    return True
+                except Exception as balance_error:
+                    print(f"⚠️ Error getting balance: {balance_error}")
+                    self.balance = 0
+                    return True  # Still return True if connected but can't get balance
             else:
                 print(f"❌ Gagal terhubung: {reason}")
+                self.is_connected = False
                 return False
         except Exception as e:
             print(f"❌ Error koneksi: {e}")
+            self.is_connected = False
+            self.api = None
             return False
     
     def disconnect(self):
@@ -220,6 +233,10 @@ class IQTradingRobot:
     
     def get_candle_data(self, asset, timeframe=1, count=10):
         """Ambil data candle"""
+        if not self.api or not self.is_connected:
+            print("❌ Not connected to IQ Option")
+            return None
+            
         try:
             candles = self.api.get_candles(asset, timeframe * 60, count, time.time())
             return candles
@@ -316,6 +333,10 @@ class IQTradingRobot:
         """
         Tempatkan order
         """
+        if not self.api or not self.is_connected:
+            print("❌ Not connected to IQ Option")
+            return False, None
+            
         try:
             expiration = 1  # 1 menit
             
@@ -340,6 +361,10 @@ class IQTradingRobot:
         """
         Tunggu hasil dari order
         """
+        if not self.api or not self.is_connected:
+            print("❌ Not connected to IQ Option")
+            return "error", 0
+            
         print("⏳ Menunggu hasil trading...")
         time.sleep(65)  # Tunggu 1 menit + buffer
         

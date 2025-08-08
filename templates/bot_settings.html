@@ -362,7 +362,7 @@
                     <h5><i class="fas fa-chart-line me-2"></i>Trading Configuration</h5>
                 </div>
                 
-                <!-- Single Row: All Trading Configuration Fields -->
+                <!-- Row 1: Basic Trading Configuration -->
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group">
@@ -400,7 +400,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="stepMartingale" class="form-label">
                                 <i class="fas fa-step-forward me-1"></i>Step Martingale
@@ -408,11 +408,11 @@
                             <input type="number" class="form-control" id="stepMartingale" name="step_martingale" 
                                    value="{% if settings %}{{ settings.step_martingale }}{% else %}3{% endif %}" 
                                    min="1" max="10" step="1">
-                            <small class="form-text text-muted">Steps</small>
+                            <small class="form-text text-muted">Number of steps</small>
                         </div>
                     </div>
                     
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="martingaleMultiple" class="form-label">
                                 <i class="fas fa-times me-1"></i>Multiple
@@ -420,33 +420,36 @@
                             <input type="number" class="form-control" id="martingaleMultiple" name="martingale_multiple" 
                                    value="{% if settings %}{{ settings.martingale_multiple }}{% else %}2.2{% endif %}" 
                                    min="1.1" max="10" step="0.1">
-                            <small class="form-text text-muted">Multiplier</small>
+                            <small class="form-text text-muted">Martingale multiplier</small>
                         </div>
                     </div>
-                    
-                    <div class="col-md-2">
+                </div>
+                
+                <!-- Row 2: Signal Type -->
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="signalType" class="form-label">
-                                <i class="fas fa-signal me-1"></i>Signal Type
+                                <i class="fas fa-signal me-1"></i>Signal Type Feature
                             </label>
                             <select class="form-control" id="signalType" name="signal_type">
                                 <option value="mt4_next_signal" {% if settings and settings.signal_type == 'mt4_next_signal' %}selected{% endif %}>
-                                    MT4 [NEXT SIGNAL]
+                                    SIGNAL MT4 TERMINAL [NEXT SIGNAL]
                                 </option>
                                 <option value="mt4_next_candle" {% if settings and settings.signal_type == 'mt4_next_candle' %}selected{% endif %}>
-                                    MT4 [NEXT CANDLE]
+                                    SIGNAL MT4 TERMINAL [NEXT CANDLE]
                                 </option>
                                 <option value="tradingview_next_signal" {% if settings and settings.signal_type == 'tradingview_next_signal' %}selected{% endif %}>
-                                    TRADINGVIEW [NEXT SIGNAL]
+                                    SIGNAL TRADINGVIEW [NEXT SIGNAL]
                                 </option>
                                 <option value="tradingview_next_candle" {% if settings and settings.signal_type == 'tradingview_next_candle' %}selected{% endif %}>
-                                    TRADINGVIEW [NEXT CANDLE]
+                                    SIGNAL TRADINGVIEW [NEXT CANDLE]
                                 </option>
                                 <option value="manual_input" {% if settings and settings.signal_type == 'manual_input' %}selected{% endif %}>
-                                    MANUAL INPUT
+                                    SIGNAL INPUT (2022-06-19 19:09:00,EURUSD,CALL OR PUT,1(TIMEFRAME))
                                 </option>
                             </select>
-                            <small class="form-text text-muted">Signal source</small>
+                            <small class="form-text text-muted">Choose your signal source for automated trading</small>
                         </div>
                     </div>
                     

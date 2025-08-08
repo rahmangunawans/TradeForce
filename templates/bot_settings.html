@@ -479,42 +479,19 @@
                     </div>
                 </div>
                 
-                <!-- Trading Sessions Summary -->
+                <!-- Current Trading Session -->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card border-primary">
                             <div class="card-header bg-primary text-white">
-                                <h6 class="mb-0"><i class="fas fa-globe me-2"></i>Global Trading Sessions</h6>
+                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Current Trading Session</h6>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="session-item mb-2">
-                                            <strong>Sydney Session:</strong> 9:00 PM - 6:00 AM UTC
-                                            <div class="session-status" id="sydneySession">
-                                                <span class="badge bg-secondary">Calculating...</span>
-                                            </div>
-                                        </div>
-                                        <div class="session-item mb-2">
-                                            <strong>Tokyo Session:</strong> 11:00 PM - 8:00 AM UTC
-                                            <div class="session-status" id="tokyoSession">
-                                                <span class="badge bg-secondary">Calculating...</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="session-item mb-2">
-                                            <strong>London Session:</strong> 7:00 AM - 4:00 PM UTC
-                                            <div class="session-status" id="londonSession">
-                                                <span class="badge bg-secondary">Calculating...</span>
-                                            </div>
-                                        </div>
-                                        <div class="session-item mb-2">
-                                            <strong>New York Session:</strong> 12:00 PM - 9:00 PM UTC
-                                            <div class="session-status" id="newYorkSession">
-                                                <span class="badge bg-secondary">Calculating...</span>
-                                            </div>
-                                        </div>
+                            <div class="card-body text-center">
+                                <div id="currentSession">
+                                    <h5 class="mb-2" id="activeSessionName">Loading...</h5>
+                                    <p class="mb-2" id="activeSessionTime">Checking current session...</p>
+                                    <div class="session-status" id="activeSessionStatus">
+                                        <span class="badge bg-secondary">Calculating...</span>
                                     </div>
                                 </div>
                             </div>
@@ -808,19 +785,58 @@
                 marketStatusEl.textContent = 'Market Closed';
             }
             
-            // Update session statuses
-            updateSessionStatus('sydneySession', utcHour >= 21 || utcHour < 6);
-            updateSessionStatus('tokyoSession', utcHour >= 23 || utcHour < 8);
-            updateSessionStatus('londonSession', utcHour >= 7 && utcHour < 16);
-            updateSessionStatus('newYorkSession', utcHour >= 12 && utcHour < 21);
+            // Update current active session
+            updateCurrentActiveSession(utcHour);
         }
         
-        function updateSessionStatus(sessionId, isActive) {
-            const sessionEl = document.getElementById(sessionId);
-            if (isActive) {
-                sessionEl.innerHTML = '<span class="badge bg-success"><i class="fas fa-circle me-1"></i>Active</span>';
+        function updateCurrentActiveSession(utcHour) {
+            const sessionNameEl = document.getElementById('activeSessionName');
+            const sessionTimeEl = document.getElementById('activeSessionTime');
+            const sessionStatusEl = document.getElementById('activeSessionStatus');
+            
+            let currentSession = null;
+            
+            // Determine which session is currently active
+            if (utcHour >= 21 || utcHour < 6) {
+                currentSession = {
+                    name: 'Sydney Session',
+                    time: '9:00 PM - 6:00 AM UTC',
+                    active: true
+                };
+            } else if (utcHour >= 23 || utcHour < 8) {
+                currentSession = {
+                    name: 'Tokyo Session', 
+                    time: '11:00 PM - 8:00 AM UTC',
+                    active: true
+                };
+            } else if (utcHour >= 7 && utcHour < 16) {
+                currentSession = {
+                    name: 'London Session',
+                    time: '7:00 AM - 4:00 PM UTC', 
+                    active: true
+                };
+            } else if (utcHour >= 12 && utcHour < 21) {
+                currentSession = {
+                    name: 'New York Session',
+                    time: '12:00 PM - 9:00 PM UTC',
+                    active: true
+                };
             } else {
-                sessionEl.innerHTML = '<span class="badge bg-secondary"><i class="fas fa-circle me-1"></i>Closed</span>';
+                currentSession = {
+                    name: 'Market Closed',
+                    time: 'No active trading session',
+                    active: false
+                };
+            }
+            
+            // Update display
+            sessionNameEl.textContent = currentSession.name;
+            sessionTimeEl.textContent = currentSession.time;
+            
+            if (currentSession.active) {
+                sessionStatusEl.innerHTML = '<span class="badge bg-success"><i class="fas fa-circle me-1"></i>Active Now</span>';
+            } else {
+                sessionStatusEl.innerHTML = '<span class="badge bg-danger"><i class="fas fa-circle me-1"></i>Closed</span>';
             }
         }
         

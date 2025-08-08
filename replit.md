@@ -56,6 +56,7 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Removed "High Volume Trading Times" section from bot settings page per user request
 - **August 8, 2025**: Updated Trading Session Information to display 4 complete forex sessions (Sydney, Tokyo, London, New York) with accurate UTC times and major pairs
 - **August 8, 2025**: Fixed time format to use AM/PM instead of 24-hour format for better readability in trading sessions
+- **August 8, 2025**: Simplified Trading Session Information to single box layout and removed Major Pairs information per user request
 
 ## System Architecture
 

@@ -249,13 +249,12 @@ def register():
         return jsonify({'success': False, 'message': 'Email already registered'})
     
     # Create new user
-    user = User(
-        name=name,
-        email=email,
-        gender=gender,
-        country=country,
-        password_hash=generate_password_hash(password)
-    )
+    user = User()
+    user.name = name
+    user.email = email
+    user.gender = gender
+    user.country = country
+    user.password_hash = generate_password_hash(password)
     
     db.session.add(user)
     db.session.commit()
@@ -377,7 +376,8 @@ def save_bot_settings():
         # Get or create bot settings
         settings = BotSetting.query.filter_by(user_id=current_user.id).first()
         if not settings:
-            settings = BotSetting(user_id=current_user.id)
+            settings = BotSetting()
+            settings.user_id = current_user.id
         
         # Update settings
         settings.broker_domain = data['broker_domain']

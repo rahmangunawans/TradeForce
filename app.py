@@ -74,6 +74,13 @@ class BotSetting(db.Model):
     strategy = db.Column(db.String(50), default='martingale')
     signal_type = db.Column(db.String(100), default='mt4_next_signal')  # Signal source type
     max_consecutive_losses = db.Column(db.Integer, default=3)
+    
+    # Trading Session Configuration
+    start_time = db.Column(db.String(10), default='09:00')  # Trading start time
+    end_time = db.Column(db.String(10), default='17:00')  # Trading end time
+    timezone = db.Column(db.String(50), default='UTC')  # Trading timezone
+    active_days = db.Column(db.String(20), default='weekdays')  # Trading active days
+    
     is_active = db.Column(db.Boolean, default=False)
     balance_info = db.Column(db.Text)  # JSON string to store balance data
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -371,6 +378,12 @@ def save_bot_settings():
         settings.martingale_multiple = float(data.get('martingale_multiple', 2.2))
         
         settings.signal_type = data.get('signal_type', 'mt4_next_signal')
+        
+        # Trading Session Configuration
+        settings.start_time = data.get('start_time', '09:00')
+        settings.end_time = data.get('end_time', '17:00')
+        settings.timezone = data.get('timezone', 'UTC')
+        settings.active_days = data.get('active_days', 'weekdays')
         
         db.session.add(settings)
         db.session.commit()

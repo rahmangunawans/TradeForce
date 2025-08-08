@@ -452,9 +452,66 @@
                             <small class="form-text text-muted">Choose your signal source for automated trading</small>
                         </div>
                     </div>
-                    
                 </div>
                 
+                <!-- Trading Session -->
+                <div class="section-divider">
+                    <h5><i class="fas fa-clock me-2"></i>Trading Session</h5>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="startTime" class="form-label">
+                                <i class="fas fa-play me-1"></i>Start Time
+                            </label>
+                            <input type="time" class="form-control" id="startTime" name="start_time" 
+                                   value="{% if settings %}{{ settings.start_time }}{% else %}09:00{% endif %}">
+                            <small class="form-text text-muted">Trading start time</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="endTime" class="form-label">
+                                <i class="fas fa-stop me-1"></i>End Time
+                            </label>
+                            <input type="time" class="form-control" id="endTime" name="end_time" 
+                                   value="{% if settings %}{{ settings.end_time }}{% else %}17:00{% endif %}">
+                            <small class="form-text text-muted">Trading end time</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="timezone" class="form-label">
+                                <i class="fas fa-globe me-1"></i>Timezone
+                            </label>
+                            <select class="form-control" id="timezone" name="timezone">
+                                <option value="UTC" {% if settings and settings.timezone == 'UTC' %}selected{% endif %}>UTC (GMT+0)</option>
+                                <option value="Asia/Jakarta" {% if settings and settings.timezone == 'Asia/Jakarta' %}selected{% endif %}>Jakarta (GMT+7)</option>
+                                <option value="Asia/Singapore" {% if settings and settings.timezone == 'Asia/Singapore' %}selected{% endif %}>Singapore (GMT+8)</option>
+                                <option value="Europe/London" {% if settings and settings.timezone == 'Europe/London' %}selected{% endif %}>London (GMT+0/+1)</option>
+                                <option value="America/New_York" {% if settings and settings.timezone == 'America/New_York' %}selected{% endif %}>New York (GMT-5/-4)</option>
+                            </select>
+                            <small class="form-text text-muted">Trading timezone</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="activeDays" class="form-label">
+                                <i class="fas fa-calendar me-1"></i>Active Days
+                            </label>
+                            <select class="form-control" id="activeDays" name="active_days">
+                                <option value="weekdays" {% if settings and settings.active_days == 'weekdays' %}selected{% endif %}>Weekdays Only (Mon-Fri)</option>
+                                <option value="all" {% if settings and settings.active_days == 'all' %}selected{% endif %}>All Days (Mon-Sun)</option>
+                                <option value="custom" {% if settings and settings.active_days == 'custom' %}selected{% endif %}>Custom Days</option>
+                            </select>
+                            <small class="form-text text-muted">Trading days</small>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Action Buttons -->
                 <div class="d-flex gap-3 justify-content-center mt-4">

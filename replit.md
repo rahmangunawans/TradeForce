@@ -59,6 +59,8 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Simplified Trading Session Information to single box layout and removed Major Pairs information per user request
 - **August 8, 2025**: Changed trading sessions to show only the currently active session instead of displaying all 4 sessions at once
 - **August 8, 2025**: Updated trading session times to display in client's local timezone instead of UTC per user request
+- **August 8, 2025**: Successfully completed project migration from Replit Agent to Replit environment with PostgreSQL database configuration
+- **August 8, 2025**: Moved Trading Session Information from sidebar to main header area for better visibility and accessibility
 
 ## System Architecture
 

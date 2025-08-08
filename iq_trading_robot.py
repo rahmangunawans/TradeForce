@@ -286,34 +286,16 @@ class IQTradingRobot:
             
             print(f"📊 Trading: {direction.upper()} {self.config.asset} - ${amount}")
             
-            # Coba beberapa format asset
-            asset_variants = [
-                self.config.asset,
-                f"{self.config.asset}-OTC",
-                "EURUSD-OTC",
-                "EURUSD"
-            ]
+            success, order_id = self.api.buy(
+                amount, self.config.asset, direction, expiration
+            )
             
-            success = False
-            order_id = None
-            
-            for asset in asset_variants:
-                try:
-                    print(f"🔍 Mencoba asset: {asset}")
-                    success, order_id = self.api.buy(amount, asset, direction, expiration)
-                    if success:
-                        print(f"✅ Order berhasil! Asset: {asset}, ID: {order_id}")
-                        # Update config dengan asset yang berhasil
-                        self.config.asset = asset
-                        return True, order_id
-                    else:
-                        print(f"❌ Gagal dengan asset: {asset}")
-                except Exception as asset_error:
-                    print(f"❌ Error dengan asset {asset}: {asset_error}")
-                    continue
-            
-            print("❌ Semua variasi asset gagal")
-            return False, None
+            if success:
+                print(f"✅ Order berhasil! ID: {order_id}")
+                return True, order_id
+            else:
+                print("❌ Order gagal")
+                return False, None
                 
         except Exception as e:
             print(f"❌ Error order: {e}")

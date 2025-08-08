@@ -76,6 +76,11 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Fixed configuration mismatch between HTML bot system and console output - synchronized database model, HTML form, and robot class to all default to 'manual_input' strategy
 - **August 8, 2025**: Simplified HTML Signal Type dropdown to show only Manual Signal Input option, removing all other strategies from the interface
 - **August 8, 2025**: Updated database model BotSetting to default signal_type to 'manual_input' instead of 'mt4_next_signal' for consistency
+- **August 8, 2025**: COMPLETE REWRITE of iq_trading_robot.py - removed ALL strategies, OTC assets, martingale logic, technical analysis
+- **August 8, 2025**: Simplified robot to 100% focus on manual signal input only (CALL/PUT format)
+- **August 8, 2025**: Changed default asset from "EURUSD-OTC" to "EURUSD" (removed OTC)
+- **August 8, 2025**: Removed all strategy variables (martingale_multiple, step_martingale, consecutive_losses, etc.)
+- **August 8, 2025**: Created pure signal-input trading loop with Indonesian interface messages
 
 ## System Architecture
 

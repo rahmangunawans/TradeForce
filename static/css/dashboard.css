@@ -268,6 +268,71 @@
 .menu-text {
     font-size: 0.9rem;
     font-weight: 500;
+    flex: 1;
+}
+
+/* ===== SUBMENU STYLES ===== */
+.has-submenu .menu-link {
+    justify-content: space-between;
+}
+
+.submenu-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+    margin-left: auto;
+}
+
+.has-submenu.open .submenu-arrow {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: #f8fafc;
+}
+
+.has-submenu.open .submenu {
+    max-height: 300px;
+}
+
+.submenu li {
+    margin: 0;
+}
+
+.submenu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1.5rem 0.6rem 3rem;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.submenu-link:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    text-decoration: none;
+    border-left-color: #00e676;
+}
+
+.submenu-link.active {
+    background: #e2e8f0;
+    color: #00e676;
+    border-left-color: #00e676;
+    font-weight: 600;
+}
+
+.submenu-link i {
+    font-size: 0.8rem;
+    color: #94a3b8;
 }
 
 

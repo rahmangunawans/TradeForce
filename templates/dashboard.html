@@ -83,11 +83,20 @@
                                 <span class="menu-text">Dashboard</span>
                             </a>
                         </li>
-                        <li class="menu-item">
-                            <a class="menu-link" href="#" data-section="trading">
+                        <li class="menu-item has-submenu">
+                            <a class="menu-link menu-toggle" href="#" data-section="trading">
                                 <i class="menu-icon fas fa-robot"></i>
                                 <span class="menu-text">Trading Robot</span>
+                                <i class="fas fa-chevron-down submenu-arrow"></i>
                             </a>
+                            <ul class="submenu">
+                                <li><a href="#" data-section="binomo" class="submenu-link"><i class="fas fa-chart-line me-2"></i>Binomo</a></li>
+                                <li><a href="#" data-section="stockity" class="submenu-link"><i class="fas fa-chart-bar me-2"></i>Stockity</a></li>
+                                <li><a href="#" data-section="iqoption" class="submenu-link"><i class="fas fa-signal me-2"></i>IQ Option</a></li>
+                                <li><a href="#" data-section="olymptrade" class="submenu-link"><i class="fas fa-chart-area me-2"></i>Olymp Trade</a></li>
+                                <li><a href="#" data-section="quotex" class="submenu-link"><i class="fas fa-candlestick me-2"></i>Quotex</a></li>
+                                <li><a href="#" data-section="pocketoption" class="submenu-link"><i class="fas fa-mobile-alt me-2"></i>Pocket Option</a></li>
+                            </ul>
                         </li>
                         <li class="menu-item">
                             <a class="menu-link" href="#" data-section="analytics">
@@ -532,6 +541,295 @@
                     <p class="text-muted">Get help and contact our support team.</p>
                 </div>
                 <!-- Support content here -->
+            </section>
+
+            <!-- Broker Individual Sections -->
+            <section id="binomo" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-line me-2"></i>Binomo Trading Robot</h2>
+                    <p class="text-muted">Manage your Binomo automated trading settings and performance.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Binomo Robot Status</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="robot-status active">
+                                    <i class="fas fa-robot"></i>
+                                    <h3>ACTIVE</h3>
+                                    <p>Binomo trading robot is currently running</p>
+                                </div>
+                                <div class="robot-controls">
+                                    <button class="btn btn-danger me-2"><i class="fas fa-stop"></i> Stop Robot</button>
+                                    <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Today's Performance</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="trading-stat">
+                                    <span class="stat-label">Total Trades:</span>
+                                    <span class="stat-value">15</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Win Rate:</span>
+                                    <span class="stat-value text-success">73%</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Profit Today:</span>
+                                    <span class="stat-value text-success">+$89.50</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="stockity" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar me-2"></i>Stockity Trading Robot</h2>
+                    <p class="text-muted">Manage your Stockity automated trading settings and performance.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Stockity Robot Status</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="robot-status active">
+                                    <i class="fas fa-robot"></i>
+                                    <h3>ACTIVE</h3>
+                                    <p>Stockity trading robot is currently running</p>
+                                </div>
+                                <div class="robot-controls">
+                                    <button class="btn btn-danger me-2"><i class="fas fa-stop"></i> Stop Robot</button>
+                                    <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Today's Performance</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="trading-stat">
+                                    <span class="stat-label">Total Trades:</span>
+                                    <span class="stat-value">12</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Win Rate:</span>
+                                    <span class="stat-value text-success">67%</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Profit Today:</span>
+                                    <span class="stat-value text-success">+$67.25</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="iqoption" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-signal me-2"></i>IQ Option Trading Robot</h2>
+                    <p class="text-muted">Manage your IQ Option automated trading settings and performance.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>IQ Option Robot Status</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="robot-status" style="background: #fef3c7; border: 2px solid #d97706;">
+                                    <i class="fas fa-pause-circle" style="color: #d97706;"></i>
+                                    <h3 style="color: #d97706;">PAUSED</h3>
+                                    <p>IQ Option trading robot is currently paused</p>
+                                </div>
+                                <div class="robot-controls">
+                                    <button class="btn btn-success me-2"><i class="fas fa-play"></i> Start Robot</button>
+                                    <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Today's Performance</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="trading-stat">
+                                    <span class="stat-label">Total Trades:</span>
+                                    <span class="stat-value">8</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Win Rate:</span>
+                                    <span class="stat-value text-success">75%</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Profit Today:</span>
+                                    <span class="stat-value text-success">+$45.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="olymptrade" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-area me-2"></i>Olymp Trade Trading Robot</h2>
+                    <p class="text-muted">Manage your Olymp Trade automated trading settings and performance.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Olymp Trade Robot Status</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="robot-status active">
+                                    <i class="fas fa-robot"></i>
+                                    <h3>ACTIVE</h3>
+                                    <p>Olymp Trade trading robot is currently running</p>
+                                </div>
+                                <div class="robot-controls">
+                                    <button class="btn btn-danger me-2"><i class="fas fa-stop"></i> Stop Robot</button>
+                                    <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Today's Performance</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="trading-stat">
+                                    <span class="stat-label">Total Trades:</span>
+                                    <span class="stat-value">10</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Win Rate:</span>
+                                    <span class="stat-value text-success">80%</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Profit Today:</span>
+                                    <span class="stat-value text-success">+$72.30</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quotex" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-candlestick me-2"></i>Quotex Trading Robot</h2>
+                    <p class="text-muted">Manage your Quotex automated trading settings and performance.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Quotex Robot Status</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="robot-status" style="background: #fecaca; border: 2px solid #dc2626;">
+                                    <i class="fas fa-stop-circle" style="color: #dc2626;"></i>
+                                    <h3 style="color: #dc2626;">STOPPED</h3>
+                                    <p>Quotex trading robot is currently stopped</p>
+                                </div>
+                                <div class="robot-controls">
+                                    <button class="btn btn-success me-2"><i class="fas fa-play"></i> Start Robot</button>
+                                    <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Today's Performance</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="trading-stat">
+                                    <span class="stat-label">Total Trades:</span>
+                                    <span class="stat-value">0</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Win Rate:</span>
+                                    <span class="stat-value">-</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Profit Today:</span>
+                                    <span class="stat-value">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pocketoption" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-mobile-alt me-2"></i>Pocket Option Trading Robot</h2>
+                    <p class="text-muted">Manage your Pocket Option automated trading settings and performance.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Pocket Option Robot Status</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="robot-status active">
+                                    <i class="fas fa-robot"></i>
+                                    <h3>ACTIVE</h3>
+                                    <p>Pocket Option trading robot is currently running</p>
+                                </div>
+                                <div class="robot-controls">
+                                    <button class="btn btn-danger me-2"><i class="fas fa-stop"></i> Stop Robot</button>
+                                    <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Today's Performance</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="trading-stat">
+                                    <span class="stat-label">Total Trades:</span>
+                                    <span class="stat-value">18</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Win Rate:</span>
+                                    <span class="stat-value text-success">72%</span>
+                                </div>
+                                <div class="trading-stat">
+                                    <span class="stat-label">Profit Today:</span>
+                                    <span class="stat-value text-success">+$95.75</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
         </main>

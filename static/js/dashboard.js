@@ -24,10 +24,33 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
+            // Handle submenu toggle
+            if (this.classList.contains('menu-toggle')) {
+                const parentItem = this.closest('.has-submenu');
+                const isOpen = parentItem.classList.contains('open');
+                
+                // Close all other submenus
+                document.querySelectorAll('.has-submenu.open').forEach(item => {
+                    if (item !== parentItem) {
+                        item.classList.remove('open');
+                    }
+                });
+                
+                // Toggle current submenu
+                if (isOpen) {
+                    parentItem.classList.remove('open');
+                } else {
+                    parentItem.classList.add('open');
+                }
+                
+                return;
+            }
+            
             const targetSection = this.getAttribute('data-section');
             
             // Remove active class from all links
             sidebarLinks.forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
             
             // Add active class to clicked link
             this.classList.add('active');
@@ -49,6 +72,50 @@ document.addEventListener('DOMContentLoaded', function() {
             // Close sidebar on mobile after navigation
             if (window.innerWidth <= 991) {
                 // Hide sidebar on mobile/tablet after menu selection
+                if (sidebar) {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    sidebar.classList.add('hidden');
+                }
+                if (mainContent) {
+                    mainContent.style.marginLeft = '0';
+                }
+                if (sidebarToggle) {
+                    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            }
+        });
+    });
+    
+    // Handle submenu links
+    document.querySelectorAll('.submenu-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetSection = this.getAttribute('data-section');
+            
+            // Remove active class from all main links and submenu links
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
+            
+            // Add active class to clicked submenu link
+            this.classList.add('active');
+            
+            // Hide all content sections
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            const targetElement = document.getElementById(targetSection);
+            if (targetElement) {
+                targetElement.classList.add('active');
+            }
+            
+            // Update page title
+            updatePageTitle(targetSection);
+            
+            // Close sidebar on mobile after navigation
+            if (window.innerWidth <= 991) {
                 if (sidebar) {
                     sidebar.style.transform = 'translateX(-100%)';
                     sidebar.classList.add('hidden');

@@ -829,15 +829,8 @@
             // Priority order: Check overlapping sessions, New York > London > Tokyo > Sydney
             let currentSession = null;
             
-            if (utcHour >= 12 && utcHour < 21) {
-                // New York Session: 12:00 PM - 9:00 PM UTC
-                const localTime = convertUTCToLocal(12, 21);
-                currentSession = {
-                    name: 'New York Session',
-                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
-                    active: true
-                };
-            } else if (utcHour >= 7 && utcHour < 16) {
+            // Simple logic: check each session individually with proper time ranges
+            if (utcHour >= 7 && utcHour < 16) {
                 // London Session: 7:00 AM - 4:00 PM UTC
                 const localTime = convertUTCToLocal(7, 16);
                 currentSession = {
@@ -845,11 +838,11 @@
                     time: `${localTime.start} - ${localTime.end} (Local Time)`, 
                     active: true
                 };
-            } else if (utcHour >= 23 || utcHour < 8) {
-                // Tokyo Session: 11:00 PM - 8:00 AM UTC (crosses midnight)
-                const localTime = convertUTCToLocal(23, 8);
+            } else if (utcHour >= 12 && utcHour < 21) {
+                // New York Session: 12:00 PM - 9:00 PM UTC
+                const localTime = convertUTCToLocal(12, 21);
                 currentSession = {
-                    name: 'Tokyo Session', 
+                    name: 'New York Session',
                     time: `${localTime.start} - ${localTime.end} (Local Time)`,
                     active: true
                 };
@@ -861,8 +854,16 @@
                     time: `${localTime.start} - ${localTime.end} (Local Time)`,
                     active: true
                 };
+            } else if (utcHour >= 23 || utcHour < 8) {
+                // Tokyo Session: 11:00 PM - 8:00 AM UTC (crosses midnight)
+                const localTime = convertUTCToLocal(23, 8);
+                currentSession = {
+                    name: 'Tokyo Session', 
+                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
+                    active: true
+                };
             } else {
-                // Market is closed - between sessions
+                // Market is closed - between sessions (6-7 UTC and 8-9 UTC only)
                 currentSession = {
                     name: 'Market Closed',
                     time: 'No active trading session',

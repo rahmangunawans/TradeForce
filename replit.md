@@ -61,6 +61,7 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Updated trading session times to display in client's local timezone instead of UTC per user request
 - **August 8, 2025**: Successfully completed project migration from Replit Agent to Replit environment with PostgreSQL database configuration
 - **August 8, 2025**: Moved Trading Session Information from sidebar to main header area for better visibility and accessibility
+- **August 8, 2025**: Fixed trading session priority logic to properly display New York Session when overlapping with London Session (13-22 UTC prioritized over 8-17 UTC)
 
 ## System Architecture
 

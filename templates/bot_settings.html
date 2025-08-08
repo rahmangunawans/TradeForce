@@ -1245,24 +1245,23 @@
             }
             
             // Determine which session is currently active based on UTC hour
-            // Priority order: Check overlapping sessions, New York > London > Tokyo > Sydney
+            // Priority order for overlapping sessions: New York > London > Tokyo > Sydney
             let currentSession = null;
             
-            // Clear logic: check each session in sequence with NO overlaps
-            // UTC 9 = 9 AM UTC should be London Session (8-17 UTC)
-            console.log('Checking sessions for UTC hour:', utcHour);
+            console.log('*** UPDATED LOGIC *** Checking sessions for UTC hour:', utcHour);
             
-            if (utcHour >= 0 && utcHour < 8) {
-                // Tokyo Session: 11:00 PM previous day - 8:00 AM UTC
-                console.log('Tokyo Session (early morning)');
-                const localTime = convertUTCToLocal(23, 8);
+            // Check all sessions and prioritize overlapping ones
+            if (utcHour >= 13 && utcHour < 22) {
+                // New York Session: 1:00 PM - 10:00 PM UTC (Priority 1)
+                console.log('New York Session (afternoon/evening)');
+                const localTime = convertUTCToLocal(13, 22);
                 currentSession = {
-                    name: 'Tokyo Session', 
+                    name: 'New York Session',
                     time: `${localTime.start} - ${localTime.end} (Local Time)`,
                     active: true
                 };
             } else if (utcHour >= 8 && utcHour < 17) {
-                // London Session: 8:00 AM - 5:00 PM UTC
+                // London Session: 8:00 AM - 5:00 PM UTC (Priority 2)
                 console.log('London Session (morning/afternoon)');
                 const localTime = convertUTCToLocal(8, 17);
                 currentSession = {
@@ -1270,12 +1269,12 @@
                     time: `${localTime.start} - ${localTime.end} (Local Time)`, 
                     active: true
                 };
-            } else if (utcHour >= 13 && utcHour < 22) {
-                // New York Session: 1:00 PM - 10:00 PM UTC
-                console.log('New York Session (afternoon/evening)');
-                const localTime = convertUTCToLocal(13, 22);
+            } else if (utcHour >= 0 && utcHour < 8) {
+                // Tokyo Session: 11:00 PM previous day - 8:00 AM UTC
+                console.log('Tokyo Session (early morning)');
+                const localTime = convertUTCToLocal(23, 8);
                 currentSession = {
-                    name: 'New York Session',
+                    name: 'Tokyo Session', 
                     time: `${localTime.start} - ${localTime.end} (Local Time)`,
                     active: true
                 };
@@ -1312,6 +1311,9 @@
         // Update trading session info every second
         updateTradingSessionInfo();
         setInterval(updateTradingSessionInfo, 1000);
+        
+        // Force immediate refresh to ensure latest logic is applied
+        console.log('Trading session logic updated - forced refresh');
         
     </script>
 </body>

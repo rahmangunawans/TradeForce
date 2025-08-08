@@ -5,16 +5,90 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
+from dataclasses import dataclass
+from typing import Optional
 from iqoptionapi.stable_api import IQ_Option
 import time
 import threading
 from datetime import datetime, timedelta
 import json
 
+@dataclass
+class TradingBotConfig:
+    """Dataclass untuk konfigurasi trading bot yang sesuai dengan HTML form"""
+    # Account Configuration
+    broker_domain: str = 'iqoption.com'
+    iq_email: str = ''
+    iq_password: str = ''
+    account_type: str = 'demo'  # demo or real
+    
+    # Trading Configuration - SESUAI HTML FORM
+    trading_amount: float = 1.0  # Amount ($)
+    stop_win: float = 10.0       # Stop Win ($)
+    stop_loss: float = 10.0      # Stop Loss ($) 
+    step_martingale: int = 3     # Step Martingale
+    martingale_multiple: float = 2.2  # Multiple
+    
+    # Asset Configuration
+    asset: str = 'EURUSD'  # TIDAK ADA -OTC
+    
+    # Signal Configuration
+    signal_type: str = 'manual_input'  # Signal Type - HANYA MANUAL INPUT
+    signal_content: str = ''  # Signal content untuk manual input
+    
+    # Session Configuration (opsional)
+    start_time: str = '09:00'
+    end_time: str = '17:00'
+    timezone: str = 'UTC'
+    active_days: str = 'weekdays'
+    
+    def to_dict(self) -> dict:
+        """Convert dataclass to dictionary"""
+        return {
+            'broker_domain': self.broker_domain,
+            'iq_email': self.iq_email,
+            'iq_password': self.iq_password,
+            'account_type': self.account_type,
+            'trading_amount': self.trading_amount,
+            'stop_win': self.stop_win,
+            'stop_loss': self.stop_loss,
+            'step_martingale': self.step_martingale,
+            'martingale_multiple': self.martingale_multiple,
+            'asset': self.asset,
+            'signal_type': self.signal_type,
+            'signal_content': self.signal_content,
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'timezone': self.timezone,
+            'active_days': self.active_days
+        }
+    
+    @classmethod
+    def from_db_settings(cls, settings):
+        """Create config from database BotSetting object"""
+        return cls(
+            broker_domain=getattr(settings, 'broker_domain', 'iqoption.com'),
+            iq_email=getattr(settings, 'iq_email', ''),
+            iq_password='',  # Password tidak disimpan dalam config object
+            account_type=getattr(settings, 'account_type', 'demo'),
+            trading_amount=getattr(settings, 'trading_amount', 1.0),
+            stop_win=getattr(settings, 'stop_win', 10.0),
+            stop_loss=getattr(settings, 'stop_loss', 10.0),
+            step_martingale=getattr(settings, 'step_martingale', 3),
+            martingale_multiple=getattr(settings, 'martingale_multiple', 2.2),
+            asset=getattr(settings, 'asset', 'EURUSD'),
+            signal_type=getattr(settings, 'signal_type', 'manual_input'),
+            signal_content=getattr(settings, 'signal_content', ''),
+            start_time=getattr(settings, 'start_time', '09:00'),
+            end_time=getattr(settings, 'end_time', '17:00'),
+            timezone=getattr(settings, 'timezone', 'UTC'),
+            active_days=getattr(settings, 'active_days', 'weekdays')
+        )
+
 class IQTradingRobot:
-    def __init__(self, email, password):
+    def __init__(self, email: str, password: str, config: Optional[TradingBotConfig] = None):
         """
-        IQ Option Trading Robot - HANYA SIGNAL INPUT
+        IQ Option Trading Robot - MENGGUNAKAN DATACLASS CONFIG
         """
         self.email = email
         self.password = password
@@ -24,17 +98,11 @@ class IQTradingRobot:
         self.is_trading = False
         self.trading_thread = None
         
-        # HANYA PENGATURAN DASAR SIGNAL INPUT
-        self.trading_amount = 1.0
-        self.asset = "EURUSD"  # TIDAK ADA -OTC, asset standar
-        self.timeframe = 1  # 1 menit
+        # GUNAKAN DATACLASS CONFIG
+        self.config = config or TradingBotConfig()
+        self.config.iq_email = email  # Set email dalam config
         
-        # Stop Settings (sederhana)
-        self.stop_win = 10.0
-        self.stop_loss = 10.0
-        
-        # SIGNAL INPUT SETTINGS - INI SAJA YANG DIPAKAI
-        self.signal_content = ""
+        # SIGNAL INPUT SETTINGS - DARI CONFIG
         self.parsed_signals = []
         
         # Trade History
@@ -42,7 +110,7 @@ class IQTradingRobot:
         self.profit_total = 0
         self.start_balance = 0
         
-        print("🎯 SIGNAL INPUT TRADING ROBOT - VERSI SEDERHANA")
+        print("🎯 SIGNAL INPUT TRADING ROBOT - DENGAN DATACLASS CONFIG")
         print("📊 FOKUS: Manual Signal Input SAJA")
         print("=" * 50)
     
@@ -54,11 +122,11 @@ class IQTradingRobot:
         3. 2025-08-08 16:45:00,EURUSD,CALL,1 (full format)
         """
         self.parsed_signals = []
-        if not self.signal_content:
+        if not self.config.signal_content:
             print("❌ Tidak ada signal input")
             return
             
-        lines = self.signal_content.strip().split('\n')
+        lines = self.config.signal_content.strip().split('\n')
         
         for line_num, line in enumerate(lines, 1):
             line = line.strip().upper()
@@ -115,24 +183,24 @@ class IQTradingRobot:
     
     def configure_from_settings(self, settings):
         """
-        Konfigurasi dari database settings
+        Konfigurasi dari database settings menggunakan dataclass
         """
         if settings:
-            self.trading_amount = settings.trading_amount
-            self.stop_win = settings.stop_win
-            self.stop_loss = settings.stop_loss
-            self.asset = settings.asset
-            self.signal_content = settings.signal_content or ""
+            # Update config dari database settings
+            self.config = TradingBotConfig.from_db_settings(settings)
             
-            # Parse signal content
-            if self.signal_content:
+            # Parse signal content jika ada
+            if self.config.signal_content:
                 self.parse_signal_content()
             
-            print(f"⚙️ Konfigurasi:")
-            print(f"   Amount: ${self.trading_amount}")
-            print(f"   Asset: {self.asset}")
-            print(f"   Stop Win: ${self.stop_win}")
-            print(f"   Stop Loss: ${self.stop_loss}")
+            print(f"⚙️ Konfigurasi (dari HTML form):")
+            print(f"   Amount: ${self.config.trading_amount}")
+            print(f"   Stop Win: ${self.config.stop_win}")
+            print(f"   Stop Loss: ${self.config.stop_loss}")
+            print(f"   Step Martingale: {self.config.step_martingale}")
+            print(f"   Multiple: {self.config.martingale_multiple}")
+            print(f"   Signal Type: {self.config.signal_type}")
+            print(f"   Asset: {self.config.asset}")
             print(f"   Signals: {len(self.parsed_signals)}")
     
     def connect(self):
@@ -207,7 +275,7 @@ class IQTradingRobot:
     
     def place_order(self, direction, amount):
         """
-        Tempatkan order trading
+        Tempatkan order trading menggunakan config
         """
         if not self.api or not self.is_connected:
             print("❌ Tidak terhubung ke IQ Option")
@@ -216,10 +284,10 @@ class IQTradingRobot:
         try:
             expiration = 1  # 1 menit
             
-            print(f"📊 Trading: {direction.upper()} {self.asset} - ${amount}")
+            print(f"📊 Trading: {direction.upper()} {self.config.asset} - ${amount}")
             
             success, order_id = self.api.buy(
-                amount, self.asset, direction, expiration
+                amount, self.config.asset, direction, expiration
             )
             
             if success:
@@ -253,7 +321,7 @@ class IQTradingRobot:
                 print(f"🎉 WIN! Profit: ${profit:.2f} | Total: ${self.profit_total:.2f}")
                 return "win", profit
             else:
-                loss = self.trading_amount
+                loss = self.config.trading_amount
                 self.profit_total -= loss
                 print(f"😢 LOSS! Loss: ${loss:.2f} | Total: ${self.profit_total:.2f}")
                 return "loss", loss
@@ -267,8 +335,8 @@ class IQTradingRobot:
         TRADING LOOP SEDERHANA - HANYA SIGNAL INPUT
         """
         print("🚀 MULAI TRADING - SIGNAL INPUT ONLY")
-        print(f"📊 Asset: {self.asset}")
-        print(f"💰 Amount: ${self.trading_amount}")
+        print(f"📊 Asset: {self.config.asset}")
+        print(f"💰 Amount: ${self.config.trading_amount}")
         print("=" * 50)
         
         self.start_balance = self.balance
@@ -284,11 +352,11 @@ class IQTradingRobot:
                 except:
                     pass
                 
-                # Cek stop conditions
-                if self.profit_total >= self.stop_win:
+                # Cek stop conditions dari config
+                if self.profit_total >= self.config.stop_win:
                     print(f"🎉 STOP WIN! Profit: ${self.profit_total:.2f}")
                     break
-                if self.profit_total <= -self.stop_loss:
+                if self.profit_total <= -self.config.stop_loss:
                     print(f"❌ STOP LOSS! Loss: ${abs(self.profit_total):.2f}")
                     break
                 
@@ -297,9 +365,9 @@ class IQTradingRobot:
                 
                 if signal:
                     direction = signal['direction'].lower()
-                    print(f"🎯 TRADING: {direction.upper()} {self.asset}")
+                    print(f"🎯 TRADING: {direction.upper()} {self.config.asset}")
                     
-                    success, order_id = self.place_order(direction, self.trading_amount)
+                    success, order_id = self.place_order(direction, self.config.trading_amount)
                     
                     if success:
                         result, amount = self.wait_for_result(order_id)
@@ -307,9 +375,9 @@ class IQTradingRobot:
                         # Simpan history
                         trade_data = {
                             'timestamp': datetime.now().isoformat(),
-                            'asset': self.asset,
+                            'asset': self.config.asset,
                             'direction': direction,
-                            'amount': self.trading_amount,
+                            'amount': self.config.trading_amount,
                             'result': result,
                             'profit_loss': amount if result == 'win' else -amount
                         }
@@ -424,7 +492,7 @@ def main():
                         break
                     signals.append(signal)
                 
-                robot.signal_content = '\n'.join(signals)
+                robot.config.signal_content = '\n'.join(signals)
                 robot.parse_signal_content()
                 
             elif choice == "2":

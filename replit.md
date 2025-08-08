@@ -83,6 +83,8 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Created pure signal-input trading loop with Indonesian interface messages
 - **August 8, 2025**: Fixed critical signal parsing error for full format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME" - robot now correctly extracts direction and timeframe from all 3 supported formats
 - **August 8, 2025**: Fixed database model asset default from "EURUSD-OTC" to "EURUSD" for consistency with simplified robot configuration
+- **August 8, 2025**: Created TradingBotConfig dataclass for better configuration management - matches exactly with HTML form fields (Amount, Stop Win, Stop Loss, Step Martingale, Multiple, Signal Type, Asset)
+- **August 8, 2025**: Updated IQTradingRobot to use dataclass configuration ensuring complete consistency between HTML form and robot execution
 
 ## System Architecture
 

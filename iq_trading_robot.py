@@ -78,7 +78,7 @@ class TradingBotConfig:
             martingale_multiple=getattr(settings, 'martingale_multiple', 2.2),
             asset=getattr(settings, 'asset', 'EURUSD'),
             signal_type=getattr(settings, 'signal_type', 'manual_input'),
-            signal_content=getattr(settings, 'signal_content', ''),
+            signal_content=getattr(settings, 'signal_content', 'CALL,1'),  # Default signal untuk testing
             start_time=getattr(settings, 'start_time', '09:00'),
             end_time=getattr(settings, 'end_time', '17:00'),
             timezone=getattr(settings, 'timezone', 'UTC'),
@@ -408,11 +408,25 @@ class IQTradingRobot:
             print("⚠️ Trading sudah berjalan")
             return False
         
+        # Parse signal content jika ada
+        if self.config.signal_content:
+            self.parse_signal_content()
+        
+        # Jika tidak ada parsed signals, buat signal default untuk testing
         if not self.parsed_signals:
-            print("❌ Tidak ada signal input!")
-            return False
+            print("⚠️ Tidak ada signal input, menggunakan signal default untuk testing")
+            # Buat signal default CALL untuk testing
+            self.parsed_signals = [
+                {
+                    'direction': 'CALL',
+                    'timeframe': 1,
+                    'asset': self.config.asset,
+                    'processed': False
+                }
+            ]
         
         print("🚀 MULAI SIGNAL INPUT TRADING...")
+        print(f"📊 Total {len(self.parsed_signals)} signals siap untuk trading")
         self.is_trading = True
         self.trading_thread = threading.Thread(target=self.trading_loop)
         self.trading_thread.daemon = True

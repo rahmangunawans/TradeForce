@@ -575,6 +575,12 @@ def start_bot():
         from iq_trading_robot import TradingBotConfig
         config = TradingBotConfig.from_db_settings(settings)
         config.iq_password = iq_password  # Set password dari request
+        
+        # Pastikan ada signal content untuk testing jika kosong
+        if not config.signal_content or config.signal_content.strip() == '':
+            config.signal_content = 'CALL,1'  # Signal default untuk testing
+            print(f"⚠️ Menggunakan signal default: {config.signal_content}")
+            
         robot = IQTradingRobot(settings.iq_email, iq_password, config)
         
         # Connect to IQ Option

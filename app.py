@@ -228,6 +228,20 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    """Dashboard page for logged in users"""
+    # Get user statistics or any dashboard data here
+    user_stats = {
+        'total_trades': 0,
+        'active_packages': 0,
+        'profit_percentage': 0,
+        'account_balance': 0
+    }
+    
+    return render_template('dashboard.html', user_stats=user_stats, current_user=current_user)
+
 @app.route('/forgot-password', methods=['POST'])
 def forgot_password():
     try:

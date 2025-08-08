@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentSection && currentSection !== '') {
             try {
                 const activeLink = document.querySelector(`a[href="#${currentSection}"]`);
-                if (activeLink && activeLink.classList.contains('nav-link')) {
+                if (activeLink && activeLink.classList && activeLink.classList.contains('nav-link')) {
                     activeLink.classList.add('active');
                 }
             } catch (e) {

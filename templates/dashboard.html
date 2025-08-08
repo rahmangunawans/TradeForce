@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AUTO TRADE VIP</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg dashboard-navbar fixed-top">
+        <div class="container-fluid">
+            <!-- Brand Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV Logo" class="navbar-logo me-2">
+                <span class="brand-text">AUTO TRADE VIP</span>
+            </a>
+            
+            <!-- Top Right User Menu -->
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle user-dropdown-top" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="user-name ms-2">{{ current_user.name }}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><h6 class="dropdown-header">{{ current_user.email }}</h6></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h5><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h5>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#overview" data-section="overview">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#trading" data-section="trading">
+                            <i class="fas fa-robot"></i>
+                            <span>Trading Robot</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#packages" data-section="packages">
+                            <i class="fas fa-box"></i>
+                            <span>My Packages</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analytics" data-section="analytics">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings" data-section="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#support" data-section="support">
+                            <i class="fas fa-life-ring"></i>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-home me-1"></i>
+                    Back to Home
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-line me-2"></i>Dashboard Overview</h2>
+                    <p class="text-muted">Welcome back, {{ current_user.name }}! Here's your trading overview.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>{{ user_stats.total_trades }}</h3>
+                                <p>Total Trades</p>
+                                <span class="stats-change positive">+12%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>{{ user_stats.active_packages }}</h3>
+                                <p>Active Packages</p>
+                                <span class="stats-change positive">+2</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>{{ user_stats.profit_percentage }}%</h3>
+                                <p>Profit Rate</p>
+                                <span class="stats-change positive">+5.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h3>${{ user_stats.account_balance }}</h3>
+                                <p>Account Balance</p>
+                                <span class="stats-change positive">+$250</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4><i class="fas fa-history me-2"></i>Recent Trading Activity</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="activity-item">
+                                    <div class="activity-icon success">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Successful Trade - IQ Option</h5>
+                                        <p class="text-muted">EURUSD Buy order executed at 1.1250</p>
+                                        <small class="text-muted">2 hours ago</small>
+                                    </div>
+                                    <div class="activity-value positive">+$125.00</div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon success">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>Auto Trading Started</h5>
+                                        <p class="text-muted">Trading robot activated for Binomo</p>
+                                        <small class="text-muted">4 hours ago</small>
+                                    </div>
+                                    <div class="activity-value">Active</div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon info">
+                                        <i class="fas fa-download"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h5>MT4 Platform Updated</h5>
+                                        <p class="text-muted">MetaTrader 4 indicators synchronized</p>
+                                        <small class="text-muted">6 hours ago</small>
+                                    </div>
+                                    <div class="activity-value">Complete</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4><i class="fas fa-bell me-2"></i>Notifications</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="notification-item">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>Market volatility detected for EURUSD</p>
+                                        <small class="text-muted">15 minutes ago</small>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>Monthly subscription renewed successfully</p>
+                                        <small class="text-muted">2 days ago</small>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-info-circle text-info"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>New trading strategy available in VIP group</p>
+                                        <small class="text-muted">3 days ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trading Section -->
+            <section id="trading" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-robot me-2"></i>Trading Robot</h2>
+                    <p class="text-muted">Manage your automated trading settings and strategies.</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Robot Status</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="robot-status active">
+                                    <i class="fas fa-robot"></i>
+                                    <h3>ACTIVE</h3>
+                                    <p>Trading robot is currently running</p>
+                                </div>
+                                <div class="robot-controls">
+                                    <button class="btn btn-danger me-2">
+                                        <i class="fas fa-stop"></i> Stop Robot
+                                    </button>
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-cog"></i> Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h4>Active Strategies</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="strategy-item">
+                                    <h5>Binary Profit Strategy</h5>
+                                    <p class="text-muted">High-frequency trading on EURUSD</p>
+                                    <div class="strategy-status active">Active</div>
+                                </div>
+                                <div class="strategy-item">
+                                    <h5>Golden Moment Strategy</h5>
+                                    <p class="text-muted">Momentum-based trading</p>
+                                    <div class="strategy-status active">Active</div>
+                                </div>
+                                <div class="strategy-item">
+                                    <h5>Price Action Strategy</h5>
+                                    <p class="text-muted">Technical analysis based</p>
+                                    <div class="strategy-status paused">Paused</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Other sections can be added here -->
+            <section id="packages" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-box me-2"></i>My Packages</h2>
+                    <p class="text-muted">Manage your subscription packages and features.</p>
+                </div>
+                <!-- Package content here -->
+            </section>
+
+            <section id="analytics" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar me-2"></i>Analytics</h2>
+                    <p class="text-muted">Detailed performance analytics and reports.</p>
+                </div>
+                <!-- Analytics content here -->
+            </section>
+
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-cog me-2"></i>Settings</h2>
+                    <p class="text-muted">Configure your account and trading preferences.</p>
+                </div>
+                <!-- Settings content here -->
+            </section>
+
+            <section id="support" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-life-ring me-2"></i>Support</h2>
+                    <p class="text-muted">Get help and contact our support team.</p>
+                </div>
+                <!-- Support content here -->
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dashboard JS -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>

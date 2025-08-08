@@ -86,6 +86,12 @@
                         </a>
                     </li>
                     {% else %}
+                    <!-- Dashboard Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
                     <li class="nav-item dropdown user-dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="user-avatar me-2">
@@ -98,9 +104,10 @@
                                 <small class="text-muted">Selamat Datang</small><br>
                                 <strong>{{ current_user.name or current_user.email }}</strong>
                             </li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>
                             <li><a class="dropdown-item" href="#"><i class="fas fa-download me-2"></i>Download Robot</a></li>
                             <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
                             <li><hr class="dropdown-divider"></li>

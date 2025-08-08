@@ -789,8 +789,8 @@
             
             // Check if market is open (Monday 00:00 UTC to Friday 22:00 UTC)
             const isWeekend = utcDay === 0 || utcDay === 6; // Sunday or Saturday
-            const isFridayAfter22 = utcDay === 5 && utcHour >= 22; // Friday after 22:00 UTC
-            const isSundayBefore22 = utcDay === 0 && utcHour < 22; // Sunday before 22:00 UTC
+            const isFridayAfter22 = utcDay === 5 && realUTCHour >= 22; // Friday after 22:00 UTC
+            const isSundayBefore22 = utcDay === 0 && realUTCHour < 22; // Sunday before 22:00 UTC
             
             const marketOpen = !isWeekend && !isFridayAfter22 && !isSundayBefore22;
             

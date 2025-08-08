@@ -81,6 +81,8 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Changed default asset from "EURUSD-OTC" to "EURUSD" (removed OTC)
 - **August 8, 2025**: Removed all strategy variables (martingale_multiple, step_martingale, consecutive_losses, etc.)
 - **August 8, 2025**: Created pure signal-input trading loop with Indonesian interface messages
+- **August 8, 2025**: Fixed critical signal parsing error for full format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME" - robot now correctly extracts direction and timeframe from all 3 supported formats
+- **August 8, 2025**: Fixed database model asset default from "EURUSD-OTC" to "EURUSD" for consistency with simplified robot configuration
 
 ## System Architecture
 

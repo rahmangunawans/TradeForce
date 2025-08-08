@@ -71,7 +71,7 @@ class BotSetting(db.Model):
     step_martingale = db.Column(db.Integer, default=3)  # Number of martingale steps
     martingale_multiple = db.Column(db.Float, default=2.2)  # Martingale multiplier
     
-    asset = db.Column(db.String(50), default='EURUSD-OTC')
+    asset = db.Column(db.String(50), default='EURUSD')
     strategy = db.Column(db.String(50), default='martingale')
     signal_type = db.Column(db.String(100), default='manual_input')  # Signal source type - FOKUS HANYA SIGNAL INPUT
     signal_content = db.Column(db.Text)  # Content for manual signal input

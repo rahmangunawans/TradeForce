@@ -48,8 +48,10 @@ class IQTradingRobot:
     
     def parse_signal_content(self):
         """
-        Parse signal input yang sederhana:
-        Format: CALL atau PUT atau CALL,1 atau CALL,2
+        Parse signal input dengan 3 format:
+        1. CALL atau PUT (simple)
+        2. CALL,1 atau PUT,2 (dengan timeframe)
+        3. 2025-08-08 16:45:00,EURUSD,CALL,1 (full format)
         """
         self.parsed_signals = []
         if not self.signal_content:
@@ -64,13 +66,24 @@ class IQTradingRobot:
                 continue
                 
             try:
-                if ',' in line:
-                    parts = line.split(',')
+                parts = line.split(',')
+                direction = None
+                timeframe = 1
+                
+                if len(parts) == 1:
+                    # Format: CALL atau PUT
                     direction = parts[0].strip()
-                    timeframe = int(parts[1].strip()) if len(parts) > 1 else 1
+                elif len(parts) == 2:
+                    # Format: CALL,1 atau PUT,2
+                    direction = parts[0].strip()
+                    timeframe = int(parts[1].strip())
+                elif len(parts) == 4:
+                    # Format: 2025-08-08 16:45:00,EURUSD,CALL,1
+                    direction = parts[2].strip()  # CALL atau PUT ada di posisi ke-3
+                    timeframe = int(parts[3].strip()) if parts[3].strip().isdigit() else 1
                 else:
-                    direction = line.strip()
-                    timeframe = 1
+                    print(f"⚠️ Format signal salah: {line}")
+                    continue
                 
                 if direction not in ['CALL', 'PUT']:
                     print(f"⚠️ Signal salah: {line} (harus CALL atau PUT)")

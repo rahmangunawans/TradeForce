@@ -21,12 +21,37 @@
     <style>
         body {
             background: #f8fafc;
+            padding-top: 70px; /* Space for fixed header */
+        }
+        
+        .btn-back {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+        }
+        
+        .btn-back:hover {
+            background: #f1f5f9;
+            color: #00e676;
         }
         
         .bot-settings-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            padding-top: 1rem; /* Reduced since we have header padding on body */
         }
         
         .settings-card {
@@ -205,24 +230,43 @@
 </head>
 <body class="bg-light">
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #1e293b, #00e676);">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV Logo" style="height: 40px; margin-right: 10px;">
-                <strong>AUTO TRADE VIP</strong>
+    <!-- Top Header - Konsisten dengan Dashboard -->
+    <header class="top-header">
+        <div class="header-left">
+            <a href="{{ url_for('dashboard') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
             </a>
-            
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="{{ url_for('dashboard') }}">
-                    <i class="fas fa-dashboard"></i> Dashboard
-                </a>
-                <a class="nav-link" href="{{ url_for('logout') }}">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+            <div class="header-brand">
+                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV Logo" class="header-logo">
+                <span class="header-title">AUTO TRADE VIP - IQ Option Bot</span>
             </div>
         </div>
-    </nav>
+        <div class="header-right">
+            <div class="header-notifications">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">0</span>
+                </button>
+            </div>
+            <div class="header-user">
+                <div class="user-dropdown">
+                    <button class="user-btn" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ current_user.name }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">{{ current_user.email }}</li>
+                        <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="fas fa-dashboard me-2"></i>Dashboard</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
 
     <div class="bot-settings-container">
         

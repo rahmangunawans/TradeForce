@@ -47,6 +47,103 @@
             color: #00e676;
         }
         
+        /* Signal Input Styles */
+        .signal-input-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            background: #f8fafc;
+            margin-top: 1rem;
+        }
+        
+        .drag-drop-zone {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        .drag-drop-zone:hover,
+        .drag-drop-zone.drag-over {
+            border-color: #00e676;
+            background: #f0fff4;
+        }
+        
+        .drag-drop-icon {
+            font-size: 3rem;
+            color: #a0aec0;
+            margin-bottom: 1rem;
+        }
+        
+        .drag-drop-text {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin: 0;
+        }
+        
+        .drag-drop-subtext {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .signal-content-box {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .signal-content-header {
+            padding: 1rem;
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .signal-content-header .form-label {
+            margin: 0;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .btn-clear-signals {
+            background: none;
+            border: none;
+            color: #e53e3e;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-clear-signals:hover {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        
+        .signal-textarea {
+            border: none;
+            border-radius: 0;
+            resize: vertical;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .signal-textarea:focus {
+            box-shadow: none;
+            border-color: transparent;
+        }
+        
         .bot-settings-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -859,10 +956,57 @@
                                     SIGNAL TRADINGVIEW [NEXT CANDLE]
                                 </option>
                                 <option value="manual_input" {% if settings and settings.signal_type == 'manual_input' %}selected{% endif %}>
-                                    SIGNAL INPUT (2022-06-19 19:09:00,EURUSD,CALL OR PUT,1(TIMEFRAME))
+                                    SIGNAL INPUT (2022-06-19 19:09:00,EURUSD,CALL,1)
                                 </option>
                             </select>
                             <small class="form-text text-muted">Choose your signal source for automated trading</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Signal Input File Upload Section (shows when manual_input is selected) -->
+                <div class="row" id="signalInputSection" style="display: none;">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-file-upload me-2"></i>Signal Input File
+                            </label>
+                            <div class="signal-input-container">
+                                <!-- Drag & Drop Zone -->
+                                <div class="drag-drop-zone" id="dragDropZone">
+                                    <div class="drag-drop-content">
+                                        <i class="fas fa-cloud-upload-alt drag-drop-icon"></i>
+                                        <p class="drag-drop-text">Drag & drop your signal file here</p>
+                                        <p class="drag-drop-subtext">or click to browse</p>
+                                        <input type="file" id="signalFileInput" accept=".txt,.csv,.json" style="display: none;">
+                                    </div>
+                                </div>
+                                
+                                <!-- Signal Content Box -->
+                                <div class="signal-content-box" id="signalContentBox">
+                                    <div class="signal-content-header">
+                                        <label for="signalContent" class="form-label">
+                                            <i class="fas fa-edit me-2"></i>Signal Content
+                                        </label>
+                                        <button type="button" class="btn-clear-signals" id="clearSignalsBtn">
+                                            <i class="fas fa-trash"></i>Clear
+                                        </button>
+                                    </div>
+                                    <textarea 
+                                        class="form-control signal-textarea" 
+                                        id="signalContent" 
+                                        name="signal_content"
+                                        placeholder="Paste or edit your signals here. Example format:
+2022-06-19 19:09:00,EURUSD,CALL,1
+2022-06-19 19:15:00,GBPUSD,PUT,1
+2022-06-19 19:20:00,USDJPY,CALL,1"
+                                        rows="8"
+                                    ></textarea>
+                                    <small class="form-text text-muted">
+                                        Format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
+                                    </small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -951,7 +1095,144 @@
         // Initialize clean session on page load
         document.addEventListener('DOMContentLoaded', function() {
             clearBotSession();
+            initializeSignalInputFeature();
         });
+        
+        // Signal Input Feature Functions
+        function initializeSignalInputFeature() {
+            const signalTypeSelect = document.getElementById('signalType');
+            const signalInputSection = document.getElementById('signalInputSection');
+            const dragDropZone = document.getElementById('dragDropZone');
+            const signalFileInput = document.getElementById('signalFileInput');
+            const signalContent = document.getElementById('signalContent');
+            const clearSignalsBtn = document.getElementById('clearSignalsBtn');
+            
+            // Show/hide signal input section based on selection
+            function toggleSignalInputSection() {
+                if (signalTypeSelect.value === 'manual_input') {
+                    signalInputSection.style.display = 'block';
+                } else {
+                    signalInputSection.style.display = 'none';
+                }
+            }
+            
+            // Initial check
+            toggleSignalInputSection();
+            
+            // Listen for signal type changes
+            signalTypeSelect.addEventListener('change', toggleSignalInputSection);
+            
+            // Drag & Drop functionality
+            dragDropZone.addEventListener('click', () => {
+                signalFileInput.click();
+            });
+            
+            dragDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dragDropZone.classList.add('drag-over');
+            });
+            
+            dragDropZone.addEventListener('dragleave', () => {
+                dragDropZone.classList.remove('drag-over');
+            });
+            
+            dragDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dragDropZone.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files[0]);
+                }
+            });
+            
+            // File input change
+            signalFileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+            
+            // Clear signals button
+            clearSignalsBtn.addEventListener('click', () => {
+                signalContent.value = '';
+                signalFileInput.value = '';
+            });
+            
+            // Handle file upload
+            function handleFileUpload(file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    
+                    // Process the content based on file type
+                    let processedContent = content;
+                    
+                    if (file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
+                        // Handle CSV/TXT files - assume they're already in correct format or close to it
+                        processedContent = content.trim();
+                    } else if (file.name.endsWith('.json')) {
+                        try {
+                            // Try to parse JSON and convert to our format
+                            const jsonData = JSON.parse(content);
+                            processedContent = convertJsonToSignalFormat(jsonData);
+                        } catch (err) {
+                            alert('Invalid JSON file format');
+                            return;
+                        }
+                    }
+                    
+                    // Append to existing content if there is any
+                    if (signalContent.value.trim()) {
+                        signalContent.value += '\n' + processedContent;
+                    } else {
+                        signalContent.value = processedContent;
+                    }
+                    
+                    // Show success message
+                    showNotification('File uploaded successfully!', 'success');
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            // Convert JSON to signal format (if needed)
+            function convertJsonToSignalFormat(jsonData) {
+                if (Array.isArray(jsonData)) {
+                    return jsonData.map(signal => {
+                        // Assume JSON has properties like: timestamp, pair, direction, timeframe
+                        return `${signal.timestamp || signal.time},${signal.pair || signal.symbol},${signal.direction || signal.type},${signal.timeframe || signal.expiry || 1}`;
+                    }).join('\n');
+                }
+                return jsonData.toString();
+            }
+            
+            // Show notification helper
+            function showNotification(message, type) {
+                // Create a simple notification
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+                notification.style.cssText = `
+                    top: 20px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 250px;
+                    border-radius: 8px;
+                `;
+                notification.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    ${message}
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        }
 
 
         // Test Connection

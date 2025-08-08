@@ -62,6 +62,10 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Successfully completed project migration from Replit Agent to Replit environment with PostgreSQL database configuration
 - **August 8, 2025**: Moved Trading Session Information from sidebar to main header area for better visibility and accessibility
 - **August 8, 2025**: Fixed trading session priority logic to properly display New York Session when overlapping with London Session (13-22 UTC prioritized over 8-17 UTC)
+- **August 8, 2025**: Updated Signal Type example format from "CALL OR PUT" to "CALL,1" format per user request
+- **August 8, 2025**: Added professional drag & drop file upload functionality for signal input feature
+- **August 8, 2025**: Implemented signal content textarea with monospace font and CSV/TXT/JSON file support
+- **August 8, 2025**: Added clear signals functionality and automatic file content processing with notifications
 
 ## System Architecture
 

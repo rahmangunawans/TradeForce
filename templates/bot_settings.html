@@ -299,32 +299,36 @@
                         </div>
                     </div>
                     
-                    <!-- Trading Session Information - Moved closer to header -->
-                    <div class="section-divider">
-                        <h5><i class="fas fa-clock me-2"></i>Trading Session Information</h5>
-                        <p class="text-muted">Current forex market session status</p>
-                        
-                        <!-- Current Market Status -->
-                        <div class="alert alert-info alert-custom mb-3">
-                            <h6><i class="fas fa-info-circle me-2"></i>Current Market Status</h6>
-                            <p class="mb-1"><strong>Current Time (UTC):</strong> <span id="currentTime">Loading...</span></p>
-                            <p class="mb-1"><strong>Local Time:</strong> <span id="localTime">Loading...</span></p>
-                            <p class="mb-0"><strong>Market Status:</strong> <span id="marketStatus" class="badge bg-success">Market Open</span></p>
-                            <p class="mb-0 mt-2"><strong>Timezone:</strong> <span id="userTimezone">Loading...</span></p>
+
+                </div>
+
+                <!-- Trading Session Information Section -->
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <h2><i class="fas fa-clock me-3"></i>Trading Session Information</h2>
+                        <p>Current forex market session status</p>
+                    </div>
+                    
+                    <!-- Current Market Status -->
+                    <div class="alert alert-info alert-custom mb-3">
+                        <h6><i class="fas fa-info-circle me-2"></i>Current Market Status</h6>
+                        <p class="mb-1"><strong>Current Time (UTC):</strong> <span id="currentTime">Loading...</span></p>
+                        <p class="mb-1"><strong>Local Time:</strong> <span id="localTime">Loading...</span></p>
+                        <p class="mb-0"><strong>Market Status:</strong> <span id="marketStatus" class="badge bg-success">Market Open</span></p>
+                        <p class="mb-0 mt-2"><strong>Timezone:</strong> <span id="userTimezone">Loading...</span></p>
+                    </div>
+                    
+                    <!-- Current Trading Session -->
+                    <div class="card border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Current Trading Session</h6>
                         </div>
-                        
-                        <!-- Current Trading Session -->
-                        <div class="card border-primary">
-                            <div class="card-header bg-primary text-white">
-                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Current Trading Session</h6>
-                            </div>
-                            <div class="card-body text-center">
-                                <div id="currentSession">
-                                    <h5 class="mb-2" id="activeSessionName">Loading...</h5>
-                                    <p class="mb-2" id="activeSessionTime">Checking current session...</p>
-                                    <div class="session-status" id="activeSessionStatus">
-                                        <span class="badge bg-secondary">Calculating...</span>
-                                    </div>
+                        <div class="card-body text-center">
+                            <div id="currentSession">
+                                <h5 class="mb-2" id="activeSessionName">Loading...</h5>
+                                <p class="mb-2" id="activeSessionTime">Checking current session...</p>
+                                <div class="session-status" id="activeSessionStatus">
+                                    <span class="badge bg-secondary">Calculating...</span>
                                 </div>
                             </div>
                         </div>

@@ -400,18 +400,6 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="strategy" class="form-label">
-                                <i class="fas fa-brain me-1"></i>Strategy
-                            </label>
-                            <select class="form-control" id="strategy" name="strategy">
-                                <option value="martingale" {% if settings and settings.strategy == 'martingale' %}selected{% endif %}>Martingale</option>
-                                <option value="fixed" {% if settings and settings.strategy == 'fixed' %}selected{% endif %}>Fixed Amount</option>
-                            </select>
-                            <small class="form-text text-muted">Trading strategy</small>
-                        </div>
-                    </div>
                 </div>
                 
                 <!-- Signal Type Feature -->
@@ -445,7 +433,7 @@
                 
                 <!-- Martingale Settings -->
                 <div class="row" id="martingaleSettings">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="stepMartingale" class="form-label">
                                 <i class="fas fa-step-forward me-1"></i>Step Martingale
@@ -457,7 +445,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="martingaleMultiple" class="form-label">
                                 <i class="fas fa-times me-1"></i>Multiple
@@ -469,45 +457,8 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="asset" class="form-label">
-                                <i class="fas fa-coins me-1"></i>Asset
-                            </label>
-                            <select class="form-control" id="asset" name="asset">
-                                <option value="EURUSD-OTC" {% if settings and settings.asset == 'EURUSD-OTC' %}selected{% endif %}>EUR/USD (OTC)</option>
-                                <option value="GBPUSD-OTC" {% if settings and settings.asset == 'GBPUSD-OTC' %}selected{% endif %}>GBP/USD (OTC)</option>
-                                <option value="USDJPY-OTC" {% if settings and settings.asset == 'USDJPY-OTC' %}selected{% endif %}>USD/JPY (OTC)</option>
-                                <option value="AUDUSD-OTC" {% if settings and settings.asset == 'AUDUSD-OTC' %}selected{% endif %}>AUD/USD (OTC)</option>
-                                <option value="USDCAD-OTC" {% if settings and settings.asset == 'USDCAD-OTC' %}selected{% endif %}>USD/CAD (OTC)</option>
-                                <option value="NZDUSD-OTC" {% if settings and settings.asset == 'NZDUSD-OTC' %}selected{% endif %}>NZD/USD (OTC)</option>
-                            </select>
-                            <small class="form-text text-muted">Trading pair</small>
-                        </div>
-                    </div>
                 </div>
                 
-                <!-- Advanced Settings Toggle -->
-                <div class="text-center mb-3">
-                    <button type="button" class="btn btn-outline-primary" id="toggleAdvanced">
-                        <i class="fas fa-cog me-2"></i>Show Advanced Settings
-                    </button>
-                </div>
-                
-                <!-- Advanced Settings -->
-                <div class="advanced-settings" id="advancedSettings">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="maxLosses" class="form-label">Max Consecutive Losses</label>
-                                <input type="number" class="form-control" id="maxLosses" name="max_consecutive_losses" 
-                                       value="{% if settings %}{{ settings.max_consecutive_losses }}{% else %}3{% endif %}" 
-                                       min="1" max="10">
-                                <small class="form-text text-muted">Bot will stop after this many consecutive losses</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Action Buttons -->
                 <div class="d-flex gap-3 justify-content-center mt-4">
@@ -557,39 +508,12 @@
         const testConnectionBtn = document.getElementById('testConnectionBtn');
         const startBotBtn = document.getElementById('startBotBtn');
         const stopBotBtn = document.getElementById('stopBotBtn');
-        const toggleAdvancedBtn = document.getElementById('toggleAdvanced');
-        const advancedSettings = document.getElementById('advancedSettings');
         const statusIndicator = document.getElementById('statusIndicator');
         const statusText = document.getElementById('statusText');
         const balanceInfo = document.getElementById('balanceInfo');
         const balanceAmount = document.getElementById('balanceAmount');
         const accountTypeBadge = document.getElementById('accountTypeBadge');
 
-        // Toggle Advanced Settings
-        toggleAdvancedBtn.addEventListener('click', function() {
-            advancedSettings.classList.toggle('show-advanced');
-            const isVisible = advancedSettings.classList.contains('show-advanced');
-            this.innerHTML = isVisible ? 
-                '<i class="fas fa-cog me-2"></i>Hide Advanced Settings' : 
-                '<i class="fas fa-cog me-2"></i>Show Advanced Settings';
-        });
-        
-        // Toggle Martingale Settings based on Strategy
-        const strategySelect = document.getElementById('strategy');
-        const martingaleSettings = document.getElementById('martingaleSettings');
-        
-        function toggleMartingaleSettings() {
-            if (strategySelect.value === 'martingale') {
-                martingaleSettings.style.display = 'block';
-            } else {
-                martingaleSettings.style.display = 'none';
-            }
-        }
-        
-        strategySelect.addEventListener('change', toggleMartingaleSettings);
-        
-        // Initialize martingale settings visibility
-        toggleMartingaleSettings();
 
         // Test Connection
         testConnectionBtn.addEventListener('click', function() {

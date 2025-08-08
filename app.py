@@ -370,10 +370,7 @@ def save_bot_settings():
         settings.step_martingale = int(data.get('step_martingale', 3))
         settings.martingale_multiple = float(data.get('martingale_multiple', 2.2))
         
-        settings.asset = data.get('asset', 'EURUSD-OTC')
-        settings.strategy = data.get('strategy', 'martingale')
         settings.signal_type = data.get('signal_type', 'mt4_next_signal')
-        settings.max_consecutive_losses = int(data.get('max_consecutive_losses', 3))
         
         db.session.add(settings)
         db.session.commit()
@@ -404,8 +401,6 @@ def test_connection():
         test_robot.stop_loss = float(data.get('stop_loss', 10.0))
         test_robot.step_martingale = int(data.get('step_martingale', 3))
         test_robot.martingale_multiple = float(data.get('martingale_multiple', 2.2))
-        test_robot.asset = data.get('asset', 'EURUSD-OTC')
-        test_robot.strategy = data.get('strategy', 'martingale')
         test_robot.signal_type = data.get('signal_type', 'mt4_next_signal')
         
         # Try to connect

@@ -9,6 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
     
+    // Check if required elements exist
+    if (!sidebarToggle || !sidebar || !mainContent) {
+        console.error('Dashboard elements not found:', {
+            sidebarToggle: !!sidebarToggle,
+            sidebar: !!sidebar,
+            mainContent: !!mainContent
+        });
+        return;
+    }
+    
     // Handle sidebar navigation
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -37,8 +47,12 @@ document.addEventListener('DOMContentLoaded', function() {
             updatePageTitle(targetSection);
             
             // Close sidebar on mobile after navigation
-            if (window.innerWidth <= 768) {
-                toggleSidebar();
+            if (window.innerWidth <= 991) {
+                // Hide sidebar on mobile/tablet after menu selection
+                sidebar.style.transform = 'translateX(-100%)';
+                sidebar.classList.add('hidden');
+                mainContent.style.marginLeft = '0';
+                sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
             }
         });
     });
@@ -49,23 +63,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function toggleSidebar() {
-        if (sidebar.style.transform === 'translateX(-100%)') {
+        const isHidden = sidebar.style.transform === 'translateX(-100%)' || 
+                        getComputedStyle(sidebar).transform === 'matrix(1, 0, 0, 1, -280, 0)' ||
+                        getComputedStyle(sidebar).transform === 'matrix(1, 0, 0, 1, -260, 0)' ||
+                        sidebar.classList.contains('hidden');
+        
+        if (isHidden) {
+            // Show sidebar
             sidebar.style.transform = 'translateX(0)';
-            mainContent.style.marginLeft = '280px';
+            sidebar.classList.remove('hidden');
+            if (window.innerWidth > 991) {
+                mainContent.style.marginLeft = '280px';
+            }
+            sidebarToggle.innerHTML = '<i class="fas fa-times"></i>';
         } else {
+            // Hide sidebar
             sidebar.style.transform = 'translateX(-100%)';
+            sidebar.classList.add('hidden');
             mainContent.style.marginLeft = '0';
+            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
         }
     }
     
     // ===== RESPONSIVE HANDLING ===== 
     function handleResize() {
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 991) {
+            // Mobile/tablet view - hide sidebar by default
             sidebar.style.transform = 'translateX(-100%)';
+            sidebar.classList.add('hidden');
             mainContent.style.marginLeft = '0';
+            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
         } else {
+            // Desktop view - show sidebar
             sidebar.style.transform = 'translateX(0)';
+            sidebar.classList.remove('hidden');
             mainContent.style.marginLeft = '280px';
+            sidebarToggle.innerHTML = '<i class="fas fa-times"></i>';
         }
     }
     

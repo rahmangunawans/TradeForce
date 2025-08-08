@@ -89,6 +89,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle submenu links
     document.querySelectorAll('.submenu-link').forEach(link => {
         link.addEventListener('click', function(e) {
+            // Skip preventDefault if the link has an actual href (like bot-settings)
+            if (this.href && this.href !== window.location.href + '#' && !this.getAttribute('data-section')) {
+                // Let the browser handle the navigation normally
+                return;
+            }
+            
             e.preventDefault();
             
             const targetSection = this.getAttribute('data-section');

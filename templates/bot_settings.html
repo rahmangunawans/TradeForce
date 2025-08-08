@@ -956,7 +956,7 @@
                                     SIGNAL TRADINGVIEW [NEXT CANDLE]
                                 </option>
                                 <option value="manual_input" {% if settings and settings.signal_type == 'manual_input' %}selected{% endif %}>
-                                    SIGNAL INPUT (2022-06-19 19:09:00,EURUSD,CALL,1)
+                                    SIGNAL INPUT (CALL,1 atau CALL atau format lengkap)
                                 </option>
                             </select>
                             <small class="form-text text-muted">Choose your signal source for automated trading</small>
@@ -996,14 +996,22 @@
                                         class="form-control signal-textarea" 
                                         id="signalContent" 
                                         name="signal_content"
-                                        placeholder="Paste or edit your signals here. Example format:
-2022-06-19 19:09:00,EURUSD,CALL,1
-2022-06-19 19:15:00,GBPUSD,PUT,1
-2022-06-19 19:20:00,USDJPY,CALL,1"
+                                        placeholder="Contoh format yang didukung:
+
+CALL,1
+PUT,1
+CALL
+
+Atau format lengkap:
+2025-08-08 16:30:00,EURUSD,CALL,1
+2025-08-08 16:35:00,GBPUSD,PUT,1"
                                         rows="8"
                                     ></textarea>
                                     <small class="form-text text-muted">
-                                        Format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
+                                        <strong>3 Format yang didukung:</strong><br>
+                                        • <code>CALL</code> atau <code>PUT</code> (sederhana, eksekusi segera)<br>
+                                        • <code>CALL,1</code> atau <code>PUT,1</code> (dengan timeframe menit)<br>
+                                        • <code>2025-08-08 16:30:00,EURUSD,CALL,1</code> (format lengkap dengan waktu dan pair)
                                     </small>
                                 </div>
                             </div>

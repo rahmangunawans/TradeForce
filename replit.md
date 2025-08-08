@@ -67,6 +67,9 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Implemented signal content textarea with monospace font and CSV/TXT/JSON file support
 - **August 8, 2025**: Added clear signals functionality and automatic file content processing with notifications
 - **August 8, 2025**: Fixed critical start bot functionality by correcting JavaScript ID selector mismatch (iqPassword vs iq_password) - Bot can now start successfully
+- **August 8, 2025**: Enhanced signal processing to support multiple formats: simple format "CALL,1" or "CALL", and full format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME" 
+- **August 8, 2025**: Fixed trading signal execution issue - bot now recognizes and executes signals immediately for manual input instead of waiting for specific timestamps
+- **August 8, 2025**: Updated bot settings UI to show all 3 supported signal formats with examples and clear documentation
 
 ## System Architecture
 

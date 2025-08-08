@@ -58,13 +58,18 @@ class IQTradingRobot:
     
     def parse_signal_content(self):
         """
-        Parse signal content in format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
+        Parse signal content in multiple formats:
+        1. Full format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
+        2. Simple format: CALL/PUT,TIMEFRAME (uses current asset and immediate execution)
+        3. Very simple: CALL or PUT (uses current asset, 1 minute timeframe, immediate execution)
         """
         self.parsed_signals = []
         if not self.signal_content:
             return
             
         lines = self.signal_content.strip().split('\n')
+        signal_delay = 0  # For immediate execution with slight delays
+        
         for line_num, line in enumerate(lines, 1):
             line = line.strip()
             if not line or line.startswith('#'):  # Skip empty lines and comments
@@ -72,31 +77,54 @@ class IQTradingRobot:
                 
             try:
                 parts = [part.strip() for part in line.split(',')]
+                
+                # Handle different formats
                 if len(parts) >= 4:
+                    # Full format: YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME
                     timestamp_str, pair, direction, timeframe = parts[0], parts[1], parts[2], parts[3]
                     
                     # Parse timestamp
                     signal_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
-                    
-                    # Validate direction
-                    direction = direction.upper()
-                    if direction not in ['CALL', 'PUT']:
-                        print(f"⚠️ Invalid direction '{direction}' on line {line_num}, skipping")
-                        continue
-                    
-                    # Parse timeframe
+                    pair = pair.upper()
                     timeframe = int(timeframe)
                     
-                    signal = {
-                        'time': signal_time,
-                        'pair': pair.upper(),
-                        'direction': direction,
-                        'timeframe': timeframe,
-                        'processed': False
-                    }
-                    self.parsed_signals.append(signal)
+                elif len(parts) >= 2:
+                    # Simple format: CALL/PUT,TIMEFRAME
+                    direction, timeframe = parts[0], parts[1]
+                    pair = self.asset  # Use current configured asset
+                    # Execute immediately with small delay
+                    signal_time = datetime.now() + timedelta(seconds=signal_delay)
+                    signal_delay += 30  # Add 30 seconds delay between signals
+                    timeframe = int(timeframe)
+                    
+                elif len(parts) == 1:
+                    # Very simple format: CALL or PUT
+                    direction = parts[0]
+                    pair = self.asset  # Use current configured asset
+                    timeframe = 1  # Default 1 minute
+                    # Execute immediately with small delay
+                    signal_time = datetime.now() + timedelta(seconds=signal_delay)
+                    signal_delay += 30  # Add 30 seconds delay between signals
+                    
                 else:
                     print(f"⚠️ Invalid signal format on line {line_num}: {line}")
+                    continue
+                
+                # Validate direction
+                direction = direction.upper()
+                if direction not in ['CALL', 'PUT']:
+                    print(f"⚠️ Invalid direction '{direction}' on line {line_num}, skipping")
+                    continue
+                
+                signal = {
+                    'time': signal_time,
+                    'pair': pair.upper(),
+                    'direction': direction,
+                    'timeframe': timeframe,
+                    'processed': False
+                }
+                self.parsed_signals.append(signal)
+                print(f"📊 Signal {line_num}: {direction} {pair} at {signal_time.strftime('%H:%M:%S')} ({timeframe}m)")
                     
             except ValueError as e:
                 print(f"⚠️ Error parsing line {line_num}: {line} - {e}")
@@ -112,12 +140,16 @@ class IQTradingRobot:
             
         current_time = datetime.now()
         
-        # Find signals that are ready to be executed (time has passed)
+        # Find signals that are ready to be executed (time has passed or very close)
         for i, signal in enumerate(self.parsed_signals):
-            if not signal['processed'] and signal['time'] <= current_time:
-                # Mark as processed and return
-                signal['processed'] = True
-                return signal
+            if not signal['processed']:
+                time_diff = (signal['time'] - current_time).total_seconds()
+                # Execute if time has passed or within 5 seconds
+                if time_diff <= 5:
+                    # Mark as processed and return
+                    signal['processed'] = True
+                    print(f"🎯 Executing signal: {signal['direction']} {signal['pair']} (scheduled for {signal['time'].strftime('%H:%M:%S')})")
+                    return signal
                 
         return None
     

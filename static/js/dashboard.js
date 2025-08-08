@@ -1,10 +1,13 @@
-// Dashboard JavaScript - ATV Theme Consistent
+// Dashboard JavaScript - Professional Clean Design
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard loaded successfully!');
     
     // ===== SIDEBAR NAVIGATION ===== 
-    const sidebarLinks = document.querySelectorAll('.nav-menu .nav-link');
+    const sidebarLinks = document.querySelectorAll('.menu-link');
     const contentSections = document.querySelectorAll('.content-section');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
     
     // Handle sidebar navigation
     sidebarLinks.forEach(link => {
@@ -32,8 +35,45 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update page title
             updatePageTitle(targetSection);
+            
+            // Close sidebar on mobile after navigation
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
         });
     });
+    
+    // ===== SIDEBAR TOGGLE ===== 
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+    
+    function toggleSidebar() {
+        if (sidebar.style.transform === 'translateX(-100%)') {
+            sidebar.style.transform = 'translateX(0)';
+            mainContent.style.marginLeft = '280px';
+        } else {
+            sidebar.style.transform = 'translateX(-100%)';
+            mainContent.style.marginLeft = '0';
+        }
+    }
+    
+    // ===== RESPONSIVE HANDLING ===== 
+    function handleResize() {
+        if (window.innerWidth <= 768) {
+            sidebar.style.transform = 'translateX(-100%)';
+            mainContent.style.marginLeft = '0';
+        } else {
+            sidebar.style.transform = 'translateX(0)';
+            mainContent.style.marginLeft = '280px';
+        }
+    }
+    
+    // Initial check
+    handleResize();
+    
+    // Listen for resize events
+    window.addEventListener('resize', handleResize);
     
     // Update page title based on active section
     function updatePageTitle(section) {
@@ -273,112 +313,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Start real-time updates simulation
     simulateRealTimeUpdates();
     
-    // ===== MOBILE RESPONSIVE SIDEBAR =====
-    function initMobileMenu() {
-        // Create mobile menu toggle button if not exists
-        let mobileToggle = document.querySelector('.mobile-toggle');
-        
-        if (window.innerWidth <= 991) {
-            if (!mobileToggle) {
-                mobileToggle = document.createElement('button');
-                mobileToggle.className = 'mobile-toggle';
-                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                mobileToggle.setAttribute('aria-label', 'Toggle Sidebar');
-                document.body.appendChild(mobileToggle);
-            }
-            
-            // Remove any existing event listeners
-            const newToggle = mobileToggle.cloneNode(true);
-            mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
-            mobileToggle = newToggle;
-            
-            mobileToggle.addEventListener('click', function() {
-                const sidebar = document.querySelector('.modern-sidebar');
-                let overlay = document.querySelector('.sidebar-overlay');
-                
-                // Toggle sidebar
-                sidebar.classList.toggle('mobile-open');
-                this.classList.toggle('active');
-                
-                // Update button icon
-                const icon = this.querySelector('i');
-                if (sidebar.classList.contains('mobile-open')) {
-                    icon.className = 'fas fa-times';
-                    
-                    // Create overlay if doesn't exist
-                    if (!overlay) {
-                        overlay = document.createElement('div');
-                        overlay.className = 'sidebar-overlay';
-                        document.body.appendChild(overlay);
-                    }
-                    
-                    overlay.classList.add('show');
-                    
-                    // Close sidebar when clicking overlay
-                    overlay.addEventListener('click', closeSidebar);
-                } else {
-                    icon.className = 'fas fa-bars';
-                    if (overlay) {
-                        overlay.classList.remove('show');
-                        setTimeout(() => {
-                            if (overlay && overlay.parentNode) {
-                                overlay.remove();
-                            }
-                        }, 300);
-                    }
-                }
-            });
-            
-            function closeSidebar() {
-                const sidebar = document.querySelector('.modern-sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                const toggle = document.querySelector('.mobile-toggle');
-                
-                sidebar.classList.remove('mobile-open');
-                toggle.classList.remove('active');
-                toggle.querySelector('i').className = 'fas fa-bars';
-                
-                if (overlay) {
-                    overlay.classList.remove('show');
-                    setTimeout(() => {
-                        if (overlay && overlay.parentNode) {
-                            overlay.remove();
-                        }
-                    }, 300);
-                }
-            }
-            
-            // Close sidebar when clicking sidebar links on mobile
-            const sidebarLinks = document.querySelectorAll('.nav-menu .nav-link');
-            sidebarLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 991) {
-                        setTimeout(closeSidebar, 100);
-                    }
-                });
-            });
-            
-        } else {
-            // Remove mobile toggle on desktop
-            if (mobileToggle) {
-                mobileToggle.remove();
-            }
-            
-            // Remove overlay on desktop
-            const overlay = document.querySelector('.sidebar-overlay');
-            if (overlay) {
-                overlay.remove();
-            }
-            
-            // Ensure sidebar is visible on desktop
-            const sidebar = document.querySelector('.modern-sidebar');
-            sidebar.classList.remove('mobile-open');
-        }
-    }
-    
-    // Initialize mobile menu on load and resize
-    initMobileMenu();
-    window.addEventListener('resize', debounce(initMobileMenu, 250));
     
     // Debounce function for resize events
     function debounce(func, wait) {

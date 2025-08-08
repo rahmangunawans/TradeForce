@@ -18,28 +18,35 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
-<body>
+<body class="dashboard-body">
 
-    <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg dashboard-navbar fixed-top">
-        <div class="container-fluid">
-            <!-- Brand Logo -->
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV Logo" class="navbar-logo me-2">
-                <span class="brand-text">AUTO TRADE VIP</span>
-            </a>
-            
-            <!-- Top Right User Menu -->
-            <div class="navbar-nav ms-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle user-dropdown-top" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                        <div class="user-avatar">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <span class="user-name ms-2">{{ current_user.name }}</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><h6 class="dropdown-header">{{ current_user.email }}</h6></li>
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="header-left">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-brand">
+                <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV Logo" class="header-logo">
+                <span class="header-title">AUTO TRADE VIP</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-notifications">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+            <div class="header-user">
+                <div class="user-dropdown">
+                    <button class="user-btn" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ current_user.name }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">{{ current_user.email }}</li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -48,147 +55,91 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Mobile Toggle Button (will be added by JavaScript on mobile) -->
-    
     <!-- Dashboard Layout -->
-    <div class="dashboard-container">
+    <div class="dashboard-wrapper">
         
-        <!-- Modern Navigation Sidebar -->
-        <aside class="modern-sidebar" id="sidebar">
-            <!-- Sidebar Brand -->
-            <div class="sidebar-brand">
-                <div class="brand-logo">
-                    <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV" class="brand-icon">
-                </div>
-                <div class="brand-content">
-                    <h5 class="brand-title">AUTO TRADE VIP</h5>
-                    <p class="brand-subtitle">Dashboard</p>
-                </div>
-            </div>
-
-            <!-- Navigation Menu -->
-            <nav class="nav-menu">
-                <!-- Main Navigation -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Main</div>
-                    <ul class="nav-list">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#overview" data-section="overview">
-                                <div class="nav-icon">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <div class="nav-content">
-                                    <span class="nav-title">Overview</span>
-                                    <span class="nav-desc">Dashboard summary</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#trading" data-section="trading">
-                                <div class="nav-icon">
-                                    <i class="fas fa-robot"></i>
-                                </div>
-                                <div class="nav-content">
-                                    <span class="nav-title">Trading Robot</span>
-                                    <span class="nav-desc">Automated trading</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#analytics" data-section="analytics">
-                                <div class="nav-icon">
-                                    <i class="fas fa-chart-bar"></i>
-                                </div>
-                                <div class="nav-content">
-                                    <span class="nav-title">Analytics</span>
-                                    <span class="nav-desc">Performance reports</span>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Trading Section -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Trading</div>
-                    <ul class="nav-list">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#packages" data-section="packages">
-                                <div class="nav-icon">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="nav-content">
-                                    <span class="nav-title">My Packages</span>
-                                    <span class="nav-desc">Subscriptions</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#strategies" data-section="strategies">
-                                <div class="nav-icon">
-                                    <i class="fas fa-brain"></i>
-                                </div>
-                                <div class="nav-content">
-                                    <span class="nav-title">Strategies</span>
-                                    <span class="nav-desc">Trading strategies</span>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Account Section -->
-                <div class="nav-section">
-                    <div class="nav-section-title">Account</div>
-                    <ul class="nav-list">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#settings" data-section="settings">
-                                <div class="nav-icon">
-                                    <i class="fas fa-cog"></i>
-                                </div>
-                                <div class="nav-content">
-                                    <span class="nav-title">Settings</span>
-                                    <span class="nav-desc">Account preferences</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#support" data-section="support">
-                                <div class="nav-icon">
-                                    <i class="fas fa-life-ring"></i>
-                                </div>
-                                <div class="nav-content">
-                                    <span class="nav-title">Support</span>
-                                    <span class="nav-desc">Help & contact</span>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <!-- Sidebar Footer -->
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- User Profile Section -->
+                <div class="sidebar-user">
+                    <div class="user-avatar-large">
                         <i class="fas fa-user-circle"></i>
                     </div>
-                    <div class="user-info">
-                        <div class="user-name">{{ current_user.name }}</div>
-                        <div class="user-email">{{ current_user.email }}</div>
+                    <div class="user-details">
+                        <h6 class="user-name">{{ current_user.name }}</h6>
+                        <p class="user-role">VIP Member</p>
                     </div>
                 </div>
-                <a href="{{ url_for('index') }}" class="btn-home">
-                    <i class="fas fa-home"></i>
-                    <span>Back to Home</span>
-                </a>
+                
+                <!-- Navigation Menu -->
+                <div class="sidebar-menu">
+                    <ul class="menu-list">
+                        <li class="menu-item">
+                            <a class="menu-link active" href="#" data-section="overview">
+                                <i class="menu-icon fas fa-home"></i>
+                                <span class="menu-text">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="#" data-section="trading">
+                                <i class="menu-icon fas fa-robot"></i>
+                                <span class="menu-text">Trading Robot</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="#" data-section="analytics">
+                                <i class="menu-icon fas fa-chart-line"></i>
+                                <span class="menu-text">Analytics</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="#" data-section="packages">
+                                <i class="menu-icon fas fa-box"></i>
+                                <span class="menu-text">My Packages</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="#" data-section="strategies">
+                                <i class="menu-icon fas fa-brain"></i>
+                                <span class="menu-text">Strategies</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="#" data-section="history">
+                                <i class="menu-icon fas fa-history"></i>
+                                <span class="menu-text">Trade History</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="#" data-section="settings">
+                                <i class="menu-icon fas fa-cog"></i>
+                                <span class="menu-text">Settings</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="#" data-section="support">
+                                <i class="menu-icon fas fa-life-ring"></i>
+                                <span class="menu-text">Support</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Sidebar Footer -->
+                <div class="sidebar-footer">
+                    <a href="{{ url_for('index') }}" class="footer-link">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Website</span>
+                    </a>
+                </div>
             </div>
-        </aside>
+        </nav>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content" id="mainContent">
             
             <!-- Overview Section -->
             <section id="overview" class="content-section active">

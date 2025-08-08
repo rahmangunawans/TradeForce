@@ -436,13 +436,21 @@ def test_connection():
         test_robot = IQTradingRobot(iq_email, iq_password)
         test_robot.api = None  # Reset to ensure fresh connection
         
-        # Configure robot with current form data for testing
-        test_robot.trading_amount = float(data.get('trading_amount', 1.0))
-        test_robot.stop_win = float(data.get('stop_win', 10.0))
-        test_robot.stop_loss = float(data.get('stop_loss', 10.0))
-        test_robot.step_martingale = int(data.get('step_martingale', 3))
-        test_robot.martingale_multiple = float(data.get('martingale_multiple', 2.2))
-        test_robot.signal_type = data.get('signal_type', 'manual_input')  # Default ke manual input
+        # Configure robot dengan dataclass config
+        from iq_trading_robot import TradingBotConfig
+        config = TradingBotConfig(
+            iq_email=iq_email,
+            iq_password=iq_password,
+            account_type=account_type,
+            trading_amount=float(data.get('trading_amount', 1.0)),
+            stop_win=float(data.get('stop_win', 10.0)),
+            stop_loss=float(data.get('stop_loss', 10.0)),
+            step_martingale=int(data.get('step_martingale', 3)),
+            martingale_multiple=float(data.get('martingale_multiple', 2.2)),
+            signal_type=data.get('signal_type', 'manual_input'),
+            asset=data.get('asset', 'EURUSD')
+        )
+        test_robot.config = config
         
         # Try to connect
         success = test_robot.connect()
@@ -563,9 +571,11 @@ def start_bot():
                 'message': 'Password required to start bot. Please test connection first.'
             })
         
-        # Create new robot instance
-        robot = IQTradingRobot(settings.iq_email, iq_password)
-        robot.configure_from_settings(settings)
+        # Create new robot instance dengan dataclass config
+        from iq_trading_robot import TradingBotConfig
+        config = TradingBotConfig.from_db_settings(settings)
+        config.iq_password = iq_password  # Set password dari request
+        robot = IQTradingRobot(settings.iq_email, iq_password, config)
         
         # Connect to IQ Option
         if not robot.connect():

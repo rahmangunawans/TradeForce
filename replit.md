@@ -85,6 +85,10 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Fixed database model asset default from "EURUSD-OTC" to "EURUSD" for consistency with simplified robot configuration
 - **August 8, 2025**: Created TradingBotConfig dataclass for better configuration management - matches exactly with HTML form fields (Amount, Stop Win, Stop Loss, Step Martingale, Multiple, Signal Type, Asset)
 - **August 8, 2025**: Updated IQTradingRobot to use dataclass configuration ensuring complete consistency between HTML form and robot execution
+- **August 8, 2025**: Successfully migrated project from Replit Agent to standard Replit environment with PostgreSQL database
+- **August 8, 2025**: Fixed LSP diagnostics errors by updating robot configuration system to use TradingBotConfig dataclass properly
+- **August 8, 2025**: Enhanced trading order system with asset variants (EURUSD, EURUSD-OTC) to improve order success rate
+- **August 8, 2025**: Resolved "order gagal" issue by implementing multiple asset format attempts during trading execution
 
 ## System Architecture
 

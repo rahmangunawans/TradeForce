@@ -66,6 +66,7 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Added professional drag & drop file upload functionality for signal input feature
 - **August 8, 2025**: Implemented signal content textarea with monospace font and CSV/TXT/JSON file support
 - **August 8, 2025**: Added clear signals functionality and automatic file content processing with notifications
+- **August 8, 2025**: Fixed critical start bot functionality by correcting JavaScript ID selector mismatch (iqPassword vs iq_password) - Bot can now start successfully
 
 ## System Architecture
 

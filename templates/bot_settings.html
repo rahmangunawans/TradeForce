@@ -991,15 +991,25 @@
                     
                     showAlert('success', result.message);
                 } else {
-                    showAlert('danger', result.message);
-                    // Update status
+                    // Clear connection status on failure
                     statusIndicator.className = 'status-indicator status-disconnected';
                     statusText.textContent = 'Connection Failed';
                     balanceInfo.style.display = 'none';
+                    startBotBtn.disabled = true;
+                    stopBotBtn.disabled = true;
+                    
+                    showAlert('danger', result.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                // Clear connection status on error
+                statusIndicator.className = 'status-indicator status-disconnected';
+                statusText.textContent = 'Disconnected';
+                balanceInfo.style.display = 'none';
+                startBotBtn.disabled = true;
+                stopBotBtn.disabled = true;
+                
                 showAlert('danger', 'An error occurred while testing connection');
             })
             .finally(() => {

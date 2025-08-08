@@ -475,12 +475,39 @@ def test_connection():
                 'account_type': account_type
             })
         else:
+            # Clear any cached balance info on failed connection
+            settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+            if settings:
+                balance_info = {
+                    'balance': 0,
+                    'account_type': 'none',
+                    'last_checked': str(db.func.current_timestamp()),
+                    'status': 'disconnected'
+                }
+                settings.balance_info = json.dumps(balance_info)
+                db.session.commit()
+            
             return jsonify({
                 'success': False,
                 'message': 'Failed to connect. Please check your credentials.'
             })
             
     except Exception as e:
+        # Clear any cached balance info on exception
+        try:
+            settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+            if settings:
+                balance_info = {
+                    'balance': 0,
+                    'account_type': 'none',
+                    'last_checked': str(db.func.current_timestamp()),
+                    'status': 'error'
+                }
+                settings.balance_info = json.dumps(balance_info)
+                db.session.commit()
+        except:
+            pass
+            
         return jsonify({
             'success': False,
             'message': f'Connection test failed: {str(e)}'

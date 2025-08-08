@@ -12,6 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from iq_trading_robot import IQTradingRobot
 import threading
 import json
+import time
 
 class Base(DeclarativeBase):
     pass
@@ -425,6 +426,7 @@ def test_connection():
         user_id = current_user.id
         if user_id in active_bots:
             try:
+                active_bots[user_id].stop_trading()
                 active_bots[user_id].disconnect()
                 del active_bots[user_id]
             except:
@@ -467,8 +469,8 @@ def test_connection():
                 settings.balance_info = json.dumps(balance_info)
                 db.session.commit()
             
-            # Disconnect test connection
-            test_robot.disconnect()
+            # Don't disconnect - keep connection alive for potential bot start
+            # test_robot.disconnect()
             
             return jsonify({
                 'success': True,
@@ -537,10 +539,6 @@ def start_bot():
                 'message': 'Bot settings not found. Please configure bot settings first.'
             })
         
-        # Create new robot instance
-        robot = IQTradingRobot(settings.iq_email, "")  # Password will be set during connection
-        robot.configure_from_settings(settings)
-        
         # Get the last test connection data to use password
         data = request.get_json() or {}
         iq_password = data.get('iq_password')
@@ -551,9 +549,11 @@ def start_bot():
                 'message': 'Password required to start bot. Please test connection first.'
             })
         
-        # Set password and connect
-        robot.password = iq_password
+        # Create new robot instance
+        robot = IQTradingRobot(settings.iq_email, iq_password)
+        robot.configure_from_settings(settings)
         
+        # Connect to IQ Option
         if not robot.connect():
             return jsonify({
                 'success': False,
@@ -566,13 +566,17 @@ def start_bot():
         else:
             robot.change_balance('REAL')
         
+        # Update balance after account type switch
+        time.sleep(1)
+        robot.balance = robot.get_balance()
+        
         # Start trading
         if robot.start_trading():
             active_bots[user_id] = robot
             return jsonify({
                 'success': True,
                 'message': 'Trading bot started successfully!',
-                'balance': robot.get_balance()
+                'balance': robot.balance
             })
         else:
             robot.disconnect()

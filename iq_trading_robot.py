@@ -180,8 +180,8 @@ class IQTradingRobot:
                     print(f"✅ Berhasil terhubung!")
                     print(f"💰 Saldo: ${self.balance}")
                     
-                    # Keep connection stable
-                    time.sleep(1)
+                    # Keep connection stable - don't disconnect automatically
+                    time.sleep(2)  # Wait a bit longer for stable connection
                     return True
                 except Exception as balance_error:
                     print(f"⚠️ Error getting balance: {balance_error}")
@@ -205,6 +205,7 @@ class IQTradingRobot:
                 self.api.api.close()
             except:
                 pass
+            self.api = None
             self.is_connected = False
             print("📡 Koneksi terputus")
     
@@ -436,10 +437,11 @@ class IQTradingRobot:
             try:
                 # Cek balance
                 try:
-                    current_balance = self.api.get_balance()
-                    if current_balance and current_balance != self.balance:
-                        self.balance = current_balance
-                        print(f"💰 Balance update: ${self.balance}")
+                    if self.api and self.is_connected:
+                        current_balance = self.api.get_balance()
+                        if current_balance and current_balance != self.balance:
+                            self.balance = current_balance
+                            print(f"💰 Balance update: ${self.balance}")
                 except:
                     pass
                 
@@ -520,10 +522,12 @@ class IQTradingRobot:
             print("⚠️ Trading sudah berjalan")
             return False
         
+        print("🚀 Starting trading bot...")
         self.is_trading = True
         self.trading_thread = threading.Thread(target=self.trading_loop)
         self.trading_thread.daemon = True
         self.trading_thread.start()
+        print("✅ Trading bot started successfully!")
         return True
     
     def stop_trading(self):

@@ -92,6 +92,8 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Fixed missing asset field in bot settings form - now properly saves all configuration including trading asset
 - **August 8, 2025**: Enhanced signal content textarea to display saved values from database
 - **August 8, 2025**: Completed migration with comprehensive settings save functionality
+- **August 8, 2025**: Fixed signal parsing to extract and use asset from signal content format "timestamp,asset,direction,timeframe"
+- **August 8, 2025**: Enhanced trading system to prioritize asset from signal content over form asset field
 
 ## System Architecture
 

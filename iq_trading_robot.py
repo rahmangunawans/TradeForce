@@ -138,6 +138,8 @@ class IQTradingRobot:
                 direction = None
                 timeframe = 1
                 
+                asset = None  # Asset dari signal, atau gunakan default config
+                
                 if len(parts) == 1:
                     # Format: CALL atau PUT
                     direction = parts[0].strip()
@@ -147,8 +149,10 @@ class IQTradingRobot:
                     timeframe = int(parts[1].strip())
                 elif len(parts) == 4:
                     # Format: 2025-08-08 16:45:00,EURUSD,CALL,1
+                    asset = parts[1].strip().upper()  # Asset dari signal
                     direction = parts[2].strip()  # CALL atau PUT ada di posisi ke-3
                     timeframe = int(parts[3].strip()) if parts[3].strip().isdigit() else 1
+                    print(f"🎯 Signal dengan asset: {asset}")
                 else:
                     print(f"⚠️ Format signal salah: {line}")
                     continue
@@ -158,6 +162,7 @@ class IQTradingRobot:
                     continue
                 
                 signal = {
+                    'asset': asset,  # Asset dari signal (bisa None jika format simple)
                     'direction': direction,
                     'timeframe': timeframe,
                     'processed': False
@@ -177,7 +182,10 @@ class IQTradingRobot:
         for signal in self.parsed_signals:
             if not signal['processed']:
                 signal['processed'] = True
-                print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']}")
+                if signal.get('asset'):
+                    print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {signal['asset']}")
+                else:
+                    print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
                 return signal
         return None
     
@@ -284,12 +292,16 @@ class IQTradingRobot:
         try:
             expiration = 1  # 1 menit
             
-            print(f"📊 Trading: {direction.upper()} {self.config.asset} - ${amount}")
+            # Gunakan asset dari signal jika ada, atau fallback ke config
+            signal_asset = getattr(self, '_current_signal_asset', None)
+            base_asset = signal_asset or self.config.asset
+            
+            print(f"📊 Trading: {direction.upper()} {base_asset} - ${amount}")
             
             # Coba beberapa format asset
             asset_variants = [
-                self.config.asset,
-                f"{self.config.asset}-OTC",
+                base_asset,
+                f"{base_asset}-OTC",
                 "EURUSD-OTC", 
                 "EURUSD"
             ]
@@ -405,17 +417,25 @@ class IQTradingRobot:
                 
                 if signal:
                     direction = signal['direction'].lower()
-                    print(f"🎯 TRADING: {direction.upper()} {self.config.asset}")
+                    
+                    # Set asset dari signal jika ada
+                    if signal.get('asset'):
+                        self._current_signal_asset = signal['asset']
+                        print(f"🎯 TRADING: {direction.upper()} {signal['asset']} (dari signal)")
+                    else:
+                        self._current_signal_asset = None
+                        print(f"🎯 TRADING: {direction.upper()} {self.config.asset} (default)")
                     
                     success, order_id = self.place_order(direction, self.config.trading_amount)
                     
                     if success:
                         result, amount = self.wait_for_result(order_id)
                         
-                        # Simpan history
+                        # Simpan history dengan asset yang benar
+                        actual_asset = self._current_signal_asset or self.config.asset
                         trade_data = {
                             'timestamp': datetime.now().isoformat(),
-                            'asset': self.config.asset,
+                            'asset': actual_asset,
                             'direction': direction,
                             'amount': self.config.trading_amount,
                             'result': result,

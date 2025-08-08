@@ -414,6 +414,35 @@
                     </div>
                 </div>
                 
+                <!-- Signal Type Feature -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="signalType" class="form-label">
+                                <i class="fas fa-signal me-2"></i>Signal Type Feature
+                            </label>
+                            <select class="form-control" id="signalType" name="signal_type">
+                                <option value="mt4_next_signal" {% if settings and settings.signal_type == 'mt4_next_signal' %}selected{% endif %}>
+                                    SIGNAL MT4 TERMINAL [NEXT SIGNAL]
+                                </option>
+                                <option value="mt4_next_candle" {% if settings and settings.signal_type == 'mt4_next_candle' %}selected{% endif %}>
+                                    SIGNAL MT4 TERMINAL [NEXT CANDLE]
+                                </option>
+                                <option value="tradingview_next_signal" {% if settings and settings.signal_type == 'tradingview_next_signal' %}selected{% endif %}>
+                                    SIGNAL TRADINGVIEW [NEXT SIGNAL]
+                                </option>
+                                <option value="tradingview_next_candle" {% if settings and settings.signal_type == 'tradingview_next_candle' %}selected{% endif %}>
+                                    SIGNAL TRADINGVIEW [NEXT CANDLE]
+                                </option>
+                                <option value="manual_input" {% if settings and settings.signal_type == 'manual_input' %}selected{% endif %}>
+                                    SIGNAL INPUT (2022-06-19 19:09:00,EURUSD,CALL OR PUT,1(TIMEFRAME))
+                                </option>
+                            </select>
+                            <small class="form-text text-muted">Choose your signal source for automated trading</small>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Martingale Settings -->
                 <div class="row" id="martingaleSettings">
                     <div class="col-md-4">

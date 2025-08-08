@@ -70,6 +70,7 @@ class BotSetting(db.Model):
     
     asset = db.Column(db.String(50), default='EURUSD-OTC')
     strategy = db.Column(db.String(50), default='martingale')
+    signal_type = db.Column(db.String(100), default='mt4_next_signal')  # Signal source type
     max_consecutive_losses = db.Column(db.Integer, default=3)
     is_active = db.Column(db.Boolean, default=False)
     balance_info = db.Column(db.Text)  # JSON string to store balance data
@@ -369,6 +370,7 @@ def save_bot_settings():
         
         settings.asset = data.get('asset', 'EURUSD-OTC')
         settings.strategy = data.get('strategy', 'martingale')
+        settings.signal_type = data.get('signal_type', 'mt4_next_signal')
         settings.max_consecutive_losses = int(data.get('max_consecutive_losses', 3))
         
         db.session.add(settings)
@@ -402,6 +404,7 @@ def test_connection():
         test_robot.martingale_multiple = float(data.get('martingale_multiple', 2.2))
         test_robot.asset = data.get('asset', 'EURUSD-OTC')
         test_robot.strategy = data.get('strategy', 'martingale')
+        test_robot.signal_type = data.get('signal_type', 'mt4_next_signal')
         
         # Try to connect
         success = test_robot.connect()

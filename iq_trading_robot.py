@@ -42,6 +42,9 @@ class IQTradingRobot:
         self.max_consecutive_losses = 3  # Maksimal loss berturut-turut
         self.consecutive_losses = 0
         
+        # Signal Settings
+        self.signal_type = "mt4_next_signal"  # Signal source type
+        
         # Trade History
         self.trades_history = []
         self.profit_total = 0

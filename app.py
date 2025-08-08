@@ -73,7 +73,7 @@ class BotSetting(db.Model):
     
     asset = db.Column(db.String(50), default='EURUSD-OTC')
     strategy = db.Column(db.String(50), default='martingale')
-    signal_type = db.Column(db.String(100), default='mt4_next_signal')  # Signal source type
+    signal_type = db.Column(db.String(100), default='manual_input')  # Signal source type - FOKUS HANYA SIGNAL INPUT
     signal_content = db.Column(db.Text)  # Content for manual signal input
     max_consecutive_losses = db.Column(db.Integer, default=3)
     
@@ -394,7 +394,7 @@ def save_bot_settings():
         settings.step_martingale = int(data.get('step_martingale', 3))
         settings.martingale_multiple = float(data.get('martingale_multiple', 2.2))
         
-        settings.signal_type = data.get('signal_type', 'mt4_next_signal')
+        settings.signal_type = data.get('signal_type', 'manual_input')  # Default ke manual input
         settings.signal_content = data.get('signal_content', '')  # Save signal content for manual input
         
         # Trading Session Configuration
@@ -442,7 +442,7 @@ def test_connection():
         test_robot.stop_loss = float(data.get('stop_loss', 10.0))
         test_robot.step_martingale = int(data.get('step_martingale', 3))
         test_robot.martingale_multiple = float(data.get('martingale_multiple', 2.2))
-        test_robot.signal_type = data.get('signal_type', 'mt4_next_signal')
+        test_robot.signal_type = data.get('signal_type', 'manual_input')  # Default ke manual input
         
         # Try to connect
         success = test_robot.connect()

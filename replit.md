@@ -73,6 +73,9 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Simplified IQ_trading_robot.py to focus only on manual signal input strategy - removed all technical analysis and other trading strategies per user request
 - **August 8, 2025**: Optimized signal execution timing - reduced wait time from 1 minute to 10 seconds for manual signals
 - **August 8, 2025**: Set default signal_type to 'manual_input' and removed candle data dependency for signal-based trading
+- **August 8, 2025**: Fixed configuration mismatch between HTML bot system and console output - synchronized database model, HTML form, and robot class to all default to 'manual_input' strategy
+- **August 8, 2025**: Simplified HTML Signal Type dropdown to show only Manual Signal Input option, removing all other strategies from the interface
+- **August 8, 2025**: Updated database model BotSetting to default signal_type to 'manual_input' instead of 'mt4_next_signal' for consistency
 
 ## System Architecture
 

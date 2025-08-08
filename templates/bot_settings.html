@@ -943,23 +943,12 @@
                                 <i class="fas fa-signal me-1"></i>Signal Type Feature
                             </label>
                             <select class="form-control" id="signalType" name="signal_type">
-                                <option value="mt4_next_signal" {% if settings and settings.signal_type == 'mt4_next_signal' %}selected{% endif %}>
-                                    SIGNAL MT4 TERMINAL [NEXT SIGNAL]
+                                <option value="manual_input" selected>
+                                    ✍️ MANUAL SIGNAL INPUT (HANYA STRATEGI INI)
                                 </option>
-                                <option value="mt4_next_candle" {% if settings and settings.signal_type == 'mt4_next_candle' %}selected{% endif %}>
-                                    SIGNAL MT4 TERMINAL [NEXT CANDLE]
-                                </option>
-                                <option value="tradingview_next_signal" {% if settings and settings.signal_type == 'tradingview_next_signal' %}selected{% endif %}>
-                                    SIGNAL TRADINGVIEW [NEXT SIGNAL]
-                                </option>
-                                <option value="tradingview_next_candle" {% if settings and settings.signal_type == 'tradingview_next_candle' %}selected{% endif %}>
-                                    SIGNAL TRADINGVIEW [NEXT CANDLE]
-                                </option>
-                                <option value="manual_input" {% if settings and settings.signal_type == 'manual_input' %}selected{% endif %}>
-                                    SIGNAL INPUT (CALL,1 atau CALL atau format lengkap)
-                                </option>
+                                <!-- SEMUA STRATEGI LAIN DIHAPUS - FOKUS MANUAL INPUT SAJA -->
                             </select>
-                            <small class="form-text text-muted">Choose your signal source for automated trading</small>
+                            <small class="form-text text-muted">Hanya menggunakan Manual Signal Input - semua strategi lain sudah dihapus</small>
                         </div>
                     </div>
                 </div>

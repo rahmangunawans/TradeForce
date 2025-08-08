@@ -94,6 +94,11 @@
     padding: 0.5rem;
     border-radius: 8px;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
 }
 
 .notification-btn:hover {

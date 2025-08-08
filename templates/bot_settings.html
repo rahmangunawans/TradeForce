@@ -270,18 +270,30 @@
 
     <div class="bot-settings-container">
         
-        <div class="row">
-            <!-- Left Column: Bot Settings -->
-            <div class="col-md-8">
-                <!-- Page Header -->
+        <!-- Page Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
                 <div class="settings-card">
                     <div class="settings-header">
                         <h2><i class="fas fa-robot me-3"></i>IQ Option Trading Bot Settings</h2>
                         <p>Configure your automated trading bot for IQ Option platform</p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status and Session Information Section -->
+        <div class="row mb-4">
+            <!-- Connection & Balance Status -->
+            <div class="col-lg-6">
+                <div class="settings-card h-100">
+                    <div class="settings-header">
+                        <h4><i class="fas fa-wifi me-2"></i>Connection Status</h4>
+                        <p>Current bot connection and account information</p>
+                    </div>
                     
                     <!-- Connection Status -->
-                    <div class="connection-status" id="connectionStatus">
+                    <div class="connection-status mb-3" id="connectionStatus">
                         <div class="status-indicator status-disconnected" id="statusIndicator"></div>
                         <span id="statusText">Not Connected</span>
                     </div>
@@ -301,11 +313,11 @@
                 </div>
             </div>
             
-            <!-- Right Column: Trading Session Information -->
-            <div class="col-md-4">
-                <div class="settings-card">
+            <!-- Trading Session Information -->
+            <div class="col-lg-6">
+                <div class="settings-card h-100">
                     <div class="settings-header">
-                        <h2><i class="fas fa-clock me-3"></i>Trading Session Information</h2>
+                        <h4><i class="fas fa-clock me-2"></i>Trading Session Information</h4>
                         <p>Current forex market session status</p>
                     </div>
                     
@@ -336,13 +348,17 @@
                 </div>
             </div>
         </div>
-        
-        <div class="row">
-            <!-- Full Width Column for Forms -->
-            <div class="col-md-12">
+
+        <!-- Bot Configuration Section -->
+        <div class="row mb-4">
+            <div class="col-12">
 
                 <!-- Bot Configuration Form -->
                 <div class="settings-card">
+                    <div class="settings-header">
+                        <h4><i class="fas fa-cogs me-2"></i>Bot Configuration</h4>
+                        <p>Configure trading parameters and bot settings</p>
+                    </div>
             <form id="botSettingsForm">
                 
                 <!-- Broker Settings -->
@@ -508,29 +524,35 @@
                     </button>
                 </div>
             </form>
+                </div>
+            </div>
         </div>
 
-        <!-- Bot Control Panel -->
-        <div class="settings-card">
-            <div class="settings-header">
-                <h4><i class="fas fa-play me-2"></i>Bot Control Panel</h4>
-                <p>Start or stop your automated trading bot</p>
-            </div>
-            
-            <div class="text-center">
-                <button class="btn btn-success btn-lg me-3" id="startBotBtn" disabled>
-                    <i class="fas fa-play me-2"></i>Start Trading Bot
-                </button>
-                <button class="btn btn-danger btn-lg" id="stopBotBtn" disabled>
-                    <i class="fas fa-stop me-2"></i>Stop Trading Bot
-                </button>
-            </div>
-            
-            <div class="mt-4" id="botStatus" style="display: none;">
-                <div class="alert alert-info alert-custom">
-                    <h6><i class="fas fa-info-circle me-2"></i>Bot Status</h6>
-                    <div id="botStatusContent">
-                        <!-- Bot status will be loaded here -->
+        <!-- Bot Control Panel Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <h4><i class="fas fa-play me-2"></i>Bot Control Panel</h4>
+                        <p>Start or stop your automated trading bot</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="btn btn-success btn-lg me-3" id="startBotBtn" disabled>
+                            <i class="fas fa-play me-2"></i>Start Trading Bot
+                        </button>
+                        <button class="btn btn-danger btn-lg" id="stopBotBtn" disabled>
+                            <i class="fas fa-stop me-2"></i>Stop Trading Bot
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4" id="botStatus" style="display: none;">
+                        <div class="alert alert-info alert-custom">
+                            <h6><i class="fas fa-info-circle me-2"></i>Bot Status</h6>
+                            <div id="botStatusContent">
+                                <!-- Bot status will be loaded here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard loaded successfully!');
     
     // ===== SIDEBAR NAVIGATION ===== 
-    const sidebarLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+    const sidebarLinks = document.querySelectorAll('.nav-menu .nav-link');
     const contentSections = document.querySelectorAll('.content-section');
     
     // Handle sidebar navigation
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mobileToggle = newToggle;
             
             mobileToggle.addEventListener('click', function() {
-                const sidebar = document.querySelector('.sidebar');
+                const sidebar = document.querySelector('.modern-sidebar');
                 let overlay = document.querySelector('.sidebar-overlay');
                 
                 // Toggle sidebar
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             function closeSidebar() {
-                const sidebar = document.querySelector('.sidebar');
+                const sidebar = document.querySelector('.modern-sidebar');
                 const overlay = document.querySelector('.sidebar-overlay');
                 const toggle = document.querySelector('.mobile-toggle');
                 
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Close sidebar when clicking sidebar links on mobile
-            const sidebarLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+            const sidebarLinks = document.querySelectorAll('.nav-menu .nav-link');
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', function() {
                     if (window.innerWidth <= 991) {
@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Ensure sidebar is visible on desktop
-            const sidebar = document.querySelector('.sidebar');
+            const sidebar = document.querySelector('.modern-sidebar');
             sidebar.classList.remove('mobile-open');
         }
     }
@@ -422,6 +422,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const diffX = e.changedTouches[0].clientX - startX;
                 const sidebar = document.querySelector('.sidebar');
+                
+                const sidebar = document.querySelector('.modern-sidebar');
                 
                 // Swipe right from left edge to open sidebar
                 if (startX < 50 && diffX > 100 && !sidebar.classList.contains('mobile-open')) {

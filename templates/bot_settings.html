@@ -794,31 +794,58 @@
             const sessionTimeEl = document.getElementById('activeSessionTime');
             const sessionStatusEl = document.getElementById('activeSessionStatus');
             
+            const now = new Date();
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            // Convert UTC session times to user's local time
+            function convertUTCToLocal(utcStart, utcEnd) {
+                const today = new Date();
+                const startUTC = new Date(today.getFullYear(), today.getMonth(), today.getDate(), utcStart, 0, 0);
+                const endUTC = new Date(today.getFullYear(), today.getMonth(), today.getDate(), utcEnd, 0, 0);
+                
+                // Handle sessions that cross midnight
+                if (utcEnd < utcStart) {
+                    endUTC.setDate(endUTC.getDate() + 1);
+                }
+                
+                const startLocal = new Date(startUTC.getTime() - (startUTC.getTimezoneOffset() * 60000) + (now.getTimezoneOffset() * 60000));
+                const endLocal = new Date(endUTC.getTime() - (endUTC.getTimezoneOffset() * 60000) + (now.getTimezoneOffset() * 60000));
+                
+                return {
+                    start: startLocal.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+                    end: endLocal.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+                };
+            }
+            
             let currentSession = null;
             
-            // Determine which session is currently active
+            // Determine which session is currently active based on UTC hour
             if (utcHour >= 21 || utcHour < 6) {
+                const localTime = convertUTCToLocal(21, 6);
                 currentSession = {
                     name: 'Sydney Session',
-                    time: '9:00 PM - 6:00 AM UTC',
+                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
                     active: true
                 };
             } else if (utcHour >= 23 || utcHour < 8) {
+                const localTime = convertUTCToLocal(23, 8);
                 currentSession = {
                     name: 'Tokyo Session', 
-                    time: '11:00 PM - 8:00 AM UTC',
+                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
                     active: true
                 };
             } else if (utcHour >= 7 && utcHour < 16) {
+                const localTime = convertUTCToLocal(7, 16);
                 currentSession = {
                     name: 'London Session',
-                    time: '7:00 AM - 4:00 PM UTC', 
+                    time: `${localTime.start} - ${localTime.end} (Local Time)`, 
                     active: true
                 };
             } else if (utcHour >= 12 && utcHour < 21) {
+                const localTime = convertUTCToLocal(12, 21);
                 currentSession = {
                     name: 'New York Session',
-                    time: '12:00 PM - 9:00 PM UTC',
+                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
                     active: true
                 };
             } else {

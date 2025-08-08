@@ -58,6 +58,7 @@ Preferred communication style: Simple, everyday language.
 - **August 8, 2025**: Fixed time format to use AM/PM instead of 24-hour format for better readability in trading sessions
 - **August 8, 2025**: Simplified Trading Session Information to single box layout and removed Major Pairs information per user request
 - **August 8, 2025**: Changed trading sessions to show only the currently active session instead of displaying all 4 sessions at once
+- **August 8, 2025**: Updated trading session times to display in client's local timezone instead of UTC per user request
 
 ## System Architecture
 

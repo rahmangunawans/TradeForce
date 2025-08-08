@@ -1332,10 +1332,29 @@
             const btn = this;
             const passwordInput = document.getElementById('iq_password');
             
-            if (!passwordInput || !passwordInput.value) {
+            // Debug logging
+            console.log('Start bot clicked');
+            console.log('Password input:', passwordInput);
+            console.log('Password value:', passwordInput ? passwordInput.value : 'null');
+            
+            // Check if connection test was successful first
+            const statusIndicator = document.getElementById('statusIndicator');
+            console.log('Status indicator:', statusIndicator);
+            console.log('Status classes:', statusIndicator ? statusIndicator.className : 'null');
+            
+            if (!statusIndicator || !statusIndicator.classList.contains('status-connected')) {
+                console.log('Connection test not passed');
+                showAlert('danger', 'Please test connection first before starting the bot.');
+                return;
+            }
+            
+            if (!passwordInput || !passwordInput.value.trim()) {
+                console.log('Password validation failed');
                 showAlert('danger', 'Password is required to start bot. Please enter your IQ Option password and test connection first.');
                 return;
             }
+            
+            console.log('All validations passed, starting bot...');
             
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
             btn.disabled = true;

@@ -335,6 +335,15 @@
     color: #94a3b8;
 }
 
+.broker-submenu-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    margin-right: 0.75rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
 
 /* ===== SIDEBAR FOOTER ===== */
 .sidebar-footer {

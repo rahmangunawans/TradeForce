@@ -160,7 +160,17 @@ class IQTradingRobot:
                     try:
                         # Parse sebagai local time (bukan UTC)
                         execution_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
-                        print(f"⏰ Akan eksekusi pada: {execution_time} (local time)")
+                        current_time = datetime.now()
+                        time_diff = execution_time - current_time
+                        
+                        # Jika signal lebih dari 30 menit di masa depan, eksekusi langsung
+                        if time_diff.total_seconds() > 1800:  # 30 menit
+                            print(f"⚡ SIGNAL TERLALU JAUH DI MASA DEPAN - EKSEKUSI LANGSUNG!")
+                            print(f"   Original time: {execution_time}")
+                            print(f"   Current time: {current_time}")
+                            execution_time = None  # Set ke None agar eksekusi langsung
+                        else:
+                            print(f"⏰ Akan eksekusi pada: {execution_time} (local time)")
                     except:
                         execution_time = None
                         print(f"⚠️ Format timestamp salah: {timestamp_str}")
@@ -207,7 +217,17 @@ class IQTradingRobot:
             if not signal['processed']:
                 # Cek apakah ada waktu eksekusi terjadwal
                 if signal.get('execution_time'):
-                    if current_time >= signal['execution_time']:
+                    # Jika signal timestamp sudah lewat lebih dari 1 jam, eksekusi langsung
+                    time_diff = current_time - signal['execution_time']
+                    if time_diff.total_seconds() > 0:  # Signal sudah lewat
+                        signal['processed'] = True
+                        print(f"⏰ SIGNAL TIMESTAMP SUDAH LEWAT - EKSEKUSI LANGSUNG: {signal['direction']}")
+                        if signal.get('asset'):
+                            print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {signal['asset']}")
+                        else:
+                            print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
+                        return signal
+                    elif current_time >= signal['execution_time']:
                         signal['processed'] = True
                         print(f"⏰ WAKTU EKSEKUSI TIBA: {signal['direction']} pada {signal['execution_time']}")
                         if signal.get('asset'):
@@ -216,13 +236,23 @@ class IQTradingRobot:
                             print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
                         return signal
                     else:
-                        # Belum waktunya eksekusi
+                        # Cek jika waktu tunggu terlalu lama (>30 menit), eksekusi langsung
                         time_left = signal['execution_time'] - current_time
-                        hours = int(time_left.total_seconds() // 3600)
-                        minutes = int((time_left.total_seconds() % 3600) // 60)
-                        seconds = int(time_left.total_seconds() % 60)
-                        print(f"⏳ Menunggu eksekusi {signal['direction']} dalam {hours:02d}:{minutes:02d}:{seconds:02d}")
-                        continue
+                        if time_left.total_seconds() > 1800:  # Lebih dari 30 menit
+                            signal['processed'] = True
+                            print(f"⚡ WAKTU TUNGGU TERLALU LAMA - EKSEKUSI LANGSUNG: {signal['direction']}")
+                            if signal.get('asset'):
+                                print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {signal['asset']}")
+                            else:
+                                print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
+                            return signal
+                        else:
+                            # Tunggu eksekusi normal
+                            hours = int(time_left.total_seconds() // 3600)
+                            minutes = int((time_left.total_seconds() % 3600) // 60)
+                            seconds = int(time_left.total_seconds() % 60)
+                            print(f"⏳ Menunggu eksekusi {signal['direction']} dalam {hours:02d}:{minutes:02d}:{seconds:02d}")
+                            continue
                 else:
                     # Signal tanpa timestamp, eksekusi langsung
                     signal['processed'] = True

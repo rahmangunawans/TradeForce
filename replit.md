@@ -1,154 +1,51 @@
 # AUTO TRADE VIP
 
 ## Overview
-
-AUTO TRADE VIP is a Flask-based web application serving as a landing page for a trading robot platform. The application markets automated trading solutions for various binary options brokers including Binomo, Olymptrade, IQ Option, Quotex, and Pocket Option. It's designed as a promotional website to showcase trading packages and facilitate customer contact.
+AUTO TRADE VIP is a Flask-based web application designed as a landing page for a trading robot platform. It markets automated trading solutions for various binary options brokers (Binomo, Olymptrade, IQ Option, Quotex, and Pocket Option). The primary purpose is to serve as a promotional website, showcasing trading packages, and facilitating customer contact for lead generation in automated trading services.
 
 ## User Preferences
-
 Preferred communication style: Simple, everyday language.
-
-## Recent Changes
-
-- **January 7, 2025**: Successfully migrated project from Replit Agent to standard Replit environment
-- **January 7, 2025**: Fixed MetaTrader4 and TradingView icon sizing inconsistencies (reduced from 48px to 36px)
-- **January 7, 2025**: Implemented consistent hover effects and color treatment for all feature icons
-- **January 7, 2025**: Enhanced feature icon styling with proper white color filtering and scaling animations
-- **January 7, 2025**: Fixed hover effect for MetaTrader4 and TradingView icons to turn black on click/hover like Automated Trade icon
-- **January 7, 2025**: Added dynamic transparent navbar effect - becomes more transparent when scrolling with enhanced blur effects
-- **January 7, 2025**: Implemented scroll progress bar (reading progress indicator) at the top of the page with gradient colors
-- **January 7, 2025**: Added integrated login system with modal interface - users can login/register without leaving landing page
-- **January 7, 2025**: Implemented Flask-Login authentication with PostgreSQL database for user management
-- **January 7, 2025**: Added user dropdown menu in navbar for logged-in users with profile and logout options
-- **January 7, 2025**: Professional navbar redesign with gradient background, animated logo, and hover effects
-- **January 7, 2025**: Enhanced login system - simple email/password login, comprehensive registration with name, gender, country fields
-- **January 7, 2025**: Updated User model to include name, gender, country, and created_at timestamp fields
-- **January 7, 2025**: Added official AUTO TRADE VIP logo to navbar from autotradevip.com
-- **January 7, 2025**: Enhanced navbar mobile responsiveness with collapsible menu and improved spacing
-- **August 7, 2025**: Successfully completed project migration from Replit Agent to standard Replit environment
-- **August 7, 2025**: Fixed ATV logo display issue with inline styling and proper path configuration
-- **August 7, 2025**: Implemented single active menu state management to prevent duplicate navbar effects
-- **August 7, 2025**: Enhanced navbar active state with scroll-based detection and click handling
-- **August 7, 2025**: Resolved logo ATV duplicate display bug and stabilized logo rendering
-- **August 7, 2025**: Redesigned login button with modern gradient styling and hover animations
-- **August 7, 2025**: Fixed JavaScript querySelector errors in navbar active state management
-- **August 7, 2025**: Optimized button sizing for professional appearance with proper proportions
-- **August 7, 2025**: Redesigned login modal with ultra-professional styling and consistent ATV theme colors
-- **August 7, 2025**: Created dedicated login-modal.css with modern gradient effects and smooth animations
-- **August 7, 2025**: Implemented sophisticated form styling with backdrop blur and color consistency
-- **August 7, 2025**: Enhanced form toggle functionality with improved JavaScript error handling
-- **August 7, 2025**: Added Forgot Password functionality with professional styling and backend integration
-- **August 7, 2025**: Implemented three-form system (Login, Register, Forgot Password) with smooth transitions
-- **August 7, 2025**: Created forgot-password API endpoint with email validation and user verification
-- **August 8, 2025**: Redesigned navigation sidebar with modern professional structure
-- **August 8, 2025**: Implemented organized navigation sections (Main, Trading, Account) with enhanced visual design
-- **August 8, 2025**: Added navigation icons with containers, titles, descriptions, and smooth animations
-- **August 8, 2025**: Enhanced sidebar branding with integrated logo and user profile section
-- **August 8, 2025**: Updated sidebar from basic list to modern card-style navigation with gradient effects
-- **August 8, 2025**: Complete dashboard redesign with professional clean white theme instead of dark theme
-- **August 8, 2025**: Redesigned navigation from complex sidebar to simple clean menu structure
-- **August 8, 2025**: Implemented new header design with toggle button and notification system
-- **August 8, 2025**: Changed color scheme from dark green gradients to clean professional white/gray design
-- **August 8, 2025**: Simplified navigation JavaScript and removed complex mobile menu system
-- **August 8, 2025**: Updated dashboard layout to be more traditional and user-friendly
-- **August 8, 2025**: Successfully completed project migration from Replit Agent to standard Replit environment
-- **August 8, 2025**: Configured PostgreSQL database with proper environment variables
-- **August 8, 2025**: Removed "High Volume Trading Times" section from bot settings page per user request
-- **August 8, 2025**: Updated Trading Session Information to display 4 complete forex sessions (Sydney, Tokyo, London, New York) with accurate UTC times and major pairs
-- **August 8, 2025**: Fixed time format to use AM/PM instead of 24-hour format for better readability in trading sessions
-- **August 8, 2025**: Simplified Trading Session Information to single box layout and removed Major Pairs information per user request
-- **August 8, 2025**: Changed trading sessions to show only the currently active session instead of displaying all 4 sessions at once
-- **August 8, 2025**: Updated trading session times to display in client's local timezone instead of UTC per user request
-- **August 8, 2025**: Successfully completed project migration from Replit Agent to Replit environment with PostgreSQL database configuration
-- **August 8, 2025**: Moved Trading Session Information from sidebar to main header area for better visibility and accessibility
-- **August 8, 2025**: Fixed trading session priority logic to properly display New York Session when overlapping with London Session (13-22 UTC prioritized over 8-17 UTC)
-- **August 8, 2025**: Updated Signal Type example format from "CALL OR PUT" to "CALL,1" format per user request
-- **August 8, 2025**: Added professional drag & drop file upload functionality for signal input feature
-- **August 8, 2025**: Implemented signal content textarea with monospace font and CSV/TXT/JSON file support
-- **August 8, 2025**: Added clear signals functionality and automatic file content processing with notifications
-- **August 8, 2025**: Fixed critical start bot functionality by correcting JavaScript ID selector mismatch (iqPassword vs iq_password) - Bot can now start successfully
-- **August 8, 2025**: Enhanced signal processing to support multiple formats: simple format "CALL,1" or "CALL", and full format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME" 
-- **August 8, 2025**: Fixed trading signal execution issue - bot now recognizes and executes signals immediately for manual input instead of waiting for specific timestamps
-- **August 8, 2025**: Updated bot settings UI to show all 3 supported signal formats with examples and clear documentation
-- **August 8, 2025**: Simplified IQ_trading_robot.py to focus only on manual signal input strategy - removed all technical analysis and other trading strategies per user request
-- **August 8, 2025**: Optimized signal execution timing - reduced wait time from 1 minute to 10 seconds for manual signals
-- **August 8, 2025**: Set default signal_type to 'manual_input' and removed candle data dependency for signal-based trading
-- **August 8, 2025**: Fixed configuration mismatch between HTML bot system and console output - synchronized database model, HTML form, and robot class to all default to 'manual_input' strategy
-- **August 8, 2025**: Simplified HTML Signal Type dropdown to show only Manual Signal Input option, removing all other strategies from the interface
-- **August 8, 2025**: Updated database model BotSetting to default signal_type to 'manual_input' instead of 'mt4_next_signal' for consistency
-- **August 8, 2025**: COMPLETE REWRITE of iq_trading_robot.py - removed ALL strategies, OTC assets, martingale logic, technical analysis
-- **August 8, 2025**: Simplified robot to 100% focus on manual signal input only (CALL/PUT format)
-- **August 8, 2025**: Changed default asset from "EURUSD-OTC" to "EURUSD" (removed OTC)
-- **August 8, 2025**: Removed all strategy variables (martingale_multiple, step_martingale, consecutive_losses, etc.)
-- **August 8, 2025**: Created pure signal-input trading loop with Indonesian interface messages
-- **August 8, 2025**: Fixed critical signal parsing error for full format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME" - robot now correctly extracts direction and timeframe from all 3 supported formats
-- **August 8, 2025**: Fixed database model asset default from "EURUSD-OTC" to "EURUSD" for consistency with simplified robot configuration
-- **August 8, 2025**: Created TradingBotConfig dataclass for better configuration management - matches exactly with HTML form fields (Amount, Stop Win, Stop Loss, Step Martingale, Multiple, Signal Type, Asset)
-- **August 8, 2025**: Updated IQTradingRobot to use dataclass configuration ensuring complete consistency between HTML form and robot execution
-- **August 8, 2025**: Successfully migrated project from Replit Agent to standard Replit environment with PostgreSQL database
-- **August 8, 2025**: Fixed LSP diagnostics errors by updating robot configuration system to use TradingBotConfig dataclass properly
-- **August 8, 2025**: Enhanced trading order system with asset variants (EURUSD, EURUSD-OTC) to improve order success rate
-- **August 8, 2025**: Resolved "order gagal" issue by implementing multiple asset format attempts during trading execution
-- **August 8, 2025**: Fixed missing asset field in bot settings form - now properly saves all configuration including trading asset
-- **August 8, 2025**: Enhanced signal content textarea to display saved values from database
-- **August 8, 2025**: Completed migration with comprehensive settings save functionality
-- **August 8, 2025**: Fixed signal parsing to extract and use asset from signal content format "timestamp,asset,direction,timeframe"
-- **August 8, 2025**: Enhanced trading system to prioritize asset from signal content over form asset field
-- **August 8, 2025**: Fixed scheduled execution - trading robot now properly waits for timestamp in signal format "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME"
-- **August 8, 2025**: Added execution scheduler that checks timestamps and only executes signals when time arrives
 
 ## System Architecture
 
 ### Frontend Architecture
-The application uses a traditional server-side rendered architecture with Flask serving HTML templates. The frontend is built with:
-
-- **Template Engine**: Jinja2 templates for dynamic content rendering
-- **UI Framework**: Bootstrap 5.3.0 for responsive design and component styling
-- **Styling**: Custom CSS with CSS variables for consistent theming and dark mode design
-- **Icons**: Font Awesome 6.4.0 for iconography
-- **Typography**: Google Fonts (Poppins) for consistent font styling
-- **JavaScript**: Vanilla JavaScript for interactive features like smooth scrolling and scroll effects
-
-The design follows a single-page application pattern with sections for hero, packages, and contact information.
+The frontend utilizes a server-side rendered architecture with Flask and Jinja2 templates. It employs Bootstrap 5.3.0 for responsive design, custom CSS with CSS variables for theming (including dark mode), Font Awesome 6.4.0 for iconography, and Google Fonts (Poppins) for typography. Interactive features like smooth scrolling and scroll effects are implemented with vanilla JavaScript. The design follows a single-page application pattern with dedicated sections for hero, packages, and contact information.
 
 ### Backend Architecture
-The backend is built using Flask with authentication capabilities:
-
-- **Web Framework**: Flask for HTTP request handling and template rendering
-- **Database**: PostgreSQL with SQLAlchemy ORM for data persistence
-- **Authentication**: Flask-Login for session management and user authentication
-- **Session Management**: Flask sessions with environment-configurable secret key
-- **Data Structure**: Static data structures for broker and package information stored in Python dictionaries
-- **API Endpoints**: REST endpoints for login, register, and logout functionality
-- **Security**: Password hashing using Werkzeug security utilities
+The backend is built with Flask, providing HTTP request handling and template rendering. It integrates PostgreSQL via Flask-SQLAlchemy for data persistence and Flask-Login for user authentication and session management. Password hashing is handled using Werkzeug security utilities. Broker and package information are managed as static Python dictionaries. The system includes REST API endpoints for user login, registration, and logout functionalities.
 
 ### Design Patterns
-- **Static Data**: Broker and package information is hardcoded in the main route handler, indicating this is a promotional site with fixed content
-- **Environment Configuration**: Uses environment variables for sensitive configuration like session secrets
-- **Responsive Design**: Mobile-first approach with Bootstrap grid system
+Key design patterns include the use of static data for fixed content, environment variables for sensitive configurations, and a mobile-first responsive design approach using the Bootstrap grid system.
 
-### Hosting Configuration
-The application is configured for deployment with:
-- Host binding to 0.0.0.0 for container compatibility
-- Port 5000 for web traffic
-- Debug mode enabled for development
+### Core Features
+- Integrated login and registration system with a modal interface.
+- User management with Flask-Login and PostgreSQL, including user profiles (name, gender, country).
+- Dynamic transparent navbar with scroll effects, an animated logo, and hover effects.
+- Scroll progress bar.
+- Professional UI/UX with consistent ATV theme colors, modern gradient styling, and smooth animations across various components (buttons, modals, forms).
+- Three-form system for Login, Register, and Forgot Password with seamless transitions.
+- Redesigned dashboard with a clean white theme and simplified navigation structure.
+- Displays current trading session information (Sydney, Tokyo, London, New York) in the client's local timezone.
+- Professional drag & drop file upload for signal input, supporting CSV, TXT, and JSON formats.
+- Manual signal input processing with support for multiple formats (e.g., "CALL,1" and "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME").
+- Simplified trading robot (`iq_trading_robot.py`) focused exclusively on manual signal input, removed complex strategies (martingale, technical analysis, OTC assets).
+- Trading bot configuration managed via a `TradingBotConfig` dataclass for consistency between the HTML form and robot execution.
+- Enhanced trading order system with asset variants (e.g., EURUSD, EURUSD-OTC) for improved order success rates.
+- Signal parsing prioritizes asset from signal content over form fields.
+- Execution scheduler for signals with future timestamps.
 
 ## External Dependencies
 
 ### Frontend Libraries
-- **Bootstrap 5.3.0**: UI framework via CDN for responsive design
-- **Font Awesome 6.4.0**: Icon library via CDN
-- **Google Fonts**: Poppins font family for typography
+- **Bootstrap 5.3.0**: UI framework (via CDN)
+- **Font Awesome 6.4.0**: Icon library (via CDN)
+- **Google Fonts**: Poppins font family (via CDN)
 
 ### Python Dependencies
 - **Flask**: Web application framework
-- **Flask-SQLAlchemy**: Database ORM for PostgreSQL integration
+- **Flask-SQLAlchemy**: ORM for PostgreSQL integration
 - **Flask-Login**: User session management and authentication
-- **Werkzeug**: Security utilities for password hashing
-- **Standard Library**: os module for environment variable access
+- **Werkzeug**: Security utilities (for password hashing)
 
 ### Third-party Assets
-- **Broker Logos**: External image URLs from various sources (Google Images, Play Store) for broker branding
-- **CDN Dependencies**: All frontend libraries loaded from public CDNs
-
-The application currently has no database dependencies, authentication systems, or external API integrations, making it a lightweight promotional website focused on lead generation for trading services.
+- **Broker Logos**: External image URLs used for branding.

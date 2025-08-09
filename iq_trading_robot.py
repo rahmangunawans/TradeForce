@@ -186,16 +186,18 @@ class IQTradingRobot:
                         print(f"   Current time (UTC): {current_time}")
                         print(f"   Time difference: {time_diff.total_seconds():.0f} seconds")
                         
-                        # Jika signal sudah lewat atau sangat dekat (dalam 5 menit), eksekusi langsung
-                        if time_diff.total_seconds() <= 300:  # Dalam 5 menit atau sudah lewat
-                            print(f"⚡ EKSEKUSI LANGSUNG - Signal time sudah dekat/lewat!")
+                        # Jika signal sudah lewat (lebih dari 1 menit), eksekusi langsung
+                        if time_diff.total_seconds() < -60:  # Sudah lewat lebih dari 1 menit
+                            print(f"⚡ EKSEKUSI LANGSUNG - Signal sudah lewat!")
                             execution_time = None  # Set ke None agar eksekusi langsung
                         # Jika signal lebih dari 2 jam di masa depan, eksekusi langsung juga
                         elif time_diff.total_seconds() > 7200:  # Lebih dari 2 jam
                             print(f"⚡ EKSEKUSI LANGSUNG - Signal terlalu jauh di masa depan!")
                             execution_time = None  # Set ke None agar eksekusi langsung
                         else:
-                            print(f"⏰ Akan eksekusi pada: {execution_time} (menunggu {time_diff.total_seconds():.0f} detik)")
+                            # Signal masih valid untuk eksekusi terjadwal
+                            print(f"⏰ MENUNGGU EKSEKUSI TEPAT WAKTU: {execution_time}")
+                            print(f"   Waktu tunggu: {time_diff.total_seconds():.0f} detik")
                     except:
                         execution_time = None
                         print(f"⚠️ Format timestamp salah: {timestamp_str}")

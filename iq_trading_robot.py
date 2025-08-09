@@ -158,19 +158,26 @@ class IQTradingRobot:
                     # Parse timestamp untuk eksekusi terjadwal (assume local timezone)
                     from datetime import datetime
                     try:
-                        # Parse sebagai local time (bukan UTC)
+                        # Parse timestamp - assume sebagai waktu lokal user
                         execution_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
                         current_time = datetime.now()
                         time_diff = execution_time - current_time
                         
-                        # Jika signal lebih dari 30 menit di masa depan, eksekusi langsung
-                        if time_diff.total_seconds() > 1800:  # 30 menit
-                            print(f"⚡ SIGNAL TERLALU JAUH DI MASA DEPAN - EKSEKUSI LANGSUNG!")
-                            print(f"   Original time: {execution_time}")
-                            print(f"   Current time: {current_time}")
+                        print(f"🕐 Timestamp analysis:")
+                        print(f"   Signal time: {execution_time}")
+                        print(f"   Current time: {current_time}")
+                        print(f"   Time difference: {time_diff.total_seconds():.0f} seconds")
+                        
+                        # Jika signal sudah lewat atau sangat dekat (dalam 5 menit), eksekusi langsung
+                        if time_diff.total_seconds() <= 300:  # Dalam 5 menit atau sudah lewat
+                            print(f"⚡ EKSEKUSI LANGSUNG - Signal time sudah dekat/lewat!")
+                            execution_time = None  # Set ke None agar eksekusi langsung
+                        # Jika signal lebih dari 2 jam di masa depan, eksekusi langsung juga
+                        elif time_diff.total_seconds() > 7200:  # Lebih dari 2 jam
+                            print(f"⚡ EKSEKUSI LANGSUNG - Signal terlalu jauh di masa depan!")
                             execution_time = None  # Set ke None agar eksekusi langsung
                         else:
-                            print(f"⏰ Akan eksekusi pada: {execution_time} (local time)")
+                            print(f"⏰ Akan eksekusi pada: {execution_time} (menunggu {time_diff.total_seconds():.0f} detik)")
                     except:
                         execution_time = None
                         print(f"⚠️ Format timestamp salah: {timestamp_str}")

@@ -78,9 +78,9 @@ class TradingBotConfig:
             stop_loss=getattr(settings, 'stop_loss', 10.0),
             step_martingale=getattr(settings, 'step_martingale', 3),
             martingale_multiple=getattr(settings, 'martingale_multiple', 2.2),
-            asset=getattr(settings, 'asset', 'EURUSD'),
+            asset=getattr(settings, 'asset', ''),
             signal_type=getattr(settings, 'signal_type', 'manual_input'),
-            signal_content=getattr(settings, 'signal_content', 'CALL,1'),  # Default signal untuk testing
+            signal_content=getattr(settings, 'signal_content', ''),  # Tidak ada default signal
             start_time=getattr(settings, 'start_time', '09:00'),
             end_time=getattr(settings, 'end_time', '17:00'),
             timezone=getattr(settings, 'timezone', 'UTC'),
@@ -431,19 +431,34 @@ class IQTradingRobot:
         try:
             expiration = 1  # 1 menit
             
-            # Gunakan asset dari signal jika ada, atau fallback ke config
+            # Gunakan asset dari signal SAJA, tanpa fallback
             signal_asset = getattr(self, '_current_signal_asset', None)
-            base_asset = signal_asset or self.config.asset
+            
+            if not signal_asset:
+                print("❌ ERROR: Signal tidak memiliki asset! Format yang benar: YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME")
+                return False, None
+                
+            base_asset = signal_asset
             
             print(f"📊 Trading: {direction.upper()} {base_asset} - ${amount}")
             
-            # Coba beberapa format asset
-            asset_variants = [
-                base_asset,
-                f"{base_asset}-OTC",
-                "EURUSD-OTC", 
-                "EURUSD"
-            ]
+            # Coba asset dari signal terlebih dahulu, tanpa fallback otomatis ke EURUSD
+            asset_variants = []
+            
+            # Jika signal memiliki asset spesifik, gunakan itu saja
+            if signal_asset:
+                asset_variants = [
+                    signal_asset,
+                    f"{signal_asset}-OTC"
+                ]
+                print(f"🎯 Menggunakan asset dari signal: {signal_asset}")
+            else:
+                # Fallback ke config default hanya jika tidak ada asset dari signal
+                asset_variants = [
+                    base_asset,
+                    f"{base_asset}-OTC"
+                ]
+                print(f"📊 Menggunakan asset default: {base_asset}")
             
             success = False
             order_id = None
@@ -625,17 +640,12 @@ class IQTradingRobot:
         if self.config.signal_content:
             self.parse_signal_content()
         
-        # Jika tidak ada parsed signals, buat signal default untuk testing
+        # Jika tidak ada parsed signals, tampilkan pesan error
         if not self.parsed_signals:
-            print("⚠️ Tidak ada signal input, menggunakan signal default untuk testing")
-            # Buat signal default CALL untuk testing
-            self.parsed_signals = [
-                {
-                    'direction': 'CALL',
-                    'timeframe': 1,
-                    'processed': False
-                }
-            ]
+            print("❌ TIDAK ADA SIGNAL INPUT YANG VALID!")
+            print("📋 Format yang diperlukan: YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME")
+            print("📋 Contoh: 2025-08-09 16:30:00,EURUSD,CALL,1")
+            return False
         
         print("🚀 MULAI SIGNAL INPUT TRADING...")
         print(f"📊 Total {len(self.parsed_signals)} signals siap untuk trading")

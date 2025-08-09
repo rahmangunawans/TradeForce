@@ -30,9 +30,11 @@ Key design patterns include the use of static data for fixed content, environmen
 - Manual signal input processing with support for multiple formats (e.g., "CALL,1" and "YYYY-MM-DD HH:MM:SS,PAIR,CALL/PUT,TIMEFRAME").
 - Simplified trading robot (`iq_trading_robot.py`) focused exclusively on manual signal input, removed complex strategies (martingale, technical analysis, OTC assets).
 - Trading bot configuration managed via a `TradingBotConfig` dataclass for consistency between the HTML form and robot execution.
-- Enhanced trading order system with asset variants (e.g., EURUSD, EURUSD-OTC) for improved order success rates.
-- Signal parsing prioritizes asset from signal content over form fields.
-- Execution scheduler for signals with future timestamps.
+- **CRITICAL FIX (Aug 9, 2025)**: Removed all EURUSD default fallbacks - robot now strictly uses asset from signal input only.
+- Signal parsing requires full format: "YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME" - no defaults or fallbacks.
+- Asset handling ensures exact match with user input, prevents automatic OTC suffix addition unless specified in signal.
+- Multi-timezone support with auto-detection and manual selection for global users (UTC+7, UTC+8, UTC+5, UTC+3, UTC-5, UTC-8, UTC-3, UTC+0).
+- Execution scheduler for signals with future timestamps with precise timezone conversion.
 
 ## External Dependencies
 

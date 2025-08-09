@@ -158,14 +158,32 @@ class IQTradingRobot:
                     # Parse timestamp untuk eksekusi terjadwal (assume local timezone)
                     from datetime import datetime
                     try:
-                        # Parse timestamp - assume sebagai waktu lokal user
+                        # Parse timestamp dan konversi timezone
+                        from datetime import datetime, timedelta
                         execution_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
                         current_time = datetime.now()
+                        
+                        # Deteksi timezone offset user (asumsi UTC+7 untuk Indonesia)
+                        # Jika selisih lebih dari 6 jam, kemungkinan user timezone berbeda
+                        raw_diff = execution_time - current_time
+                        hours_diff = raw_diff.total_seconds() / 3600
+                        
+                        # Auto-detect timezone: jika selisih 6-8 jam, assume user di UTC+7
+                        if 6 <= hours_diff <= 8:
+                            # User kemungkinan di UTC+7, konversi signal ke UTC
+                            execution_time = execution_time - timedelta(hours=7)
+                            print(f"🌏 Timezone conversion: Mengkonversi dari UTC+7 ke UTC")
+                        elif -8 <= hours_diff <= -6:
+                            # User kemungkinan di UTC+7, tapi signal sudah lewat hari ini
+                            execution_time = execution_time - timedelta(hours=7)
+                            print(f"🌏 Timezone conversion: Signal UTC+7 ke UTC (sudah lewat)")
+                        
                         time_diff = execution_time - current_time
                         
                         print(f"🕐 Timestamp analysis:")
-                        print(f"   Signal time: {execution_time}")
-                        print(f"   Current time: {current_time}")
+                        print(f"   Signal time (original): {datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')}")
+                        print(f"   Signal time (UTC): {execution_time}")
+                        print(f"   Current time (UTC): {current_time}")
                         print(f"   Time difference: {time_diff.total_seconds():.0f} seconds")
                         
                         # Jika signal sudah lewat atau sangat dekat (dalam 5 menit), eksekusi langsung

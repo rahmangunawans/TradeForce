@@ -935,9 +935,9 @@
                     </div>
                 </div>
                 
-                <!-- Row 2: Signal Type & Asset -->
+                <!-- Row 2: Signal Type & Timezone -->
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="signalType" class="form-label">
                                 <i class="fas fa-signal me-1"></i>Signal Type Feature
@@ -952,6 +952,25 @@
                         </div>
                     </div>
                     
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="userTimezone" class="form-label">
+                                <i class="fas fa-globe me-1"></i>Your Timezone
+                            </label>
+                            <select class="form-control" id="userTimezone" name="user_timezone">
+                                <option value="auto" selected>🔍 Auto-detect</option>
+                                <option value="+7">🇮🇩 UTC+7 (Indonesia, Thailand, Vietnam)</option>
+                                <option value="+8">🇨🇳 UTC+8 (China, Malaysia, Singapore)</option>
+                                <option value="+5">🇵🇰 UTC+5 (Pakistan, Uzbekistan)</option>
+                                <option value="+3">🇸🇦 UTC+3 (Saudi Arabia, Russia)</option>
+                                <option value="-5">🇺🇸 UTC-5 (Eastern US)</option>
+                                <option value="-8">🇺🇸 UTC-8 (Pacific US)</option>
+                                <option value="-3">🇧🇷 UTC-3 (Brazil)</option>
+                                <option value="0">🇬🇧 UTC+0 (UK, Ghana)</option>
+                            </select>
+                            <small class="form-text text-muted">For accurate signal timing</small>
+                        </div>
+                    </div>
 
                 </div>
                 

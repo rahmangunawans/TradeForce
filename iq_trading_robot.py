@@ -40,6 +40,7 @@ class TradingBotConfig:
     start_time: str = '09:00'
     end_time: str = '17:00'
     timezone: str = 'UTC'
+    user_timezone: str = 'auto'  # User's timezone for signal timing
     active_days: str = 'weekdays'
     
     def to_dict(self) -> dict:
@@ -60,6 +61,7 @@ class TradingBotConfig:
             'start_time': self.start_time,
             'end_time': self.end_time,
             'timezone': self.timezone,
+            'user_timezone': self.user_timezone,
             'active_days': self.active_days
         }
     
@@ -82,6 +84,7 @@ class TradingBotConfig:
             start_time=getattr(settings, 'start_time', '09:00'),
             end_time=getattr(settings, 'end_time', '17:00'),
             timezone=getattr(settings, 'timezone', 'UTC'),
+            user_timezone=getattr(settings, 'user_timezone', 'auto'),
             active_days=getattr(settings, 'active_days', 'weekdays')
         )
 
@@ -163,20 +166,65 @@ class IQTradingRobot:
                         execution_time = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
                         current_time = datetime.now()
                         
-                        # Deteksi timezone offset user (asumsi UTC+7 untuk Indonesia)
-                        # Jika selisih lebih dari 6 jam, kemungkinan user timezone berbeda
-                        raw_diff = execution_time - current_time
-                        hours_diff = raw_diff.total_seconds() / 3600
+                        # Get user timezone setting from config
+                        user_timezone = getattr(self.config, 'user_timezone', 'auto')
                         
-                        # Auto-detect timezone: jika selisih 6-8 jam, assume user di UTC+7
-                        if 6 <= hours_diff <= 8:
-                            # User kemungkinan di UTC+7, konversi signal ke UTC
-                            execution_time = execution_time - timedelta(hours=7)
-                            print(f"🌏 Timezone conversion: Mengkonversi dari UTC+7 ke UTC")
-                        elif -8 <= hours_diff <= -6:
-                            # User kemungkinan di UTC+7, tapi signal sudah lewat hari ini
-                            execution_time = execution_time - timedelta(hours=7)
-                            print(f"🌏 Timezone conversion: Signal UTC+7 ke UTC (sudah lewat)")
+                        # Konversi berdasarkan setting user timezone
+                        if user_timezone == 'auto':
+                            # Auto-detect timezone user berdasarkan selisih waktu
+                            raw_diff = execution_time - current_time
+                            hours_diff = raw_diff.total_seconds() / 3600
+                            
+                            # Deteksi timezone berdasarkan pola selisih waktu
+                            timezone_offset = 0
+                            timezone_name = "UTC"
+                            
+                            # Deteksi timezone umum (range ±1 jam untuk toleransi)
+                            if 6 <= abs(hours_diff) <= 8:
+                                if hours_diff > 0:
+                                    timezone_offset = 7  # UTC+7 (Indonesia, Thailand, Vietnam)
+                                    timezone_name = "UTC+7 (Indonesia/Thailand/Vietnam)"
+                                else:
+                                    timezone_offset = -7  # User di UTC-7 tapi tidak umum
+                                    timezone_name = "UTC-7"
+                            elif 4 <= abs(hours_diff) <= 6:
+                                if hours_diff > 0:
+                                    timezone_offset = 5  # UTC+5 (Pakistan, Uzbekistan)
+                                    timezone_name = "UTC+5 (Pakistan/Uzbekistan)"
+                                else:
+                                    timezone_offset = -5  # UTC-5 (Eastern US)
+                                    timezone_name = "UTC-5 (Eastern US)"
+                            elif 2 <= abs(hours_diff) <= 4:
+                                if hours_diff > 0:
+                                    timezone_offset = 3  # UTC+3 (Saudi Arabia, Russia)
+                                    timezone_name = "UTC+3 (Saudi Arabia/Russia)"
+                                else:
+                                    timezone_offset = -3  # UTC-3 (Brazil)
+                                    timezone_name = "UTC-3 (Brazil)"
+                            elif 7 <= abs(hours_diff) <= 9:
+                                if hours_diff > 0:
+                                    timezone_offset = 8  # UTC+8 (China, Malaysia, Singapore)
+                                    timezone_name = "UTC+8 (China/Malaysia/Singapore)"
+                                else:
+                                    timezone_offset = -8  # UTC-8 (Pacific US)
+                                    timezone_name = "UTC-8 (Pacific US)"
+                            
+                            # Konversi ke UTC jika terdeteksi timezone
+                            if timezone_offset != 0:
+                                if hours_diff > 0:
+                                    execution_time = execution_time - timedelta(hours=timezone_offset)
+                                else:
+                                    execution_time = execution_time + timedelta(hours=abs(timezone_offset))
+                                print(f"🌏 Auto-detected & converted: {timezone_name} → UTC")
+                        else:
+                            # Manual timezone setting dari user
+                            try:
+                                timezone_offset = int(user_timezone)
+                                execution_time = execution_time - timedelta(hours=timezone_offset)
+                                print(f"🌏 Manual timezone converted: UTC{user_timezone:+d} → UTC")
+                            except (ValueError, TypeError):
+                                print(f"⚠️ Invalid timezone setting: {user_timezone}, using auto-detect")
+                                # Fallback ke auto-detect jika setting tidak valid
                         
                         time_diff = execution_time - current_time
                         

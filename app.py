@@ -81,6 +81,7 @@ class BotSetting(db.Model):
     start_time = db.Column(db.String(10), default='09:00')  # Trading start time
     end_time = db.Column(db.String(10), default='17:00')  # Trading end time
     timezone = db.Column(db.String(50), default='UTC')  # Trading timezone
+    user_timezone = db.Column(db.String(10), default='auto')  # User's timezone offset for signal timing
     active_days = db.Column(db.String(20), default='weekdays')  # Trading active days
     
     is_active = db.Column(db.Boolean, default=False)
@@ -402,6 +403,7 @@ def save_bot_settings():
         settings.start_time = data.get('start_time', '09:00')
         settings.end_time = data.get('end_time', '17:00')
         settings.timezone = data.get('timezone', 'UTC')
+        settings.user_timezone = data.get('user_timezone', 'auto')  # User's timezone for signal timing
         settings.active_days = data.get('active_days', 'weekdays')
         
         db.session.add(settings)

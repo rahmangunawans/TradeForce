@@ -263,23 +263,13 @@ class IQTradingRobot:
                             print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
                         return signal
                     else:
-                        # Cek jika waktu tunggu terlalu lama (>30 menit), eksekusi langsung
+                        # Tunggu eksekusi normal - TIDAK ADA BATAS WAKTU TUNGGU
                         time_left = signal['execution_time'] - current_time
-                        if time_left.total_seconds() > 1800:  # Lebih dari 30 menit
-                            signal['processed'] = True
-                            print(f"⚡ WAKTU TUNGGU TERLALU LAMA - EKSEKUSI LANGSUNG: {signal['direction']}")
-                            if signal.get('asset'):
-                                print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {signal['asset']}")
-                            else:
-                                print(f"🎯 EKSEKUSI SIGNAL: {signal['direction']} - Asset: {self.config.asset}")
-                            return signal
-                        else:
-                            # Tunggu eksekusi normal
-                            hours = int(time_left.total_seconds() // 3600)
-                            minutes = int((time_left.total_seconds() % 3600) // 60)
-                            seconds = int(time_left.total_seconds() % 60)
-                            print(f"⏳ Menunggu eksekusi {signal['direction']} dalam {hours:02d}:{minutes:02d}:{seconds:02d}")
-                            continue
+                        hours = int(time_left.total_seconds() // 3600)
+                        minutes = int((time_left.total_seconds() % 3600) // 60)
+                        seconds = int(time_left.total_seconds() % 60)
+                        print(f"⏳ Menunggu eksekusi {signal['direction']} dalam {hours:02d}:{minutes:02d}:{seconds:02d}")
+                        continue
                 else:
                     # Signal tanpa timestamp, eksekusi langsung
                     signal['processed'] = True

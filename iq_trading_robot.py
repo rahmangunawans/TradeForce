@@ -447,41 +447,32 @@ class IQTradingRobot:
             
             # Jika signal memiliki asset spesifik, gunakan itu saja
             if signal_asset:
-                asset_variants = [
-                    signal_asset,
-                    f"{signal_asset}-OTC"
-                ]
+                # Cek apakah sudah ada suffix OTC
+                if signal_asset.endswith('-OTC'):
+                    asset_variants = [signal_asset]  # Sudah ada OTC, gunakan as-is
+                else:
+                    asset_variants = [
+                        signal_asset,
+                        f"{signal_asset}-OTC"
+                    ]
                 print(f"🎯 Menggunakan asset dari signal: {signal_asset}")
             else:
-                # Fallback ke config default hanya jika tidak ada asset dari signal
-                asset_variants = [
-                    base_asset,
-                    f"{base_asset}-OTC"
-                ]
-                print(f"📊 Menggunakan asset default: {base_asset}")
+                # Error jika tidak ada asset
+                print("❌ ERROR: Signal harus memiliki asset!")
+                return False, None
             
             success = False
             order_id = None
             
-            # Cek status pasar dan instrumen terlebih dahulu
-            try:
-                all_open_time = self.api.get_all_open_time()
-                print(f"📅 Status pasar: {all_open_time}")
-            except:
-                print("⚠️ Tidak bisa mengecek status pasar")
+            # Skip checking status pasar untuk menghindari error
+            print("📅 Melanjutkan tanpa cek status pasar")
             
             for asset in asset_variants:
                 try:
                     print(f"🔍 Mencoba asset: {asset}")
                     
-                    # Cek apakah asset terbuka untuk trading
-                    try:
-                        asset_open = self.api.get_all_open_time()
-                        if asset_open and isinstance(asset_open, dict):
-                            asset_status = asset_open.get('binary', {}).get(asset.upper())
-                            print(f"📊 Status {asset}: {asset_status}")
-                    except Exception as status_err:
-                        print(f"⚠️ Tidak bisa cek status {asset}: {status_err}")
+                    # Skip individual asset status check untuk menghindari error
+                    print(f"📊 Memproses asset: {asset}")
                     
                     success, order_id = self.api.buy(amount, asset, direction, expiration)
                     print(f"🔄 Hasil API buy: success={success}, order_id={order_id}")
@@ -541,8 +532,8 @@ class IQTradingRobot:
         TRADING LOOP SEDERHANA - HANYA SIGNAL INPUT
         """
         print("🚀 MULAI TRADING - SIGNAL INPUT ONLY")
-        print(f"📊 Asset: {self.config.asset}")
         print(f"💰 Amount: ${self.config.trading_amount}")
+        print(f"📊 Signals: {len(self.parsed_signals)} siap untuk trading")
         print("=" * 50)
         
         self.start_balance = self.balance
@@ -577,8 +568,8 @@ class IQTradingRobot:
                         self._current_signal_asset = signal['asset']
                         print(f"🎯 TRADING: {direction.upper()} {signal['asset']} (dari signal)")
                     else:
-                        self._current_signal_asset = None
-                        print(f"🎯 TRADING: {direction.upper()} {self.config.asset} (default)")
+                        print("❌ ERROR: Signal tidak memiliki asset - trading dihentikan")
+                        break
                     
                     success, order_id = self.place_order(direction, self.config.trading_amount)
                     

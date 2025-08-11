@@ -457,15 +457,9 @@ class IQTradingRobot:
                     asset_variants = [signal_asset]  # Sudah ada OTC, gunakan as-is
                     print(f"🎯 Signal menyebutkan OTC: {signal_asset}")
                 else:
-                    # PILIHAN: Apakah mau strict atau dengan fallback OTC?
-                    # STRICT: Hanya gunakan asset persis dari signal
-                    # asset_variants = [signal_asset]
-                    # FALLBACK: Coba asset asli dulu, kalau gagal coba OTC
-                    asset_variants = [
-                        signal_asset,
-                        f"{signal_asset}-OTC"
-                    ]
-                    print(f"🎯 Signal: {signal_asset} (akan coba regular dulu, jika gagal akan coba {signal_asset}-OTC)")
+                    # STRICT MODE: Hanya gunakan asset persis dari signal
+                    asset_variants = [signal_asset]
+                    print(f"🎯 STRICT MODE: Hanya menggunakan {signal_asset} sesuai signal content")
                 print(f"📝 Asset dari signal content: {signal_asset}")
             else:
                 # Error jika tidak ada asset

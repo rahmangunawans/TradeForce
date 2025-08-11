@@ -452,15 +452,21 @@ class IQTradingRobot:
             
             # Jika signal memiliki asset spesifik, gunakan itu saja
             if signal_asset:
-                # Cek apakah sudah ada suffix OTC
+                # STRICT MODE: Gunakan HANYA asset yang ada di signal
                 if signal_asset.endswith('-OTC'):
                     asset_variants = [signal_asset]  # Sudah ada OTC, gunakan as-is
+                    print(f"🎯 Signal menyebutkan OTC: {signal_asset}")
                 else:
+                    # PILIHAN: Apakah mau strict atau dengan fallback OTC?
+                    # STRICT: Hanya gunakan asset persis dari signal
+                    # asset_variants = [signal_asset]
+                    # FALLBACK: Coba asset asli dulu, kalau gagal coba OTC
                     asset_variants = [
                         signal_asset,
                         f"{signal_asset}-OTC"
                     ]
-                print(f"🎯 Menggunakan asset dari signal: {signal_asset}")
+                    print(f"🎯 Signal: {signal_asset} (akan coba regular dulu, jika gagal akan coba {signal_asset}-OTC)")
+                print(f"📝 Asset dari signal content: {signal_asset}")
             else:
                 # Error jika tidak ada asset
                 print("❌ ERROR: Signal harus memiliki asset!")
@@ -483,7 +489,11 @@ class IQTradingRobot:
                     print(f"🔄 Hasil API buy: success={success}, order_id={order_id}")
                     
                     if success and order_id:
-                        print(f"✅ Order berhasil! Asset: {asset}, ID: {order_id}")
+                        if asset != signal_asset:
+                            print(f"✅ Order berhasil! Asset yang digunakan: {asset} (signal asli: {signal_asset})")
+                            print(f"ℹ️  Alasan: {signal_asset} tidak tersedia, menggunakan {asset}")
+                        else:
+                            print(f"✅ Order berhasil! Asset: {asset}, ID: {order_id}")
                         # Update config dengan asset yang berhasil
                         self.config.asset = asset
                         return True, order_id

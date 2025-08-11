@@ -113,6 +113,11 @@ class IQTradingRobot:
         self.profit_total = 0
         self.start_balance = 0
         
+        # Martingale Tracking
+        self.current_martingale_step = 0
+        self.consecutive_losses = 0
+        self.current_amount = self.config.trading_amount
+        
         print("🎯 SIGNAL INPUT TRADING ROBOT - DENGAN DATACLASS CONFIG")
         print("📊 FOKUS: Manual Signal Input SAJA")
         print("=" * 50)
@@ -517,8 +522,12 @@ class IQTradingRobot:
                 self.profit_total += profit
                 print(f"🎉 WIN! Profit: ${profit:.2f} | Total: ${self.profit_total:.2f}")
                 return "win", profit
+            elif result == 0:
+                # Draw/Tie - no profit, no loss, refund the amount
+                print(f"🤝 DRAW! Refund: ${self.current_amount:.2f} | Total: ${self.profit_total:.2f}")
+                return "draw", 0
             else:
-                loss = self.config.trading_amount
+                loss = self.current_amount
                 self.profit_total -= loss
                 print(f"😢 LOSS! Loss: ${loss:.2f} | Total: ${self.profit_total:.2f}")
                 return "loss", loss
@@ -527,16 +536,40 @@ class IQTradingRobot:
             print(f"❌ Error hasil: {e}")
             return "error", 0
     
+    def reset_martingale(self):
+        """Reset Martingale setelah win"""
+        self.current_martingale_step = 0
+        self.consecutive_losses = 0
+        self.current_amount = self.config.trading_amount
+        print(f"🔄 Martingale reset - Amount: ${self.current_amount:.2f}")
+
+    def apply_martingale(self):
+        """Apply logika Martingale setelah loss"""
+        if self.current_martingale_step < self.config.step_martingale:
+            self.current_martingale_step += 1
+            self.consecutive_losses += 1
+            self.current_amount = self.config.trading_amount * (self.config.martingale_multiple ** self.current_martingale_step)
+            print(f"💸 MARTINGALE Step {self.current_martingale_step}/{self.config.step_martingale}")
+            print(f"   Next Amount: ${self.current_amount:.2f} (x{self.config.martingale_multiple ** self.current_martingale_step:.1f})")
+            return True
+        else:
+            print(f"🚫 MARTINGALE MAX STEP REACHED ({self.config.step_martingale})")
+            self.reset_martingale()
+            return False
+
     def trading_loop(self):
         """
-        TRADING LOOP SEDERHANA - HANYA SIGNAL INPUT
+        TRADING LOOP DENGAN MARTINGALE - SIGNAL INPUT
         """
-        print("🚀 MULAI TRADING - SIGNAL INPUT ONLY")
-        print(f"💰 Amount: ${self.config.trading_amount}")
+        print("🚀 MULAI TRADING - SIGNAL INPUT WITH MARTINGALE")
+        print(f"💰 Initial Amount: ${self.config.trading_amount}")
+        print(f"🎯 Martingale Steps: {self.config.step_martingale}")
+        print(f"📈 Martingale Multiple: {self.config.martingale_multiple}x")
         print(f"📊 Signals: {len(self.parsed_signals)} siap untuk trading")
         print("=" * 50)
         
         self.start_balance = self.balance
+        self.reset_martingale()  # Initialize Martingale
         
         while self.is_trading and self.is_connected:
             try:
@@ -571,10 +604,25 @@ class IQTradingRobot:
                         print("❌ ERROR: Signal tidak memiliki asset - trading dihentikan")
                         break
                     
-                    success, order_id = self.place_order(direction, self.config.trading_amount)
+                    # Gunakan current_amount untuk Martingale
+                    print(f"💰 Trading Amount: ${self.current_amount:.2f} (Step: {self.current_martingale_step})")
+                    success, order_id = self.place_order(direction, self.current_amount)
                     
                     if success:
                         result, amount = self.wait_for_result(order_id)
+                        
+                        # Proses hasil trading dengan Martingale
+                        if result == "win":
+                            print("🎉 WIN - Reset Martingale")
+                            self.reset_martingale()
+                        elif result == "loss":
+                            print("😢 LOSS - Cek Martingale")
+                            martingale_continues = self.apply_martingale()
+                            if not martingale_continues:
+                                print("⚠️ Martingale selesai - reset ke amount awal")
+                        elif result == "draw":
+                            print("🤝 DRAW - Amount tidak berubah (refund)")
+                            # Untuk draw, tidak reset atau apply martingale
                         
                         # Simpan history dengan asset yang benar
                         actual_asset = self._current_signal_asset or self.config.asset
@@ -582,9 +630,10 @@ class IQTradingRobot:
                             'timestamp': datetime.now().isoformat(),
                             'asset': actual_asset,
                             'direction': direction,
-                            'amount': self.config.trading_amount,
+                            'amount': self.current_amount,
                             'result': result,
-                            'profit_loss': amount if result == 'win' else -amount
+                            'profit_loss': amount if result == 'win' else (-amount if result == 'loss' else 0),
+                            'martingale_step': self.current_martingale_step
                         }
                         self.trades_history.append(trade_data)
                 else:
@@ -665,6 +714,7 @@ class IQTradingRobot:
         
         wins = len([t for t in self.trades_history if t['result'] == 'win'])
         losses = len([t for t in self.trades_history if t['result'] == 'loss'])
+        draws = len([t for t in self.trades_history if t['result'] == 'draw'])
         total_trades = len(self.trades_history)
         win_rate = (wins / total_trades * 100) if total_trades > 0 else 0
         
@@ -674,6 +724,7 @@ class IQTradingRobot:
         print(f"Total Trades: {total_trades}")
         print(f"Wins: {wins}")
         print(f"Losses: {losses}")
+        print(f"Draws: {draws}")
         print(f"Win Rate: {win_rate:.2f}%")
         print(f"Profit/Loss: ${self.profit_total:.2f}")
         print("=" * 50)

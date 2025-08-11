@@ -35,6 +35,9 @@ Key design patterns include the use of static data for fixed content, environmen
 - Asset handling ensures exact match with user input, prevents automatic OTC suffix addition unless specified in signal.
 - Multi-timezone support with auto-detection and manual selection for global users (UTC+7, UTC+8, UTC+5, UTC+3, UTC-5, UTC-8, UTC-3, UTC+0).
 - Execution scheduler for signals with future timestamps with precise timezone conversion.
+- **MIGRATION COMPLETED (Aug 11, 2025)**: Successfully migrated from Replit Agent to Replit environment with PostgreSQL database.
+- **ENHANCEMENT (Aug 11, 2025)**: Added DRAW result support alongside WIN/LOSS for complete trading result handling.
+- **ENHANCEMENT (Aug 11, 2025)**: Implemented full Martingale functionality with configurable steps, multipliers, and proper reset logic.
 
 ## External Dependencies
 

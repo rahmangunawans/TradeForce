@@ -38,6 +38,7 @@ Key design patterns include the use of static data for fixed content, environmen
 - **MIGRATION COMPLETED (Aug 11, 2025)**: Successfully migrated from Replit Agent to Replit environment with PostgreSQL database.
 - **ENHANCEMENT (Aug 11, 2025)**: Added DRAW result support alongside WIN/LOSS for complete trading result handling.
 - **ENHANCEMENT (Aug 11, 2025)**: Implemented full Martingale functionality with configurable steps, multipliers, and proper reset logic.
+- **DATABASE FIX (Aug 11, 2025)**: Fixed bot_setting table schema to properly apply all default values from Flask model definitions.
 
 ## External Dependencies
 

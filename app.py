@@ -71,11 +71,8 @@ class BotSetting(db.Model):
     step_martingale = db.Column(db.Integer, default=3)  # Number of martingale steps
     martingale_multiple = db.Column(db.Float, default=2.2)  # Martingale multiplier
     
-    asset = db.Column(db.String(50), default='EURUSD')
-    strategy = db.Column(db.String(50), default='martingale')
     signal_type = db.Column(db.String(100), default='manual_input')  # Signal source type - FOKUS HANYA SIGNAL INPUT
     signal_content = db.Column(db.Text)  # Content for manual signal input
-    max_consecutive_losses = db.Column(db.Integer, default=3)
     
     # Trading Session Configuration
     start_time = db.Column(db.String(10), default='09:00')  # Trading start time
@@ -395,7 +392,6 @@ def save_bot_settings():
         settings.step_martingale = int(data.get('step_martingale', 3))
         settings.martingale_multiple = float(data.get('martingale_multiple', 2.2))
         
-        settings.asset = data.get('asset', 'EURUSD')  # Trading asset
         settings.signal_type = data.get('signal_type', 'manual_input')  # Default ke manual input
         settings.signal_content = data.get('signal_content', '')  # Save signal content for manual input
         

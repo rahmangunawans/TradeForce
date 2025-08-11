@@ -39,6 +39,7 @@ Key design patterns include the use of static data for fixed content, environmen
 - **ENHANCEMENT (Aug 11, 2025)**: Added DRAW result support alongside WIN/LOSS for complete trading result handling.
 - **ENHANCEMENT (Aug 11, 2025)**: Implemented full Martingale functionality with configurable steps, multipliers, and proper reset logic.
 - **DATABASE FIX (Aug 11, 2025)**: Fixed bot_setting table schema to properly apply all default values from Flask model definitions.
+- **DATABASE CLEANUP (Aug 11, 2025)**: Removed unnecessary columns (asset, strategy, max_consecutive_losses) from bot_setting table to clean up the schema.
 
 ## External Dependencies
 

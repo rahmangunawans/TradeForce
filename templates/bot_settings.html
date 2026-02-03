@@ -795,245 +795,6 @@
             </div>
         </div>
 
-        <!-- Configuration Section -->
-        <div class="config-section mb-4">
-            <div class="config-card">
-                <div class="config-content">
-
-            <form id="botSettingsForm" class="bot-config-form">
-                
-                <!-- Broker Settings -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="brokerDomain" class="form-label">
-                                <i class="fas fa-globe me-2"></i>Broker Domain (Region)
-                            </label>
-                            <select class="form-control" id="brokerDomain" name="broker_domain" required>
-                                {% for region, domain in broker_domains.items() %}
-                                <option value="{{ domain }}" {% if settings and settings.broker_domain == domain %}selected{% endif %}>
-                                    {{ region }} - {{ domain }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                            <small class="form-text text-muted">Select your region's IQ Option domain</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="accountType" class="form-label">
-                                <i class="fas fa-user-tag me-2"></i>Account Type
-                            </label>
-                            <select class="form-control" id="accountType" name="account_type" required>
-                                <option value="demo" {% if settings and settings.account_type == 'demo' %}selected{% endif %}>Demo Account</option>
-                                <option value="real" {% if settings and settings.account_type == 'real' %}selected{% endif %}>Real Account</option>
-                            </select>
-                            <small class="form-text text-muted">Choose demo for practice or real for live trading</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- IQ Option Credentials -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="iqEmail" class="form-label">
-                                <i class="fas fa-envelope me-2"></i>IQ Option Email
-                            </label>
-                            <input type="email" class="form-control" id="iqEmail" name="iq_email" 
-                                   value="{% if settings %}{{ settings.iq_email }}{% endif %}" required placeholder="Enter your IQ Option email">
-                            <small class="form-text text-muted">Your IQ Option account email</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="iqPassword" class="form-label">
-                                <i class="fas fa-lock me-2"></i>IQ Option Password
-                            </label>
-                            <input type="password" class="form-control" id="iqPassword" name="iq_password" required placeholder="Enter your IQ Option password">
-                            <small class="form-text text-muted">Your IQ Option account password</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Trading Configuration -->
-                <div class="section-divider">
-                    <h5><i class="fas fa-chart-line me-2"></i>Trading Configuration</h5>
-                </div>
-                
-                <!-- Row 1: Basic Trading Configuration -->
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="tradingAmount" class="form-label">
-                                <i class="fas fa-dollar-sign me-1"></i>Amount ($)
-                            </label>
-                            <input type="number" class="form-control" id="tradingAmount" name="trading_amount" 
-                                   value="{% if settings %}{{ settings.trading_amount }}{% else %}1{% endif %}" 
-                                   min="0.1" max="1000" step="0.1">
-                            <small class="form-text text-muted">Initial amount</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="stopWin" class="form-label">
-                                <i class="fas fa-trophy me-1"></i>Stop Win ($)
-                            </label>
-                            <input type="number" class="form-control" id="stopWin" name="stop_win" 
-                                   value="{% if settings %}{{ settings.stop_win }}{% else %}10{% endif %}" 
-                                   min="1" max="10000" step="0.1">
-                            <small class="form-text text-muted">Profit target</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="stopLoss" class="form-label">
-                                <i class="fas fa-exclamation-triangle me-1"></i>Stop Loss ($)
-                            </label>
-                            <input type="number" class="form-control" id="stopLoss" name="stop_loss" 
-                                   value="{% if settings %}{{ settings.stop_loss }}{% else %}10{% endif %}" 
-                                   min="1" max="10000" step="0.1">
-                            <small class="form-text text-muted">Loss limit</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="stepMartingale" class="form-label">
-                                <i class="fas fa-step-forward me-1"></i>Step Martingale
-                            </label>
-                            <input type="number" class="form-control" id="stepMartingale" name="step_martingale" 
-                                   value="{% if settings %}{{ settings.step_martingale }}{% else %}3{% endif %}" 
-                                   min="1" max="10" step="1">
-                            <small class="form-text text-muted">Number of steps</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="martingaleMultiple" class="form-label">
-                                <i class="fas fa-times me-1"></i>Multiple
-                            </label>
-                            <input type="number" class="form-control" id="martingaleMultiple" name="martingale_multiple" 
-                                   value="{% if settings %}{{ settings.martingale_multiple }}{% else %}2.2{% endif %}" 
-                                   min="1.1" max="10" step="0.1">
-                            <small class="form-text text-muted">Martingale multiplier</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Row 2: Signal Type & Timezone -->
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="form-group">
-                            <label for="signalType" class="form-label">
-                                <i class="fas fa-signal me-1"></i>Signal Type Feature
-                            </label>
-                            <select class="form-control" id="signalType" name="signal_type">
-                                <option value="manual_input" selected>
-                                    ✍️ MANUAL SIGNAL INPUT (HANYA STRATEGI INI)
-                                </option>
-                                <!-- SEMUA STRATEGI LAIN DIHAPUS - FOKUS MANUAL INPUT SAJA -->
-                            </select>
-                            <small class="form-text text-muted">Asset akan diambil dari signal content - tidak perlu setting manual</small>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="userTimezone" class="form-label">
-                                <i class="fas fa-globe me-1"></i>Your Timezone
-                            </label>
-                            <select class="form-control" id="userTimezone" name="user_timezone">
-                                <option value="auto" selected>🔍 Auto-detect</option>
-                                <option value="+7">🇮🇩 UTC+7 (Indonesia, Thailand, Vietnam)</option>
-                                <option value="+8">🇨🇳 UTC+8 (China, Malaysia, Singapore)</option>
-                                <option value="+5">🇵🇰 UTC+5 (Pakistan, Uzbekistan)</option>
-                                <option value="+3">🇸🇦 UTC+3 (Saudi Arabia, Russia)</option>
-                                <option value="-5">🇺🇸 UTC-5 (Eastern US)</option>
-                                <option value="-8">🇺🇸 UTC-8 (Pacific US)</option>
-                                <option value="-3">🇧🇷 UTC-3 (Brazil)</option>
-                                <option value="0">🇬🇧 UTC+0 (UK, Ghana)</option>
-                            </select>
-                            <small class="form-text text-muted">For accurate signal timing</small>
-                        </div>
-                    </div>
-
-                </div>
-                
-                <!-- Signal Input File Upload Section (shows when manual_input is selected) -->
-                <div class="row" id="signalInputSection" style="display: none;">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="fas fa-file-upload me-2"></i>Signal Input File
-                            </label>
-                            <div class="signal-input-container">
-                                <!-- Drag & Drop Zone -->
-                                <div class="drag-drop-zone" id="dragDropZone">
-                                    <div class="drag-drop-content">
-                                        <i class="fas fa-cloud-upload-alt drag-drop-icon"></i>
-                                        <p class="drag-drop-text">Drag & drop your signal file here</p>
-                                        <p class="drag-drop-subtext">or click to browse</p>
-                                        <input type="file" id="signalFileInput" accept=".txt,.csv,.json" style="display: none;">
-                                    </div>
-                                </div>
-                                
-                                <!-- Signal Content Box -->
-                                <div class="signal-content-box" id="signalContentBox">
-                                    <div class="signal-content-header">
-                                        <label for="signalContent" class="form-label">
-                                            <i class="fas fa-edit me-2"></i>Signal Content
-                                        </label>
-                                        <button type="button" class="btn-clear-signals" id="clearSignalsBtn">
-                                            <i class="fas fa-trash"></i>Clear
-                                        </button>
-                                    </div>
-                                    <textarea 
-                                        class="form-control signal-textarea" 
-                                        id="signalContent" 
-                                        name="signal_content"
-                                        placeholder="Contoh format yang didukung:
-
-CALL,1
-PUT,1
-CALL
-
-Atau format lengkap:
-2025-08-08 16:30:00,EURUSD,CALL,1
-2025-08-08 16:35:00,GBPUSD,PUT,1"
-                                        rows="8"
-                                    >{% if settings and settings.signal_content %}{{ settings.signal_content }}{% endif %}</textarea>
-                                    <small class="form-text text-muted">
-                                        <strong>3 Format yang didukung:</strong><br>
-                                        • <code>CALL</code> atau <code>PUT</code> (sederhana, eksekusi segera)<br>
-                                        • <code>CALL,1</code> atau <code>PUT,1</code> (dengan timeframe menit)<br>
-                                        • <code>2025-08-08 16:30:00,EURUSD,CALL,1</code> (format lengkap dengan waktu dan pair)
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="d-flex gap-3 justify-content-center mt-4">
-                    <button type="button" class="btn btn-primary" id="testConnectionBtn">
-                        <i class="fas fa-plug me-2"></i>Test Connection & Get Balance
-                    </button>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-2"></i>Save Settings
-                    </button>
-                </div>
-            </form>
-                </div>
-            </div>
-        </div>
-
         <!-- Control Panel Section -->
         <div class="control-section mb-4">
             <div class="control-card">
@@ -1118,9 +879,9 @@ Atau format lengkap:
             
             // Show/hide signal input section based on selection
             function toggleSignalInputSection() {
-                if (signalTypeSelect.value === 'manual_input') {
+                if (signalTypeSelect && signalTypeSelect.value === 'manual_input') {
                     signalInputSection.style.display = 'block';
-                } else {
+                } else if (signalInputSection) {
                     signalInputSection.style.display = 'none';
                 }
             }
@@ -1129,44 +890,52 @@ Atau format lengkap:
             toggleSignalInputSection();
             
             // Listen for signal type changes
-            signalTypeSelect.addEventListener('change', toggleSignalInputSection);
+            if (signalTypeSelect) {
+                signalTypeSelect.addEventListener('change', toggleSignalInputSection);
+            }
             
             // Drag & Drop functionality
-            dragDropZone.addEventListener('click', () => {
-                signalFileInput.click();
-            });
-            
-            dragDropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dragDropZone.classList.add('drag-over');
-            });
-            
-            dragDropZone.addEventListener('dragleave', () => {
-                dragDropZone.classList.remove('drag-over');
-            });
-            
-            dragDropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dragDropZone.classList.remove('drag-over');
+            if (dragDropZone) {
+                dragDropZone.addEventListener('click', () => {
+                    signalFileInput.click();
+                });
                 
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    handleFileUpload(files[0]);
-                }
-            });
+                dragDropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dragDropZone.classList.add('drag-over');
+                });
+                
+                dragDropZone.addEventListener('dragleave', () => {
+                    dragDropZone.classList.remove('drag-over');
+                });
+                
+                dragDropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dragDropZone.classList.remove('drag-over');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFileUpload(files[0]);
+                    }
+                });
+            }
             
             // File input change
-            signalFileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFileUpload(e.target.files[0]);
-                }
-            });
+            if (signalFileInput) {
+                signalFileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        handleFileUpload(e.target.files[0]);
+                    }
+                });
+            }
             
             // Clear signals button
-            clearSignalsBtn.addEventListener('click', () => {
-                signalContent.value = '';
-                signalFileInput.value = '';
-            });
+            if (clearSignalsBtn) {
+                clearSignalsBtn.addEventListener('click', () => {
+                    signalContent.value = '';
+                    signalFileInput.value = '';
+                });
+            }
             
             // Handle file upload
             function handleFileUpload(file) {
@@ -1193,9 +962,9 @@ Atau format lengkap:
                     }
                     
                     // Append to existing content if there is any
-                    if (signalContent.value.trim()) {
+                    if (signalContent && signalContent.value.trim()) {
                         signalContent.value += '\n' + processedContent;
-                    } else {
+                    } else if (signalContent) {
                         signalContent.value = processedContent;
                     }
                     
@@ -1210,430 +979,103 @@ Atau format lengkap:
             function convertJsonToSignalFormat(jsonData) {
                 if (Array.isArray(jsonData)) {
                     return jsonData.map(signal => {
-                        // Assume JSON has properties like: timestamp, pair, direction, timeframe
-                        return `${signal.timestamp || signal.time},${signal.pair || signal.symbol},${signal.direction || signal.type},${signal.timeframe || signal.expiry || 1}`;
+                        // Custom logic based on expected JSON structure
+                        return `${signal.time || ''},${signal.pair || ''},${signal.type || ''},${signal.timeframe || ''}`;
                     }).join('\n');
                 }
-                return jsonData.toString();
-            }
-            
-            // Show notification helper
-            function showNotification(message, type) {
-                // Create a simple notification
-                const notification = document.createElement('div');
-                notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
-                notification.style.cssText = `
-                    top: 20px;
-                    right: 20px;
-                    z-index: 9999;
-                    min-width: 250px;
-                    border-radius: 8px;
-                `;
-                notification.innerHTML = `
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-                    ${message}
-                `;
-                
-                document.body.appendChild(notification);
-                
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    notification.remove();
-                }, 3000);
+                return JSON.stringify(jsonData);
             }
         }
 
-
-        // Test Connection
-        testConnectionBtn.addEventListener('click', function() {
-            const btn = this;
-            const originalHTML = btn.innerHTML;
-            
-            // Show loading
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Testing...';
-            btn.disabled = true;
-            
-            // Get form data
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            
-            fetch('/test-connection', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    // Update status
-                    statusIndicator.className = 'status-indicator status-connected';
-                    statusText.textContent = 'Connected';
-                    
-                    // Show balance info
-                    balanceAmount.textContent = `$${result.balance.toFixed(2)}`;
-                    accountTypeBadge.textContent = result.account_type.charAt(0).toUpperCase() + result.account_type.slice(1);
-                    balanceInfo.style.display = 'block';
-                    
-                    // Enable start bot button
-                    startBotBtn.disabled = false;
-                    
-                    showAlert('success', result.message);
-                } else {
-                    // Clear connection status on failure
-                    statusIndicator.className = 'status-indicator status-disconnected';
-                    statusText.textContent = 'Connection Failed';
-                    balanceInfo.style.display = 'none';
-                    startBotBtn.disabled = true;
-                    stopBotBtn.disabled = true;
-                    
-                    showAlert('danger', result.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Clear connection status on error
-                statusIndicator.className = 'status-indicator status-disconnected';
-                statusText.textContent = 'Disconnected';
-                balanceInfo.style.display = 'none';
-                startBotBtn.disabled = true;
-                stopBotBtn.disabled = true;
-                
-                showAlert('danger', 'An error occurred while testing connection');
-            })
-            .finally(() => {
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
-            });
-        });
-
-        // Save Settings
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
-            fetch('/save-bot-settings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    showAlert('success', result.message);
-                } else {
-                    showAlert('danger', result.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('danger', 'An error occurred while saving settings');
-            });
-        });
-
-        // Start Bot
-        startBotBtn.addEventListener('click', function() {
-            const btn = this;
-            const passwordInput = document.getElementById('iqPassword');
-            
-            // Debug logging
-            console.log('Start bot clicked');
-            console.log('Password input:', passwordInput);
-            console.log('Password value:', passwordInput ? passwordInput.value : 'null');
-            
-            // Check if connection test was successful first
-            const statusIndicator = document.getElementById('statusIndicator');
-            console.log('Status indicator:', statusIndicator);
-            console.log('Status classes:', statusIndicator ? statusIndicator.className : 'null');
-            
-            if (!statusIndicator || !statusIndicator.classList.contains('status-connected')) {
-                console.log('Connection test not passed');
-                showAlert('danger', 'Please test connection first before starting the bot.');
-                return;
-            }
-            
-            if (!passwordInput || !passwordInput.value.trim()) {
-                console.log('Password validation failed');
-                showAlert('danger', 'Please enter your IQ Option password to start the bot.');
-                return;
-            }
-            
-            console.log('All validations passed, starting bot...');
-            
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
-            btn.disabled = true;
-            
-            fetch('/start-bot', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    iq_password: passwordInput.value
-                })
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    btn.innerHTML = '<i class="fas fa-play me-2"></i>Bot Running';
-                    stopBotBtn.disabled = false;
-                    showAlert('success', result.message);
-                } else {
-                    btn.innerHTML = '<i class="fas fa-play me-2"></i>Start Trading Bot';
-                    btn.disabled = false;
-                    showAlert('danger', result.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                btn.innerHTML = '<i class="fas fa-play me-2"></i>Start Trading Bot';
-                btn.disabled = false;
-                showAlert('danger', 'An error occurred while starting bot');
-            });
-        });
-
-        // Stop Bot
-        stopBotBtn.addEventListener('click', function() {
-            const btn = this;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Stopping...';
-            
-            fetch('/stop-bot', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    btn.innerHTML = '<i class="fas fa-stop me-2"></i>Stop Trading Bot';
-                    btn.disabled = true;
-                    startBotBtn.innerHTML = '<i class="fas fa-play me-2"></i>Start Trading Bot';
-                    startBotBtn.disabled = false;
-                    showAlert('success', result.message);
-                } else {
-                    showAlert('danger', result.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('danger', 'An error occurred while stopping bot');
-            })
-            .finally(() => {
-                btn.innerHTML = '<i class="fas fa-stop me-2"></i>Stop Trading Bot';
-            });
-        });
-
-        // Show Alert
-        function showAlert(type, message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show alert-custom`;
-            alertDiv.innerHTML = `
+        // Notification Helper
+        function showNotification(message, type = 'info') {
+            const container = document.querySelector('.bot-settings-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show mt-3 alert-custom`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
                 ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
             
             // Insert at top of container
-            document.querySelector('.bot-settings-container').insertBefore(alertDiv, document.querySelector('.settings-card'));
+            container.insertBefore(alert, container.firstChild);
             
-            // Auto remove after 5 seconds
+            // Auto dismiss after 5 seconds
             setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
             }, 5000);
         }
 
-        // Load bot status on page load
-        window.addEventListener('load', function() {
-            fetch('/bot-status')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.balance_info) {
-                        balanceAmount.textContent = `$${data.balance_info.balance.toFixed(2)}`;
-                        accountTypeBadge.textContent = data.balance_info.account_type.charAt(0).toUpperCase() + data.balance_info.account_type.slice(1);
-                        balanceInfo.style.display = 'block';
-                        statusIndicator.className = 'status-indicator status-connected';
-                        statusText.textContent = 'Connected';
-                        startBotBtn.disabled = false;
-                    }
-                    
-                    if (data.is_active) {
-                        startBotBtn.innerHTML = '<i class="fas fa-play me-2"></i>Bot Running';
-                        startBotBtn.disabled = true;
-                        stopBotBtn.disabled = false;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading bot status:', error);
-                });
-        });
-        
-        // Trading Session Functions
-        function updateTradingSessionInfo() {
+        // Clock Functions
+        function updateClocks() {
             const now = new Date();
             
-            // Get UTC time properly - create new Date with explicit UTC values
-            const realUTCHour = now.getUTCHours();
-            const realUTCMinutes = now.getUTCMinutes();
-            const realUTCSeconds = now.getUTCSeconds();
-            const utcDay = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+            // UTC Time
+            const utcTimeStr = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('currentTime').textContent = utcTimeStr;
             
-            // Update current times using UTC timezone conversion
-            document.getElementById('currentTime').textContent = now.toLocaleString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-                timeZone: 'UTC'
-            }) + ' UTC';
+            // Local Time
+            const localTimeStr = now.toLocaleString();
+            document.getElementById('localTime').textContent = localTimeStr;
             
-            document.getElementById('localTime').textContent = now.toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'numeric', 
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            });
-            document.getElementById('userTimezone').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            
-            // Debug: log current time info
-            console.log('DEBUG UPDATED - Trading Session:', {
-                realUTCHour: realUTCHour,
-                utcDay: utcDay,
-                serverTimeUTC: now.toUTCString(),
-                displayTime: now.toLocaleString('en-US', {timeZone: 'UTC'}),
-                localTimeShowing: now.toLocaleString(),
-                timestamp: Date.now()
-            });
-            
-            // Check if market is open (Monday 00:00 UTC to Friday 22:00 UTC)
-            const isWeekend = utcDay === 0 || utcDay === 6; // Sunday or Saturday
-            const isFridayAfter22 = utcDay === 5 && realUTCHour >= 22; // Friday after 22:00 UTC
-            const isSundayBefore22 = utcDay === 0 && realUTCHour < 22; // Sunday before 22:00 UTC
-            
-            const marketOpen = !isWeekend && !isFridayAfter22 && !isSundayBefore22;
-            
-            // Update market status
-            const marketStatusEl = document.getElementById('marketStatus');
-            if (marketOpen) {
-                marketStatusEl.className = 'badge bg-success';
-                marketStatusEl.textContent = 'Market Open';
-            } else {
-                marketStatusEl.className = 'badge bg-danger';
-                marketStatusEl.textContent = 'Market Closed';
-            }
-            
-            // Update current active session with real UTC hour
-            updateCurrentActiveSession(realUTCHour);
+            // Timezone
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById('userTimezone').textContent = tz;
         }
-        
-        function updateCurrentActiveSession(utcHour) {
-            const sessionNameEl = document.getElementById('activeSessionName');
-            const sessionTimeEl = document.getElementById('activeSessionTime');
-            const sessionStatusEl = document.getElementById('activeSessionStatus');
-            
-            const now = new Date();
-            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            
-            // Convert UTC session times to user's local time
-            function convertUTCToLocal(utcStart, utcEnd) {
-                const today = new Date();
-                const startUTC = new Date(today.getFullYear(), today.getMonth(), today.getDate(), utcStart, 0, 0);
-                const endUTC = new Date(today.getFullYear(), today.getMonth(), today.getDate(), utcEnd, 0, 0);
+
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        // Bot Trading Status Checks
+        let botStatusInterval;
+
+        function startStatusPolling() {
+            if (botStatusInterval) clearInterval(botStatusInterval);
+            botStatusInterval = setInterval(checkBotStatus, 3000);
+        }
+
+        function stopStatusPolling() {
+            if (botStatusInterval) clearInterval(botStatusInterval);
+        }
+
+        async function checkBotStatus() {
+            try {
+                const response = await fetch('/api/bot/status');
+                const data = await response.json();
                 
-                // Handle sessions that cross midnight
-                if (utcEnd < utcStart) {
-                    endUTC.setDate(endUTC.getDate() + 1);
+                const statusContent = document.getElementById('botStatusContent');
+                const botStatusDisplay = document.getElementById('botStatus');
+                
+                if (data.active) {
+                    botStatusDisplay.style.display = 'block';
+                    statusContent.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            <strong>Bot is Running</strong><br>
+                            Account: ${data.account_type.toUpperCase()}<br>
+                            Total Trades: ${data.total_trades || 0}<br>
+                            Current Profit: $${data.current_profit || 0}
+                        </div>
+                    `;
+                    startBotBtn.disabled = true;
+                    stopBotBtn.disabled = false;
+                } else {
+                    statusContent.innerHTML = `
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Bot is currently idle.
+                        </div>
+                    `;
+                    startBotBtn.disabled = false;
+                    stopBotBtn.disabled = true;
+                    stopStatusPolling();
                 }
-                
-                const startLocal = new Date(startUTC.getTime() - (startUTC.getTimezoneOffset() * 60000) + (now.getTimezoneOffset() * 60000));
-                const endLocal = new Date(endUTC.getTime() - (endUTC.getTimezoneOffset() * 60000) + (now.getTimezoneOffset() * 60000));
-                
-                return {
-                    start: startLocal.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-                    end: endLocal.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-                };
-            }
-            
-            // Determine which session is currently active based on UTC hour
-            // Priority order for overlapping sessions: New York > London > Tokyo > Sydney
-            let currentSession = null;
-            
-            console.log('*** UPDATED LOGIC *** Checking sessions for UTC hour:', utcHour);
-            
-            // Check all sessions and prioritize overlapping ones
-            if (utcHour >= 13 && utcHour < 22) {
-                // New York Session: 1:00 PM - 10:00 PM UTC (Priority 1)
-                console.log('New York Session (afternoon/evening)');
-                const localTime = convertUTCToLocal(13, 22);
-                currentSession = {
-                    name: 'New York Session',
-                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
-                    active: true
-                };
-            } else if (utcHour >= 8 && utcHour < 17) {
-                // London Session: 8:00 AM - 5:00 PM UTC (Priority 2)
-                console.log('London Session (morning/afternoon)');
-                const localTime = convertUTCToLocal(8, 17);
-                currentSession = {
-                    name: 'London Session',
-                    time: `${localTime.start} - ${localTime.end} (Local Time)`, 
-                    active: true
-                };
-            } else if (utcHour >= 0 && utcHour < 8) {
-                // Tokyo Session: 11:00 PM previous day - 8:00 AM UTC
-                console.log('Tokyo Session (early morning)');
-                const localTime = convertUTCToLocal(23, 8);
-                currentSession = {
-                    name: 'Tokyo Session', 
-                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
-                    active: true
-                };
-            } else if (utcHour >= 22) {
-                // Sydney Session: 10:00 PM UTC - 6:00 AM next day
-                console.log('Sydney Session (evening)');
-                const localTime = convertUTCToLocal(22, 6);
-                currentSession = {
-                    name: 'Sydney Session',
-                    time: `${localTime.start} - ${localTime.end} (Local Time)`,
-                    active: true
-                };
-            } else {
-                // Market is closed
-                console.log('Market closed');
-                currentSession = {
-                    name: 'Market Closed',
-                    time: 'No active trading session',
-                    active: false
-                };
-            }
-            
-            // Update display
-            sessionNameEl.textContent = currentSession.name;
-            sessionTimeEl.textContent = currentSession.time;
-            
-            if (currentSession.active) {
-                sessionStatusEl.innerHTML = '<span class="badge bg-success"><i class="fas fa-circle me-1"></i>Active Now</span>';
-            } else {
-                sessionStatusEl.innerHTML = '<span class="badge bg-danger"><i class="fas fa-circle me-1"></i>Closed</span>';
+            } catch (err) {
+                console.error('Error checking bot status:', err);
             }
         }
-        
-        // Update trading session info every second
-        updateTradingSessionInfo();
-        setInterval(updateTradingSessionInfo, 1000);
-        
-        // Force immediate refresh to ensure latest logic is applied
-        console.log('Trading session logic updated - forced refresh');
-        
     </script>
 </body>
 </html>

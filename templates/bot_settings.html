@@ -989,6 +989,58 @@
             // Timezone
             const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
             document.getElementById('userTimezone').textContent = tz;
+
+            // Update Trading Session Info
+            updateTradingSession(now);
+        }
+
+        function updateTradingSession(now) {
+            const hour = now.getUTCHours();
+            const minute = now.getUTCMinutes();
+            const day = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+            
+            const sessionNameElem = document.getElementById('activeSessionName');
+            const sessionTimeElem = document.getElementById('activeSessionTime');
+            const sessionStatusElem = document.getElementById('activeSessionStatus');
+            const marketStatusElem = document.getElementById('marketStatus');
+
+            // Weekend Check
+            if (day === 0 || day === 6) {
+                marketStatusElem.textContent = 'Market Closed (OTC Only)';
+                marketStatusElem.className = 'badge bg-warning';
+            } else {
+                marketStatusElem.textContent = 'Market Open';
+                marketStatusElem.className = 'badge bg-success';
+            }
+
+            // Simple Session Logic (example)
+            let session = "No Active Major Session";
+            let timeRange = "Waiting...";
+            let statusClass = "bg-secondary";
+
+            if (hour >= 0 && hour < 9) {
+                session = "Tokyo Session";
+                timeRange = "00:00 - 09:00 UTC";
+                statusClass = "bg-success";
+            } else if (hour >= 8 && hour < 17) {
+                session = "London Session";
+                timeRange = "08:00 - 17:00 UTC";
+                statusClass = "bg-success";
+            } else if (hour >= 13 && hour < 22) {
+                session = "New York Session";
+                timeRange = "13:00 - 22:00 UTC";
+                statusClass = "bg-success";
+            } else if (hour >= 21 || hour < 6) {
+                session = "Sydney Session";
+                timeRange = "21:00 - 06:00 UTC";
+                statusClass = "bg-success";
+            }
+
+            if (sessionNameElem) sessionNameElem.textContent = session;
+            if (sessionTimeElem) sessionTimeElem.textContent = timeRange;
+            if (sessionStatusElem) {
+                sessionStatusElem.innerHTML = `<span class="badge ${statusClass}">Active</span>`;
+            }
         }
 
         setInterval(updateClocks, 1000);

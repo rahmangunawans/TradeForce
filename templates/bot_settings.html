@@ -148,43 +148,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
-            padding-top: 1rem; /* Reduced since we have header padding on body */
-        }
-        
-        .settings-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: all 0.2s ease;
-        }
-        
-        .settings-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-color: #00e676;
-        }
-        
-        .settings-header {
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 1rem;
-            margin: -2rem -2rem 2rem -2rem;
-            padding: 1.25rem 2rem;
-        }
-        
-        .settings-header h2 {
-            color: #1e293b;
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin: 0;
-        }
-        
-        .settings-header p {
-            color: #64748b;
-            margin: 0.5rem 0 0 0;
+            padding-top: 1rem;
         }
         
         .form-group {
@@ -233,24 +197,16 @@
             font-weight: 600;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        
         .balance-info {
             background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
             border: 1px solid #bbf7d0;
             border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
         
         .balance-amount {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #00c965;
         }
@@ -258,9 +214,9 @@
         .account-type-badge {
             background: #00e676;
             color: white;
-            padding: 0.25rem 0.75rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 20px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         
@@ -268,12 +224,12 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         
         .status-indicator {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
         }
         
@@ -283,14 +239,6 @@
         
         .status-disconnected {
             background-color: #ef4444;
-        }
-        
-        .advanced-settings {
-            display: none;
-        }
-        
-        .show-advanced {
-            display: block;
         }
         
         .section-divider {
@@ -308,20 +256,6 @@
             border-radius: 10px;
             border: 1px solid #e2e8f0;
             padding: 1rem 1.5rem;
-        }
-        
-        .form-text {
-            color: #64748b;
-        }
-        
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
-        .spinner-border-sm {
-            width: 1rem;
-            height: 1rem;
         }
 
         /* New Professional Layout Styles */
@@ -370,18 +304,21 @@
         /* Status Grid Layout */
         .status-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
         .status-card {
             background: white;
             border-radius: 16px;
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             border: 1px solid #e2e8f0;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 350px;
         }
 
         .status-card:hover {
@@ -393,17 +330,17 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .status-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: white;
         }
 
@@ -417,299 +354,80 @@
 
         .status-header h3 {
             margin: 0;
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: #2d3748;
         }
 
         .status-content {
             color: #4a5568;
-        }
-
-        .balance-display {
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .balance-label {
-            color: #718096;
-            font-size: 0.9rem;
         }
 
         .time-display {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
         }
 
         .time-item {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .time-label {
-            font-weight: 600;
-            color: #4a5568;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
         }
 
         .market-status {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .timezone {
-            font-size: 0.9rem;
-            color: #718096;
-        }
-
-        /* Economic Calendar Section */
-        .calendar-section {
-            margin-bottom: 2rem;
-        }
-
-        .calendar-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .calendar-header {
-            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-            padding: 2rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .calendar-icon {
-            background: rgba(255,255,255,0.2);
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-        }
-
-        .calendar-title h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
             margin-bottom: 0.5rem;
+            font-size: 0.8rem;
         }
 
-        .calendar-title p {
-            margin: 0;
-            opacity: 0.9;
+        .active-session {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: auto;
         }
 
-        .calendar-content {
-            padding: 1rem;
-            min-height: 600px;
-        }
-
-        /* Configuration Section */
-        .config-section {
-            margin-bottom: 2rem;
-        }
-
-        .config-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .config-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 2rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .config-icon {
-            background: rgba(255,255,255,0.2);
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-        }
-
-        .config-title h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .config-title p {
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .config-content {
-            padding: 2rem;
-        }
-
-        .bot-config-form {
-            max-width: none;
-        }
-
-        /* Control Panel Section */
-        .control-section {
-            margin-bottom: 2rem;
-        }
-
-        .control-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .control-header {
-            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-            padding: 2rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .control-icon {
-            background: rgba(255,255,255,0.2);
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-        }
-
-        .control-title h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .control-title p {
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .control-content {
-            padding: 2rem;
-        }
-
-        .control-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-
-        .btn-primary-custom, .btn-danger-custom {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            border: none;
-            border-radius: 12px;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
+        .session-name {
+            font-size: 1rem;
             font-weight: 600;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
         }
 
-        .btn-danger-custom {
-            background: linear-gradient(135deg, #f44336, #d32f2f);
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
-        }
-
-        .btn-danger-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
-        }
-
-        .btn-primary-custom:disabled, .btn-danger-custom:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .bot-status-display {
-            background: #f7fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .status-info h4 {
-            color: #2d3748;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .session-time {
+            font-size: 0.8rem;
+            color: #64748b;
         }
 
         /* Responsive Design */
+        @media (max-width: 992px) {
+            .status-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .status-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
-
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-
             .header-text h1 {
-                font-size: 2rem;
-            }
-
-            .control-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .config-header, .control-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
+                font-size: 1.8rem;
             }
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
-    <!-- Top Header - Konsisten dengan Dashboard -->
+    <!-- Top Header -->
     <header class="top-header">
         <div class="header-left">
             <a href="{{ url_for('dashboard') }}" class="btn-back">
@@ -717,40 +435,22 @@
             </a>
             <div class="header-brand">
                 <img src="{{ url_for('static', filename='images/atv_logo.png') }}" alt="ATV Logo" class="header-logo">
-                <span class="header-title">AUTO TRADE VIP - IQ Option Bot</span>
+                <span class="header-title">AUTO TRADE VIP</span>
             </div>
         </div>
         <div class="header-right">
-            <div class="header-notifications">
-                <button class="notification-btn">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge">0</span>
-                </button>
-            </div>
             <div class="header-user">
-                <div class="user-dropdown">
-                    <button class="user-btn" data-bs-toggle="dropdown">
-                        <i class="fas fa-user-circle"></i>
-                        <span>{{ current_user.name }}</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="dropdown-header">{{ current_user.email }}</li>
-                        <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="fas fa-dashboard me-2"></i>Dashboard</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                    </ul>
-                </div>
+                <button class="user-btn">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ current_user.name }}</span>
+                </button>
             </div>
         </div>
     </header>
 
     <div class="bot-settings-container">
-        
         <!-- Main Header -->
-        <div class="main-header-section mb-4">
+        <div class="main-header-section">
             <div class="main-header-card">
                 <div class="header-content">
                     <div class="header-icon">
@@ -765,7 +465,8 @@
         </div>
 
         <!-- Status Dashboard Grid -->
-        <div class="status-grid mb-4">
+        <div class="status-grid">
+            <!-- Connection Status -->
             <div class="status-card">
                 <div class="status-header">
                     <div class="status-icon status-icon-connection">
@@ -790,6 +491,7 @@
                 </div>
             </div>
 
+            <!-- Trading Session -->
             <div class="status-card">
                 <div class="status-header">
                     <div class="status-icon status-icon-session">
@@ -798,66 +500,52 @@
                     <h3>Trading Session</h3>
                 </div>
                 <div class="status-content">
-                    <div class="session-info">
-                        <div class="time-display">
-                            <div class="time-item">
-                                <span class="time-label">UTC:</span>
-                                <span id="currentTime">Loading...</span>
-                            </div>
-                            <div class="time-item">
-                                <span class="time-label">Local:</span>
-                                <span id="localTime">Loading...</span>
-                            </div>
+                    <div class="time-display">
+                        <div class="time-item">
+                            <span>UTC:</span>
+                            <span id="currentTime">Loading...</span>
                         </div>
-                        <div class="market-status">
-                            <span id="marketStatus" class="badge bg-success">Market Open</span>
-                            <span id="userTimezone" class="timezone">Loading...</span>
+                        <div class="time-item">
+                            <span>Local:</span>
+                            <span id="localTime">Loading...</span>
                         </div>
-                        <div class="active-session">
-                            <div id="currentSession">
-                                <div class="session-name" id="activeSessionName">Loading...</div>
-                                <div class="session-time" id="activeSessionTime">Checking...</div>
-                                <div class="session-status" id="activeSessionStatus">
-                                    <span class="badge bg-secondary">Calculating...</span>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="market-status">
+                        <span id="marketStatus" class="badge bg-success">Market Open</span>
+                        <span id="userTimezone" class="text-muted">Loading...</span>
+                    </div>
+                    <div class="active-session">
+                        <div class="session-name" id="activeSessionName">Loading...</div>
+                        <div class="session-time" id="activeSessionTime">Checking...</div>
+                        <div id="activeSessionStatus" class="mt-1"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div>
-
-    <!-- Economic Calendar Section -->
-    <div class="calendar-section container mb-5">
-        <div class="calendar-card">
-            <div class="calendar-header">
-                <div class="calendar-icon">
-                    <i class="fas fa-calendar-alt"></i>
+            <!-- Economic Calendar -->
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="status-icon" style="background: linear-gradient(135deg, #4b6cb7, #182848);">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Economic Calendar</h3>
                 </div>
-                <div class="calendar-title">
-                    <h2>Economic Calendar</h2>
-                    <p>High-impact news and market-moving events</p>
+                <div class="status-content" style="overflow: hidden;">
+                    <div class="tradingview-widget-container" style="height: 100%; min-height: 250px;">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                        {
+                            "colorTheme": "light",
+                            "isMaximized": true,
+                            "width": "100%",
+                            "height": "100%",
+                            "locale": "en",
+                            "importanceFilter": "-1,0,1",
+                            "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD,CHF"
+                        }
+                        </script>
+                    </div>
                 </div>
-            </div>
-            <div class="calendar-content">
-                <!-- TradingView Economic Calendar Widget BEGIN -->
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-                    {
-                        "colorTheme": "light",
-                        "isMaximized": true,
-                        "width": "100%",
-                        "height": "600",
-                        "locale": "en",
-                        "importanceFilter": "-1,0,1",
-                        "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD,CHF"
-                    }
-                    </script>
-                </div>
-                <!-- TradingView Economic Calendar Widget END -->
             </div>
         </div>
     </div>
@@ -866,299 +554,43 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // DOM Elements
-        const form = document.getElementById('botSettingsForm');
-        const testConnectionBtn = document.getElementById('testConnectionBtn');
-        const startBotBtn = document.getElementById('startBotBtn');
-        const stopBotBtn = document.getElementById('stopBotBtn');
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
-        const balanceInfo = document.getElementById('balanceInfo');
-        const balanceAmount = document.getElementById('balanceAmount');
-        const accountTypeBadge = document.getElementById('accountTypeBadge');
-
-        // Clear session data when page loads for fresh start
-        function clearBotSession() {
-            // Reset status indicators
-            statusIndicator.className = 'status-indicator status-disconnected';
-            statusText.textContent = 'Disconnected';
-            balanceInfo.style.display = 'none';
-            
-            // Disable bot control buttons
-            startBotBtn.disabled = true;
-            stopBotBtn.disabled = true;
-            
-            // Clear any stored session data
-            sessionStorage.removeItem('iqBotSession');
-            localStorage.removeItem('iqBotSession');
-        }
-
-        // Initialize clean session on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            clearBotSession();
-            initializeSignalInputFeature();
-        });
-        
-        // Signal Input Feature Functions
-        function initializeSignalInputFeature() {
-            const signalTypeSelect = document.getElementById('signalType');
-            const signalInputSection = document.getElementById('signalInputSection');
-            const dragDropZone = document.getElementById('dragDropZone');
-            const signalFileInput = document.getElementById('signalFileInput');
-            const signalContent = document.getElementById('signalContent');
-            const clearSignalsBtn = document.getElementById('clearSignalsBtn');
-            
-            // Show/hide signal input section based on selection
-            function toggleSignalInputSection() {
-                if (signalTypeSelect && signalTypeSelect.value === 'manual_input') {
-                    signalInputSection.style.display = 'block';
-                } else if (signalInputSection) {
-                    signalInputSection.style.display = 'none';
-                }
-            }
-            
-            // Initial check
-            toggleSignalInputSection();
-            
-            // Listen for signal type changes
-            if (signalTypeSelect) {
-                signalTypeSelect.addEventListener('change', toggleSignalInputSection);
-            }
-            
-            // Drag & Drop functionality
-            if (dragDropZone) {
-                dragDropZone.addEventListener('click', () => {
-                    signalFileInput.click();
-                });
-                
-                dragDropZone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    dragDropZone.classList.add('drag-over');
-                });
-                
-                dragDropZone.addEventListener('dragleave', () => {
-                    dragDropZone.classList.remove('drag-over');
-                });
-                
-                dragDropZone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    dragDropZone.classList.remove('drag-over');
-                    
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) {
-                        handleFileUpload(files[0]);
-                    }
-                });
-            }
-            
-            // File input change
-            if (signalFileInput) {
-                signalFileInput.addEventListener('change', (e) => {
-                    if (e.target.files.length > 0) {
-                        handleFileUpload(e.target.files[0]);
-                    }
-                });
-            }
-            
-            // Clear signals button
-            if (clearSignalsBtn) {
-                clearSignalsBtn.addEventListener('click', () => {
-                    signalContent.value = '';
-                    signalFileInput.value = '';
-                });
-            }
-            
-            // Handle file upload
-            function handleFileUpload(file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const content = e.target.result;
-                    
-                    // Process the content based on file type
-                    let processedContent = content;
-                    
-                    if (file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
-                        // Handle CSV/TXT files - assume they're already in correct format or close to it
-                        processedContent = content.trim();
-                    } else if (file.name.endsWith('.json')) {
-                        try {
-                            // Try to parse JSON and convert to our format
-                            const jsonData = JSON.parse(content);
-                            processedContent = convertJsonToSignalFormat(jsonData);
-                        } catch (err) {
-                            alert('Invalid JSON file format');
-                            return;
-                        }
-                    }
-                    
-                    // Append to existing content if there is any
-                    if (signalContent && signalContent.value.trim()) {
-                        signalContent.value += '\n' + processedContent;
-                    } else if (signalContent) {
-                        signalContent.value = processedContent;
-                    }
-                    
-                    // Show success message
-                    showNotification('File uploaded successfully!', 'success');
-                };
-                
-                reader.readAsText(file);
-            }
-            
-            // Convert JSON to signal format (if needed)
-            function convertJsonToSignalFormat(jsonData) {
-                if (Array.isArray(jsonData)) {
-                    return jsonData.map(signal => {
-                        // Custom logic based on expected JSON structure
-                        return `${signal.time || ''},${signal.pair || ''},${signal.type || ''},${signal.timeframe || ''}`;
-                    }).join('\n');
-                }
-                return JSON.stringify(jsonData);
-            }
-        }
-
-        // Notification Helper
-        function showNotification(message, type = 'info') {
-            const container = document.querySelector('.bot-settings-container');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show mt-3 alert-custom`;
-            alert.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            // Insert at top of container
-            container.insertBefore(alert, container.firstChild);
-            
-            // Auto dismiss after 5 seconds
-            setTimeout(() => {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }, 5000);
-        }
-
-        // Clock Functions
+        // Clock & Session Logic
         function updateClocks() {
             const now = new Date();
-            
-            // UTC Time
-            const utcTimeStr = now.toISOString().replace('T', ' ').substring(0, 19);
-            document.getElementById('currentTime').textContent = utcTimeStr;
-            
-            // Local Time
-            const localTimeStr = now.toLocaleString();
-            document.getElementById('localTime').textContent = localTimeStr;
-            
-            // Timezone
-            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            document.getElementById('userTimezone').textContent = tz;
-
-            // Update Trading Session Info
+            document.getElementById('currentTime').textContent = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('localTime').textContent = now.toLocaleString();
+            document.getElementById('userTimezone').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
             updateTradingSession(now);
         }
 
         function updateTradingSession(now) {
             const hour = now.getUTCHours();
-            const minute = now.getUTCMinutes();
-            const day = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+            const day = now.getUTCDay();
+            const marketStatus = document.getElementById('marketStatus');
             
-            const sessionNameElem = document.getElementById('activeSessionName');
-            const sessionTimeElem = document.getElementById('activeSessionTime');
-            const sessionStatusElem = document.getElementById('activeSessionStatus');
-            const marketStatusElem = document.getElementById('marketStatus');
-
-            // Weekend Check
             if (day === 0 || day === 6) {
-                marketStatusElem.textContent = 'Market Closed (OTC Only)';
-                marketStatusElem.className = 'badge bg-warning';
+                marketStatus.textContent = 'Market Closed (OTC)';
+                marketStatus.className = 'badge bg-warning';
             } else {
-                marketStatusElem.textContent = 'Market Open';
-                marketStatusElem.className = 'badge bg-success';
+                marketStatus.textContent = 'Market Open';
+                marketStatus.className = 'badge bg-success';
             }
 
-            // Simple Session Logic (example)
-            let session = "No Active Major Session";
-            let timeRange = "Waiting...";
-            let statusClass = "bg-secondary";
+            let session = "No Major Session";
+            let timeRange = "";
+            
+            if (hour >= 0 && hour < 9) { session = "Tokyo Session"; timeRange = "00:00 - 09:00 UTC"; }
+            else if (hour >= 8 && hour < 17) { session = "London Session"; timeRange = "08:00 - 17:00 UTC"; }
+            else if (hour >= 13 && hour < 22) { session = "New York Session"; timeRange = "13:00 - 22:00 UTC"; }
+            else if (hour >= 21 || hour < 6) { session = "Sydney Session"; timeRange = "21:00 - 06:00 UTC"; }
 
-            if (hour >= 0 && hour < 9) {
-                session = "Tokyo Session";
-                timeRange = "00:00 - 09:00 UTC";
-                statusClass = "bg-success";
-            } else if (hour >= 8 && hour < 17) {
-                session = "London Session";
-                timeRange = "08:00 - 17:00 UTC";
-                statusClass = "bg-success";
-            } else if (hour >= 13 && hour < 22) {
-                session = "New York Session";
-                timeRange = "13:00 - 22:00 UTC";
-                statusClass = "bg-success";
-            } else if (hour >= 21 || hour < 6) {
-                session = "Sydney Session";
-                timeRange = "21:00 - 06:00 UTC";
-                statusClass = "bg-success";
-            }
-
-            if (sessionNameElem) sessionNameElem.textContent = session;
-            if (sessionTimeElem) sessionTimeElem.textContent = timeRange;
-            if (sessionStatusElem) {
-                sessionStatusElem.innerHTML = `<span class="badge ${statusClass}">Active</span>`;
-            }
+            document.getElementById('activeSessionName').textContent = session;
+            document.getElementById('activeSessionTime').textContent = timeRange;
+            document.getElementById('activeSessionStatus').innerHTML = '<span class="badge bg-success">Active</span>';
         }
 
         setInterval(updateClocks, 1000);
         updateClocks();
-
-        // Bot Trading Status Checks
-        let botStatusInterval;
-
-        function startStatusPolling() {
-            if (botStatusInterval) clearInterval(botStatusInterval);
-            botStatusInterval = setInterval(checkBotStatus, 3000);
-        }
-
-        function stopStatusPolling() {
-            if (botStatusInterval) clearInterval(botStatusInterval);
-        }
-
-        async function checkBotStatus() {
-            try {
-                const response = await fetch('/api/bot/status');
-                const data = await response.json();
-                
-                const statusContent = document.getElementById('botStatusContent');
-                const botStatusDisplay = document.getElementById('botStatus');
-                
-                if (data.active) {
-                    botStatusDisplay.style.display = 'block';
-                    statusContent.innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-spinner fa-spin me-2"></i>
-                            <strong>Bot is Running</strong><br>
-                            Account: ${data.account_type.toUpperCase()}<br>
-                            Total Trades: ${data.total_trades || 0}<br>
-                            Current Profit: $${data.current_profit || 0}
-                        </div>
-                    `;
-                    startBotBtn.disabled = true;
-                    stopBotBtn.disabled = false;
-                } else {
-                    statusContent.innerHTML = `
-                        <div class="alert alert-secondary">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Bot is currently idle.
-                        </div>
-                    `;
-                    startBotBtn.disabled = false;
-                    stopBotBtn.disabled = true;
-                    stopStatusPolling();
-                }
-            } catch (err) {
-                console.error('Error checking bot status:', err);
-            }
-        }
     </script>
 </body>
 </html>

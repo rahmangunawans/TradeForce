@@ -717,12 +717,12 @@
 .stats-content h3 {
     font-size: 2rem;
     font-weight: 700;
-    color: #1e293b;
+    color: #fff;
     margin-bottom: 0.5rem;
 }
 
 .stats-content p {
-    color: #64748b;
+    color: var(--text-muted);
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
     font-weight: 500;
@@ -784,14 +784,14 @@
 }
 
 .activity-content h5 {
-    color: #1e293b;
+    color: #fff;
     font-size: 0.95rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
 
 .activity-content p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin-bottom: 0.25rem;
 }
@@ -829,7 +829,7 @@
 }
 
 .notification-content p {
-    color: #64748b;
+    color: #fff;
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
     line-height: 1.4;
@@ -889,14 +889,14 @@
 }
 
 .strategy-item h5 {
-    color: #1e293b;
+    color: #fff;
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
 
 .strategy-item p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin: 0;
 }

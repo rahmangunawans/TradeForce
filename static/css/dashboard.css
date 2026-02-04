@@ -426,9 +426,10 @@
 }
 
 .section-header p {
-    color: var(--text-muted);
+    color: var(--text-light) !important;
     margin: 0;
     font-size: 1rem;
+    opacity: 0.9;
 }
 
 /* ===== DASHBOARD CARDS ===== */
@@ -578,13 +579,15 @@
 .activity-content p {
     font-size: 0.85rem;
     margin: 0;
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: var(--text-light) !important;
+    opacity: 0.8;
 }
 
 .activity-content small {
-    color: rgba(255, 255, 255, 0.5) !important;
+    color: var(--text-light) !important;
     font-size: 0.75rem;
     display: block;
+    opacity: 0.6;
 }
 
 .activity-value {
@@ -622,7 +625,8 @@
 
 .notification-content small {
     display: block;
-    color: rgba(255, 255, 255, 0.5) !important;
+    color: var(--text-light) !important;
+    opacity: 0.6;
 }
 
 /* ===== BROKER CARDS ===== */

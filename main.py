@@ -1,5 +1,7 @@
 import sys
 import os
+# Ensure current directory is in path for imports
+sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from app import app
 

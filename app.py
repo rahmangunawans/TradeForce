@@ -9,7 +9,10 @@ import sys
 import os
 sys.path.append('.')
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-from iq_trading_robot import IQTradingRobot
+try:
+    from iq_trading_robot import IQTradingRobot
+except ImportError:
+    IQTradingRobot = None
 import threading
 import json
 import time

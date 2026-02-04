@@ -507,7 +507,7 @@
 }
 
 .stats-content p {
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.7) !important;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
     font-weight: 500;
@@ -518,6 +518,7 @@
     font-weight: 600;
     padding: 0.2rem 0.5rem;
     border-radius: 6px;
+    display: inline-block;
 }
 
 .stats-change.positive {
@@ -571,22 +572,29 @@
     font-size: 0.95rem;
     font-weight: 600;
     margin-bottom: 0.15rem;
-    color: #fff;
+    color: #fff !important;
 }
 
 .activity-content p {
     font-size: 0.85rem;
     margin: 0;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.activity-content small {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 0.75rem;
+    display: block;
 }
 
 .activity-value {
     font-weight: 600;
     font-size: 0.9rem;
+    color: #fff !important;
 }
 
 .activity-value.positive {
-    color: var(--primary-color);
+    color: var(--primary-color) !important;
 }
 
 /* ===== NOTIFICATION ITEMS ===== */
@@ -609,12 +617,12 @@
 .notification-content p {
     font-size: 0.9rem;
     margin-bottom: 0.2rem;
-    color: #fff;
+    color: #fff !important;
 }
 
 .notification-content small {
     display: block;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* ===== BROKER CARDS ===== */
@@ -665,6 +673,7 @@
 .broker-info p {
     font-size: 0.8rem;
     margin: 0;
+    color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .broker-status {

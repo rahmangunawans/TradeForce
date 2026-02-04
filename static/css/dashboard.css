@@ -804,7 +804,7 @@
 .activity-value {
     font-weight: 600;
     font-size: 0.9rem;
-    color: #64748b;
+    color: var(--text-muted);
 }
 
 .activity-value.positive {
@@ -867,7 +867,7 @@
 }
 
 .robot-status p {
-    color: #64748b;
+    color: var(--text-muted);
     margin: 0;
 }
 
@@ -1053,14 +1053,14 @@
 }
 
 .broker-info h5 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
 }
 
 .broker-info p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
 }
@@ -1117,13 +1117,13 @@
 }
 
 .stat-label {
-    color: #64748b;
+    color: var(--text-muted);
     font-weight: 500;
     font-size: 0.9rem;
 }
 
 .stat-value {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     font-size: 0.95rem;
 }
@@ -1151,13 +1151,13 @@
 }
 
 .chart-info h5 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .chart-info p {
-    color: #64748b;
+    color: var(--text-muted);
     margin-bottom: 1.5rem;
     font-size: 0.9rem;
 }
@@ -1181,7 +1181,7 @@
 }
 
 .stat-label {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.9rem;
 }
 
@@ -1218,7 +1218,7 @@
     align-items: center;
     gap: 0.75rem;
     font-size: 0.9rem;
-    color: #64748b;
+    color: var(--text-muted);
 }
 
 .feature-item i {
@@ -1240,13 +1240,13 @@
 
 .info-label {
     font-size: 0.9rem;
-    color: #64748b;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
 .info-value {
     font-weight: 600;
-    color: #1e293b;
+    color: #fff;
 }
 
 .upgrade-card {
@@ -1354,7 +1354,7 @@
 }
 
 .strategy-content h5 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -1404,13 +1404,13 @@
 }
 
 .library-strategy h6 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .library-strategy p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin-bottom: 1.5rem;
     flex: 1;
@@ -1447,13 +1447,13 @@
 }
 
 .support-quick-action h5 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .support-quick-action p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
 }
@@ -1492,13 +1492,13 @@
 }
 
 .category-content h6 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .category-content p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 1rem;
 }
@@ -1524,7 +1524,7 @@
 }
 
 .support-info h6 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     margin-bottom: 0.75rem;
 }
@@ -1536,7 +1536,7 @@
 
 .trade-history-table th {
     background: #f8fafc;
-    color: #64748b;
+    color: var(--text-muted);
     font-weight: 600;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -1561,7 +1561,7 @@
 }
 
 .trade-date {
-    color: #1e293b;
+    color: #fff;
     font-weight: 500;
     line-height: 1.4;
 }
@@ -1580,7 +1580,7 @@
 
 .asset {
     font-weight: 600;
-    color: #1e293b;
+    color: #fff;
 }
 
 .direction {
@@ -1606,11 +1606,11 @@
 
 .amount {
     font-weight: 600;
-    color: #1e293b;
+    color: #fff;
 }
 
 .duration {
-    color: #64748b;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
@@ -1682,7 +1682,7 @@
 
 .broker-name {
     font-weight: 500;
-    color: #1e293b;
+    color: #fff;
     font-size: 0.9rem;
 }
 
@@ -1735,14 +1735,14 @@
 }
 
 .strategy-info h6 {
-    color: #1e293b;
+    color: #fff;
     font-weight: 600;
     font-size: 0.95rem;
     margin-bottom: 0.25rem;
 }
 
 .strategy-info p {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.8rem;
     margin: 0;
 }
@@ -1797,12 +1797,12 @@
 
 .date {
     font-weight: 500;
-    color: #1e293b;
+    color: #fff;
     font-size: 0.9rem;
 }
 
 .time {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.8rem;
 }
 
@@ -1814,7 +1814,7 @@
 }
 
 .trades {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.8rem;
 }
 

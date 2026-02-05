@@ -19,6 +19,18 @@
     border-color: rgba(0, 230, 118, 0.2) !important;
 }
 
+.border-accent {
+    border-color: #00e676 !important;
+}
+
+.border-accent-soft {
+    border-color: rgba(0, 230, 118, 0.1) !important;
+}
+
+.text-accent {
+    color: #00e676 !important;
+}
+
 .strategy-card {
     transition: all 0.3s ease;
 }

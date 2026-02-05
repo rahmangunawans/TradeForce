@@ -10,6 +10,38 @@
     --text-light: #ffffff;
     --text-muted: rgba(255, 255, 255, 0.7);
     --border-color: rgba(0, 230, 118, 0.2);
+    --accent-green: #00e676;
+}
+
+/* Trading Strategies Dark Theme Fix */
+.bg-dark-card {
+    background: #1a1f2e !important;
+    border-color: rgba(0, 230, 118, 0.2) !important;
+}
+
+.strategy-card {
+    transition: all 0.3s ease;
+}
+
+.strategy-card:hover {
+    border-color: #00e676 !important;
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+}
+
+.text-accent {
+    color: #00e676 !important;
+}
+
+.btn-outline-accent {
+    color: #00e676;
+    border-color: #00e676;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-accent:hover {
+    background: #00e676;
+    color: #000;
 }
 
 /* ===== BASE STYLES ===== */

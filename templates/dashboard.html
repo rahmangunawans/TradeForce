@@ -982,101 +982,69 @@
 
             <section id="strategies" class="content-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-brain me-2"></i>Trading Strategies</h2>
-                    <p class="text-muted">Manage and configure your trading strategies.</p>
+                    <h2 class="text-white"><i class="fas fa-brain me-2 text-accent"></i>Trading Strategies</h2>
+                    <p class="text-white-50">Optimize your trading performance with our advanced built-in strategies and indicators.</p>
                 </div>
 
-                <!-- Active Strategies -->
-                <div class="row g-4 mb-4">
-                    <div class="col-lg-4">
-                        <div class="strategy-card active">
-                            <div class="strategy-header">
-                                <div class="strategy-icon">
-                                    <i class="fas fa-chart-line"></i>
+                <div class="row g-4">
+                    <!-- Strategy Card 1 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="dashboard-card strategy-card bg-dark-card border-accent h-100">
+                            <div class="card-body">
+                                <div class="strategy-icon mb-3">
+                                    <i class="fas fa-bolt text-accent fa-2x"></i>
                                 </div>
-                                <div class="strategy-status active">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Active</span>
-                                </div>
-                            </div>
-                            <div class="strategy-content">
-                                <h5>Trend Following</h5>
-                                <p class="text-muted">Advanced trend analysis and momentum trading strategy</p>
-                                <div class="strategy-stats">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Win Rate:</span>
-                                        <span class="stat-value text-success">78.5%</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Profit:</span>
-                                        <span class="stat-value text-success">+$520.75</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Risk Level:</span>
-                                        <span class="stat-value text-warning">Medium</span>
-                                    </div>
-                                </div>
-                                <div class="strategy-controls">
-                                    <button class="btn btn-warning btn-sm">Pause</button>
-                                    <button class="btn btn-outline-secondary btn-sm">Configure</button>
-                                </div>
+                                <h4 class="text-white">Scalping Aggressive</h4>
+                                <p class="text-white-50">Strategi cepat untuk menangkap pergerakan pasar kecil. Sangat efektif di pasar dengan volatilitas rendah.</p>
+                                <ul class="strategy-features list-unstyled text-white-50">
+                                    <li><i class="fas fa-check text-accent me-2"></i>Timeframe: M1</li>
+                                    <li><i class="fas fa-check text-accent me-2"></i>Expiry: 1 Menit</li>
+                                    <li><i class="fas fa-check text-accent me-2"></i>Martingale: Level 2</li>
+                                </ul>
+                                <button class="btn btn-outline-accent w-100 mt-3">Aktifkan Strategi</button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="strategy-card active">
-                            <div class="strategy-header">
-                                <div class="strategy-icon">
-                                    <i class="fas fa-exchange-alt"></i>
+
+                    <!-- Strategy Card 2 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="dashboard-card strategy-card bg-dark-card border-accent h-100">
+                            <div class="card-body">
+                                <div class="strategy-icon mb-3">
+                                    <i class="fas fa-shield-alt text-primary fa-2x"></i>
                                 </div>
-                                <div class="strategy-status active">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Active</span>
-                                </div>
-                            </div>
-                            <div class="strategy-content">
-                                <h5>Scalping Master</h5>
-                                <p class="text-muted">Quick profit scalping for short-term trades</p>
-                                <div class="strategy-stats">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Win Rate:</span>
-                                        <span class="stat-value text-success">65.2%</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Profit:</span>
-                                        <span class="stat-value text-success">+$312.40</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Risk Level:</span>
-                                        <span class="stat-value text-danger">High</span>
-                                    </div>
-                                </div>
-                                <div class="strategy-controls">
-                                    <button class="btn btn-warning btn-sm">Pause</button>
-                                    <button class="btn btn-outline-secondary btn-sm">Configure</button>
-                                </div>
+                                <h4 class="text-white">Conservative Trend</h4>
+                                <p class="text-white-50">Mengikuti tren pasar utama dengan konfirmasi indikator ganda. Aman untuk pemula.</p>
+                                <ul class="strategy-features list-unstyled text-white-50">
+                                    <li><i class="fas fa-check text-accent me-2"></i>Timeframe: M5</li>
+                                    <li><i class="fas fa-check text-accent me-2"></i>Expiry: 5 Menit</li>
+                                    <li><i class="fas fa-check text-accent me-2"></i>Martingale: None</li>
+                                </ul>
+                                <button class="btn btn-outline-accent w-100 mt-3">Aktifkan Strategi</button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="strategy-card paused">
-                            <div class="strategy-header">
-                                <div class="strategy-icon">
-                                    <i class="fas fa-shield-alt"></i>
+
+                    <!-- Strategy Card 3 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="dashboard-card strategy-card bg-dark-card border-accent h-100">
+                            <div class="card-body">
+                                <div class="strategy-icon mb-3">
+                                    <i class="fas fa-magic text-warning fa-2x"></i>
                                 </div>
-                                <div class="strategy-status paused">
-                                    <i class="fas fa-pause-circle"></i>
-                                    <span>Paused</span>
-                                </div>
+                                <h4 class="text-white">Price Action Pro</h4>
+                                <p class="text-white-50">Menganalisa pola candlestick murni tanpa indikator tambahan. Akurasi tinggi di SNR.</p>
+                                <ul class="strategy-features list-unstyled text-white-50">
+                                    <li><i class="fas fa-check text-accent me-2"></i>Timeframe: All</li>
+                                    <li><i class="fas fa-check text-accent me-2"></i>Expiry: 1-5 Menit</li>
+                                    <li><i class="fas fa-check text-accent me-2"></i>Martingale: Level 1</li>
+                                </ul>
+                                <button class="btn btn-outline-accent w-100 mt-3">Aktifkan Strategi</button>
                             </div>
-                            <div class="strategy-content">
-                                <h5>Conservative Growth</h5>
-                                <p class="text-muted">Low-risk steady growth strategy for beginners</p>
-                                <div class="strategy-stats">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Win Rate:</span>
-                                        <span class="stat-value text-success">82.3%</span>
-                                    </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
                                     <div class="stat-item">
                                         <span class="stat-label">Profit:</span>
                                         <span class="stat-value text-success">+$198.60</span>

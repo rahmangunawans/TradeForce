@@ -2057,5 +2057,61 @@
     <!-- Dashboard JS -->
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
+    <script>
+        // Clock & Session Logic for Dashboard
+        function updateDashClocks() {
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            const localTime = now.toLocaleString();
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            // Update elements if they exist
+            const dashCurrentTime = document.getElementById('dashCurrentTime');
+            const dashLocalTime = document.getElementById('dashLocalTime');
+            const dashUserTimezone = document.getElementById('dashUserTimezone');
+
+            if (dashCurrentTime) dashCurrentTime.textContent = utcTime;
+            if (dashLocalTime) dashLocalTime.textContent = localTime;
+            if (dashUserTimezone) dashUserTimezone.textContent = timezone;
+
+            updateDashTradingSession(now);
+        }
+
+        function updateDashTradingSession(now) {
+            const hour = now.getUTCHours();
+            const day = now.getUTCDay();
+            const marketStatus = document.getElementById('dashMarketStatus');
+
+            if (marketStatus) {
+                if (day === 0 || day === 6) {
+                    marketStatus.textContent = 'Market Closed (OTC)';
+                    marketStatus.className = 'badge bg-warning';
+                } else {
+                    marketStatus.textContent = 'Market Open';
+                    marketStatus.className = 'badge bg-success';
+                }
+            }
+
+            let session = "No Major Session";
+            let timeRange = "";
+
+            if (hour >= 0 && hour < 9) { session = "Tokyo Session"; timeRange = "00:00 - 09:00 UTC"; }
+            else if (hour >= 8 && hour < 17) { session = "London Session"; timeRange = "08:00 - 17:00 UTC"; }
+            else if (hour >= 13 && hour < 22) { session = "New York Session"; timeRange = "13:00 - 22:00 UTC"; }
+            else if (hour >= 21 || hour < 6) { session = "Sydney Session"; timeRange = "21:00 - 06:00 UTC"; }
+
+            const sessionName = document.getElementById('dashActiveSessionName');
+            const sessionTime = document.getElementById('dashActiveSessionTime');
+            const sessionStatus = document.getElementById('dashActiveSessionStatus');
+
+            if (sessionName) sessionName.textContent = session;
+            if (sessionTime) sessionTime.textContent = timeRange;
+            if (sessionStatus) sessionStatus.innerHTML = '<span class="badge bg-success">Active</span>';
+        }
+
+        setInterval(updateDashClocks, 1000);
+        updateDashClocks();
+    </script>
+
 </body>
 </html>

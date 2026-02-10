@@ -368,21 +368,21 @@
                                 <div class="time-display mb-3">
                                     <div class="time-item d-flex justify-content-between py-2 border-bottom">
                                         <span>UTC:</span>
-                                        <span id="dashCurrentTime">Loading...</span>
+                                        <span class="dash-utc-time">Loading...</span>
                                     </div>
                                     <div class="time-item d-flex justify-content-between py-2 border-bottom">
                                         <span>Local:</span>
-                                        <span id="dashLocalTime">Loading...</span>
+                                        <span class="dash-local-time">Loading...</span>
                                     </div>
                                 </div>
                                 <div class="market-status d-flex justify-content-between align-items-center mb-3">
-                                    <span id="dashMarketStatus" class="badge bg-success">Market Open</span>
-                                    <span id="dashUserTimezone" class="text-muted small">Loading...</span>
+                                    <span class="dash-market-status badge bg-success">Market Open</span>
+                                    <span class="dash-timezone text-muted small">Loading...</span>
                                 </div>
                                 <div class="active-session p-3 rounded bg-light">
-                                    <div class="session-name fw-bold" id="dashActiveSessionName">Loading...</div>
-                                    <div class="session-time text-muted small" id="dashActiveSessionTime">Checking...</div>
-                                    <div id="dashActiveSessionStatus" class="mt-2"></div>
+                                    <div class="session-name fw-bold dash-session-name">Loading...</div>
+                                    <div class="session-time text-muted small dash-session-time">Checking...</div>
+                                    <div class="dash-session-status mt-2"></div>
                                 </div>
                             </div>
                         </div>
@@ -1765,6 +1765,71 @@
                     <h2><i class="fas fa-chart-line me-2"></i>Binomo Trading Robot</h2>
                     <p class="text-muted">Manage your Binomo automated trading settings and performance.</p>
                 </div>
+
+                <!-- Trading Session & Economic Calendar (Integrated) -->
+                <div class="row g-4 mb-4">
+                    <!-- Trading Session -->
+                    <div class="col-lg-6">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="status-icon-session me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #2196F3, #1976D2);">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <h4 class="mb-0">Trading Session</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="time-display mb-3">
+                                    <div class="time-item d-flex justify-content-between py-2 border-bottom">
+                                        <span>UTC:</span>
+                                        <span class="dash-utc-time">Loading...</span>
+                                    </div>
+                                    <div class="time-item d-flex justify-content-between py-2 border-bottom">
+                                        <span>Local:</span>
+                                        <span class="dash-local-time">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="market-status d-flex justify-content-between align-items-center mb-3">
+                                    <span class="dash-market-status badge bg-success">Market Open</span>
+                                    <span class="dash-timezone text-muted small">Loading...</span>
+                                </div>
+                                <div class="active-session p-3 rounded bg-light">
+                                    <div class="session-name fw-bold dash-session-name">Loading...</div>
+                                    <div class="session-time text-muted small dash-session-time">Checking...</div>
+                                    <div class="dash-session-status mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economic Calendar -->
+                    <div class="col-lg-6">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #4b6cb7, #182848);">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <h4 class="mb-0">Economic Calendar</h4>
+                            </div>
+                            <div class="card-body p-0" style="min-height: 300px;">
+                                <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
+                                    <div class="tradingview-widget-container__widget"></div>
+                                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                                    {
+                                        "colorTheme": "light",
+                                        "isMaximized": true,
+                                        "width": "100%",
+                                        "height": "300",
+                                        "locale": "en",
+                                        "importanceFilter": "-1,0,1",
+                                        "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD,CHF"
+                                    }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="dashboard-card">
@@ -1813,6 +1878,71 @@
                     <h2><i class="fas fa-chart-bar me-2"></i>Stockity Trading Robot</h2>
                     <p class="text-muted">Manage your Stockity automated trading settings and performance.</p>
                 </div>
+
+                <!-- Trading Session & Economic Calendar (Integrated) -->
+                <div class="row g-4 mb-4">
+                    <!-- Trading Session -->
+                    <div class="col-lg-6">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="status-icon-session me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #2196F3, #1976D2);">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <h4 class="mb-0">Trading Session</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="time-display mb-3">
+                                    <div class="time-item d-flex justify-content-between py-2 border-bottom">
+                                        <span>UTC:</span>
+                                        <span class="dash-utc-time">Loading...</span>
+                                    </div>
+                                    <div class="time-item d-flex justify-content-between py-2 border-bottom">
+                                        <span>Local:</span>
+                                        <span class="dash-local-time">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="market-status d-flex justify-content-between align-items-center mb-3">
+                                    <span class="dash-market-status badge bg-success">Market Open</span>
+                                    <span class="dash-timezone text-muted small">Loading...</span>
+                                </div>
+                                <div class="active-session p-3 rounded bg-light">
+                                    <div class="session-name fw-bold dash-session-name">Loading...</div>
+                                    <div class="session-time text-muted small dash-session-time">Checking...</div>
+                                    <div class="dash-session-status mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economic Calendar -->
+                    <div class="col-lg-6">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #4b6cb7, #182848);">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <h4 class="mb-0">Economic Calendar</h4>
+                            </div>
+                            <div class="card-body p-0" style="min-height: 300px;">
+                                <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
+                                    <div class="tradingview-widget-container__widget"></div>
+                                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                                    {
+                                        "colorTheme": "light",
+                                        "isMaximized": true,
+                                        "width": "100%",
+                                        "height": "300",
+                                        "locale": "en",
+                                        "importanceFilter": "-1,0,1",
+                                        "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD,CHF"
+                                    }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="dashboard-card">
@@ -2065,14 +2195,10 @@
             const localTime = now.toLocaleString();
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-            // Update elements if they exist
-            const dashCurrentTime = document.getElementById('dashCurrentTime');
-            const dashLocalTime = document.getElementById('dashLocalTime');
-            const dashUserTimezone = document.getElementById('dashUserTimezone');
-
-            if (dashCurrentTime) dashCurrentTime.textContent = utcTime;
-            if (dashLocalTime) dashLocalTime.textContent = localTime;
-            if (dashUserTimezone) dashUserTimezone.textContent = timezone;
+            // Update all instances
+            document.querySelectorAll('.dash-utc-time').forEach(el => el.textContent = utcTime);
+            document.querySelectorAll('.dash-local-time').forEach(el => el.textContent = localTime);
+            document.querySelectorAll('.dash-timezone').forEach(el => el.textContent = timezone);
 
             updateDashTradingSession(now);
         }
@@ -2080,17 +2206,18 @@
         function updateDashTradingSession(now) {
             const hour = now.getUTCHours();
             const day = now.getUTCDay();
-            const marketStatus = document.getElementById('dashMarketStatus');
-
-            if (marketStatus) {
-                if (day === 0 || day === 6) {
-                    marketStatus.textContent = 'Market Closed (OTC)';
-                    marketStatus.className = 'badge bg-warning';
-                } else {
-                    marketStatus.textContent = 'Market Open';
-                    marketStatus.className = 'badge bg-success';
-                }
+            
+            let statusText = 'Market Open';
+            let statusClass = 'badge bg-success';
+            if (day === 0 || day === 6) {
+                statusText = 'Market Closed (OTC)';
+                statusClass = 'badge bg-warning';
             }
+
+            document.querySelectorAll('.dash-market-status').forEach(el => {
+                el.textContent = statusText;
+                el.className = `dash-market-status badge ${statusClass}`;
+            });
 
             let session = "No Major Session";
             let timeRange = "";
@@ -2100,13 +2227,9 @@
             else if (hour >= 13 && hour < 22) { session = "New York Session"; timeRange = "13:00 - 22:00 UTC"; }
             else if (hour >= 21 || hour < 6) { session = "Sydney Session"; timeRange = "21:00 - 06:00 UTC"; }
 
-            const sessionName = document.getElementById('dashActiveSessionName');
-            const sessionTime = document.getElementById('dashActiveSessionTime');
-            const sessionStatus = document.getElementById('dashActiveSessionStatus');
-
-            if (sessionName) sessionName.textContent = session;
-            if (sessionTime) sessionTime.textContent = timeRange;
-            if (sessionStatus) sessionStatus.innerHTML = '<span class="badge bg-success">Active</span>';
+            document.querySelectorAll('.dash-session-name').forEach(el => el.textContent = session);
+            document.querySelectorAll('.dash-session-time').forEach(el => el.textContent = timeRange);
+            document.querySelectorAll('.dash-session-status').forEach(el => el.innerHTML = '<span class="badge bg-success">Active</span>');
         }
 
         setInterval(updateDashClocks, 1000);

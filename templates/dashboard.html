@@ -2056,47 +2056,407 @@
                     </div>
                 </div>
 
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h4>IQ Option Robot Status</h4>
+                <!-- Row 1: Login & Account Type -->
+                <div class="row g-4 mb-4">
+                    <!-- Login & Balance -->
+                    <div class="col-lg-7">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;background:linear-gradient(135deg,#1565C0,#0D47A1);">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </div>
+                                <h4 class="mb-0">Login IQ Option</h4>
+                                <span id="iq-conn-badge" class="badge bg-secondary ms-auto">Disconnected</span>
                             </div>
-                            <div class="card-body text-center">
-                                <div class="robot-status active">
-                                    <i class="fas fa-robot"></i>
-                                    <h3>ACTIVE</h3>
-                                    <p>IQ Option trading robot is currently running</p>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label small" style="color:#94a3b8;">Email</label>
+                                    <input type="email" id="iq-email" class="form-control bg-dark border-secondary text-white" placeholder="email@example.com">
                                 </div>
-                                <div class="robot-controls">
-                                    <button class="btn btn-danger me-2"><i class="fas fa-stop"></i> Stop Robot</button>
-                                    <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                                <div class="mb-3">
+                                    <label class="form-label small" style="color:#94a3b8;">Password</label>
+                                    <div class="input-group">
+                                        <input type="password" id="iq-password" class="form-control bg-dark border-secondary text-white" placeholder="••••••••">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="toggleIqPass()"><i class="fas fa-eye" id="iq-eye-icon"></i></button>
+                                    </div>
                                 </div>
+                                <button id="iq-login-btn" class="btn btn-primary w-100 mb-3" onclick="iqLogin()">
+                                    <i class="fas fa-plug me-2"></i>Login & Check Connection
+                                </button>
+                                <div id="iq-balance-box" class="p-3 rounded text-center" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:none;">
+                                    <div class="small" style="color:#94a3b8;">Balance</div>
+                                    <div id="iq-balance-val" class="fw-bold fs-4" style="color:#4ade80;">$0.00</div>
+                                    <div id="iq-acct-label" class="small badge bg-secondary mt-1">DEMO</div>
+                                </div>
+                                <div id="iq-login-msg" class="mt-2 small text-center"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h4>Today's Performance</h4>
+
+                    <!-- Account Type -->
+                    <div class="col-lg-5">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;background:linear-gradient(135deg,#6a11cb,#2575fc);">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <h4 class="mb-0">Account Type</h4>
                             </div>
                             <div class="card-body">
-                                <div class="trading-stat">
-                                    <span class="stat-label">Total Trades:</span>
-                                    <span class="stat-value">8</span>
-                                </div>
-                                <div class="trading-stat">
-                                    <span class="stat-label">Win Rate:</span>
-                                    <span class="stat-value text-success">75%</span>
-                                </div>
-                                <div class="trading-stat">
-                                    <span class="stat-label">Profit Today:</span>
-                                    <span class="stat-value text-success">+$45.00</span>
+                                <div class="d-grid gap-3 mt-2">
+                                    <label class="iq-acct-option p-3 rounded d-flex align-items-center gap-3" style="cursor:pointer;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);">
+                                        <input type="radio" name="iq_account_type" value="PRACTICE" id="iq-demo-radio" checked style="accent-color:#2575fc;width:18px;height:18px;">
+                                        <div>
+                                            <div class="fw-bold" style="color:#f8fafc;">DEMO ACCOUNT</div>
+                                            <div class="small" style="color:#94a3b8;">Virtual funds – risk-free practice</div>
+                                        </div>
+                                    </label>
+                                    <label class="iq-acct-option p-3 rounded d-flex align-items-center gap-3" style="cursor:pointer;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);">
+                                        <input type="radio" name="iq_account_type" value="REAL" id="iq-real-radio" style="accent-color:#f59e0b;width:18px;height:18px;">
+                                        <div>
+                                            <div class="fw-bold" style="color:#f8fafc;">REAL ACCOUNT</div>
+                                            <div class="small" style="color:#94a3b8;">Live funds – real trading</div>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Row 2: Strategy Type -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;background:linear-gradient(135deg,#11998e,#38ef7d);">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <h4 class="mb-0">Strategy Type</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small" style="color:#94a3b8;">Select Signal Source</label>
+                                        <select id="iq-strategy" class="form-select bg-dark border-secondary text-white" onchange="onStrategyChange()">
+                                            <option value="mt4_next_candle">SIGNAL MT4 TERMINAL [NEXT CANDLE]</option>
+                                            <option value="mt4_next_signal">SIGNAL MT4 TERMINAL [NEXT SIGNAL]</option>
+                                            <option value="tv_next_candle">SIGNAL TRADINGVIEW [NEXT CANDLE]</option>
+                                            <option value="tv_next_signal">SIGNAL TRADINGVIEW [NEXT SIGNAL]</option>
+                                            <option value="signal_input" selected>SIGNAL INPUT</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6" id="iq-signal-input-wrap">
+                                        <label class="form-label small" style="color:#94a3b8;">Signal Input <span class="text-muted">(FORMAT: CALL/PUT, duration_minutes, ASSET)</span></label>
+                                        <input type="text" id="iq-signal-content" class="form-control bg-dark border-secondary text-white" placeholder="CALL, 1, EURUSD-OTC">
+                                    </div>
+                                    <div class="col-12" id="iq-mt4-info" style="display:none;">
+                                        <div class="alert alert-info mb-0 py-2 small">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Bot akan membaca sinyal dari <strong>MetaTrader 4 Terminal</strong> secara otomatis.
+                                        </div>
+                                    </div>
+                                    <div class="col-12" id="iq-tv-info" style="display:none;">
+                                        <div class="alert alert-info mb-0 py-2 small">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Bot akan membaca sinyal dari <strong>TradingView Alert</strong> secara otomatis.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Bot Settings + Start/Stop -->
+                <div class="row g-4">
+                    <!-- Bot Settings -->
+                    <div class="col-lg-8">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;background:linear-gradient(135deg,#f7971e,#ffd200);">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <h4 class="mb-0">Setting Bot</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label small" style="color:#94a3b8;">Amount ($)</label>
+                                        <input type="number" id="iq-amount" class="form-control bg-dark border-secondary text-white" value="1" min="1" step="0.01">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small" style="color:#94a3b8;">Stop Win ($)</label>
+                                        <input type="number" id="iq-stop-win" class="form-control bg-dark border-secondary text-white" value="10" min="0" step="0.01">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small" style="color:#94a3b8;">Stop Loss ($)</label>
+                                        <input type="number" id="iq-stop-loss" class="form-control bg-dark border-secondary text-white" value="10" min="0" step="0.01">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small" style="color:#94a3b8;">Step Martingale</label>
+                                        <input type="number" id="iq-step-marti" class="form-control bg-dark border-secondary text-white" value="3" min="0" max="10">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small" style="color:#94a3b8;">Multiple (Martingale x)</label>
+                                        <input type="number" id="iq-multiple" class="form-control bg-dark border-secondary text-white" value="2.2" min="1" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start / Stop -->
+                    <div class="col-lg-4">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;background:linear-gradient(135deg,#f953c6,#b91d73);">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h4 class="mb-0">Bot Control</h4>
+                            </div>
+                            <div class="card-body text-center d-flex flex-column justify-content-center gap-3">
+                                <div id="iq-bot-status-indicator" class="p-3 rounded" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">
+                                    <div class="fs-5 fw-bold" id="iq-bot-status-text" style="color:#94a3b8;">
+                                        <i class="fas fa-circle-notch me-1"></i>IDLE
+                                    </div>
+                                    <div class="small mt-1" style="color:#64748b;">Bot not running</div>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button id="iq-start-btn" class="btn btn-success btn-lg" onclick="iqStartBot()">
+                                        <i class="fas fa-play me-2"></i>START BOT
+                                    </button>
+                                    <button id="iq-stop-btn" class="btn btn-danger btn-lg" onclick="iqStopBot()" disabled>
+                                        <i class="fas fa-stop me-2"></i>STOP BOT
+                                    </button>
+                                </div>
+                                <div id="iq-bot-msg" class="small"></div>
+                                <div id="iq-bot-stats" style="display:none;">
+                                    <div class="d-flex justify-content-between small border-top pt-2" style="color:#94a3b8;">
+                                        <span>Total Trades:</span>
+                                        <span id="iq-stat-trades" class="text-white">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small border-top pt-2" style="color:#94a3b8;">
+                                        <span>Profit Total:</span>
+                                        <span id="iq-stat-profit" class="text-success">$0.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small border-top pt-2" style="color:#94a3b8;">
+                                        <span>Consec. Losses:</span>
+                                        <span id="iq-stat-losses" class="text-warning">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                function toggleIqPass() {
+                    const inp = document.getElementById('iq-password');
+                    const icon = document.getElementById('iq-eye-icon');
+                    if (inp.type === 'password') {
+                        inp.type = 'text';
+                        icon.className = 'fas fa-eye-slash';
+                    } else {
+                        inp.type = 'password';
+                        icon.className = 'fas fa-eye';
+                    }
+                }
+
+                function onStrategyChange() {
+                    const val = document.getElementById('iq-strategy').value;
+                    const signalWrap = document.getElementById('iq-signal-input-wrap');
+                    const mt4Info = document.getElementById('iq-mt4-info');
+                    const tvInfo = document.getElementById('iq-tv-info');
+                    signalWrap.style.display = 'none';
+                    mt4Info.style.display = 'none';
+                    tvInfo.style.display = 'none';
+                    if (val === 'signal_input') {
+                        signalWrap.style.display = 'block';
+                    } else if (val.startsWith('mt4')) {
+                        mt4Info.style.display = 'block';
+                    } else if (val.startsWith('tv')) {
+                        tvInfo.style.display = 'block';
+                    }
+                }
+
+                function iqSetMsg(elId, msg, type) {
+                    const el = document.getElementById(elId);
+                    if (!el) return;
+                    el.innerHTML = msg ? `<span class="text-${type || 'muted'}">${msg}</span>` : '';
+                }
+
+                function iqLogin() {
+                    const email = document.getElementById('iq-email').value.trim();
+                    const password = document.getElementById('iq-password').value;
+                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
+                    const btn = document.getElementById('iq-login-btn');
+                    const badge = document.getElementById('iq-conn-badge');
+
+                    if (!email || !password) {
+                        iqSetMsg('iq-login-msg', 'Email dan password wajib diisi.', 'danger');
+                        return;
+                    }
+
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Connecting...';
+                    badge.className = 'badge bg-warning ms-auto';
+                    badge.textContent = 'Connecting...';
+
+                    fetch('/test-connection', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            broker_domain: 'iqoption.com',
+                            iq_email: email,
+                            iq_password: password,
+                            account_type: acctType === 'REAL' ? 'real' : 'demo',
+                            trading_amount: parseFloat(document.getElementById('iq-amount').value) || 1,
+                            stop_win: parseFloat(document.getElementById('iq-stop-win').value) || 10,
+                            stop_loss: parseFloat(document.getElementById('iq-stop-loss').value) || 10,
+                            step_martingale: parseInt(document.getElementById('iq-step-marti').value) || 3,
+                            martingale_multiple: parseFloat(document.getElementById('iq-multiple').value) || 2.2,
+                            signal_type: document.getElementById('iq-strategy').value,
+                            asset: 'EURUSD-OTC'
+                        })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-plug me-2"></i>Login & Check Connection';
+                        if (data.success) {
+                            badge.className = 'badge bg-success ms-auto';
+                            badge.textContent = 'Connected';
+                            const balBox = document.getElementById('iq-balance-box');
+                            balBox.style.display = 'block';
+                            document.getElementById('iq-balance-val').textContent = '$' + parseFloat(data.balance || 0).toFixed(2);
+                            const lbl = document.getElementById('iq-acct-label');
+                            lbl.textContent = acctType === 'REAL' ? 'REAL ACCOUNT' : 'DEMO ACCOUNT';
+                            lbl.className = acctType === 'REAL' ? 'small badge bg-warning mt-1' : 'small badge bg-info mt-1';
+                            iqSetMsg('iq-login-msg', '✓ ' + data.message, 'success');
+                        } else {
+                            badge.className = 'badge bg-danger ms-auto';
+                            badge.textContent = 'Failed';
+                            iqSetMsg('iq-login-msg', data.message, 'danger');
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-plug me-2"></i>Login & Check Connection';
+                        badge.className = 'badge bg-danger ms-auto';
+                        badge.textContent = 'Error';
+                        iqSetMsg('iq-login-msg', 'Connection error. Try again.', 'danger');
+                    });
+                }
+
+                function iqStartBot() {
+                    const email = document.getElementById('iq-email').value.trim();
+                    const password = document.getElementById('iq-password').value;
+                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
+
+                    if (!email || !password) {
+                        iqSetMsg('iq-bot-msg', 'Login terlebih dahulu sebelum menjalankan bot.', 'danger');
+                        return;
+                    }
+
+                    const startBtn = document.getElementById('iq-start-btn');
+                    const stopBtn = document.getElementById('iq-stop-btn');
+                    startBtn.disabled = true;
+                    startBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting...';
+
+                    fetch('/save-bot-settings', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            broker_domain: 'iqoption.com',
+                            iq_email: email,
+                            iq_password: password,
+                            account_type: acctType === 'REAL' ? 'real' : 'demo',
+                            trading_amount: parseFloat(document.getElementById('iq-amount').value) || 1,
+                            stop_win: parseFloat(document.getElementById('iq-stop-win').value) || 10,
+                            stop_loss: parseFloat(document.getElementById('iq-stop-loss').value) || 10,
+                            step_martingale: parseInt(document.getElementById('iq-step-marti').value) || 3,
+                            martingale_multiple: parseFloat(document.getElementById('iq-multiple').value) || 2.2,
+                            signal_type: document.getElementById('iq-strategy').value,
+                            signal_content: document.getElementById('iq-signal-content').value
+                        })
+                    })
+                    .then(r => r.json())
+                    .then(() => {
+                        return fetch('/start-bot', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({iq_password: password})
+                        });
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        startBtn.innerHTML = '<i class="fas fa-play me-2"></i>START BOT';
+                        if (data.success) {
+                            startBtn.disabled = true;
+                            stopBtn.disabled = false;
+                            iqSetMsg('iq-bot-msg', '✓ ' + data.message, 'success');
+                            document.getElementById('iq-bot-status-text').innerHTML = '<i class="fas fa-circle text-success me-1"></i>RUNNING';
+                            document.getElementById('iq-bot-stats').style.display = 'block';
+                            iqPollStatus();
+                        } else {
+                            startBtn.disabled = false;
+                            iqSetMsg('iq-bot-msg', data.message, 'danger');
+                        }
+                    })
+                    .catch(() => {
+                        startBtn.disabled = false;
+                        startBtn.innerHTML = '<i class="fas fa-play me-2"></i>START BOT';
+                        iqSetMsg('iq-bot-msg', 'Error starting bot.', 'danger');
+                    });
+                }
+
+                function iqStopBot() {
+                    const stopBtn = document.getElementById('iq-stop-btn');
+                    const startBtn = document.getElementById('iq-start-btn');
+                    stopBtn.disabled = true;
+                    stopBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Stopping...';
+
+                    fetch('/stop-bot', {method: 'POST', headers: {'Content-Type': 'application/json'}})
+                    .then(r => r.json())
+                    .then(data => {
+                        stopBtn.innerHTML = '<i class="fas fa-stop me-2"></i>STOP BOT';
+                        startBtn.disabled = false;
+                        iqSetMsg('iq-bot-msg', data.message, data.success ? 'warning' : 'danger');
+                        document.getElementById('iq-bot-status-text').innerHTML = '<i class="fas fa-circle-notch me-1"></i>IDLE';
+                        if (data.success) document.getElementById('iq-bot-stats').style.display = 'none';
+                    })
+                    .catch(() => {
+                        stopBtn.disabled = false;
+                        stopBtn.innerHTML = '<i class="fas fa-stop me-2"></i>STOP BOT';
+                    });
+                }
+
+                let _iqPollTimer = null;
+                function iqPollStatus() {
+                    if (_iqPollTimer) clearInterval(_iqPollTimer);
+                    _iqPollTimer = setInterval(() => {
+                        fetch('/bot-status')
+                        .then(r => r.json())
+                        .then(data => {
+                            if (!data.is_active) {
+                                clearInterval(_iqPollTimer);
+                                document.getElementById('iq-start-btn').disabled = false;
+                                document.getElementById('iq-stop-btn').disabled = true;
+                                document.getElementById('iq-bot-status-text').innerHTML = '<i class="fas fa-circle-notch me-1"></i>IDLE';
+                                return;
+                            }
+                            document.getElementById('iq-stat-trades').textContent = data.total_trades || 0;
+                            const profit = parseFloat(data.profit_total || 0);
+                            const profEl = document.getElementById('iq-stat-profit');
+                            profEl.textContent = '$' + profit.toFixed(2);
+                            profEl.className = profit >= 0 ? 'text-success' : 'text-danger';
+                            document.getElementById('iq-stat-losses').textContent = data.consecutive_losses || 0;
+                        })
+                        .catch(() => {});
+                    }, 5000);
+                }
+                </script>
             </section>
 
             <section id="olymptrade" class="content-section">

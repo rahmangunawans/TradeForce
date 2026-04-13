@@ -202,6 +202,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.title = `${title} - AUTO TRADE VIP`;
     }
     
+    // ===== GLOBAL SHOW SECTION HELPER =====
+    window.showSection = function(sectionId) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById(sectionId);
+        if (target) target.classList.add('active');
+        document.title = sectionId.charAt(0).toUpperCase() + sectionId.slice(1) + ' - AUTO TRADE VIP';
+    };
+
     // ===== STATS CARDS ANIMATION =====
     const statsCards = document.querySelectorAll('.stats-card');
     

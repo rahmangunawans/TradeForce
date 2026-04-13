@@ -101,7 +101,7 @@
                                     <img src="{{ url_for('static', filename='images/brokers/stockity.png') }}" alt="Stockity" class="broker-submenu-icon">
                                     Stockity
                                 </a></li>
-                                <li><a href="{{ url_for('bot_settings') }}" class="submenu-link">
+                                <li><a href="#" data-section="iqoption" class="submenu-link">
                                     <img src="{{ url_for('static', filename='images/brokers/iqoption.png') }}" alt="IQ Option" class="broker-submenu-icon">
                                     IQ Option Bot
                                 </a></li>
@@ -253,7 +253,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4 text-end">
-                                        <a href="{{ url_for('bot_settings') }}" class="btn btn-dark btn-lg">
+                                        <a href="#" class="btn btn-dark btn-lg" onclick="showSection('iqoption'); return false;">
                                             <i class="fas fa-cog me-2"></i>Configure Bot
                                         </a>
                                     </div>
@@ -1991,6 +1991,96 @@
                     <h2><i class="fas fa-signal me-2"></i>IQ Option Trading Robot</h2>
                     <p class="text-muted">Manage your IQ Option automated trading settings and performance.</p>
                 </div>
+
+                <!-- Trading Session & Economic Calendar -->
+                <div class="row g-4 mb-4">
+                    <!-- Connection Status -->
+                    <div class="col-lg-4">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #4CAF50, #45a049);">
+                                    <i class="fas fa-wifi"></i>
+                                </div>
+                                <h4 class="mb-0">Connection Status</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div id="iqStatusIndicator" style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0;"></div>
+                                    <span id="iqStatusText" style="color:#f8fafc;">Not Connected</span>
+                                </div>
+                                <div id="iqBalanceInfo" style="display:none; background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.2); border-radius:10px; padding:1rem;">
+                                    <div style="font-size:1.5rem; font-weight:700; color:#00c965;" id="iqBalanceAmount">$0.00</div>
+                                    <small style="color:#94a3b8;">Current Balance</small><br>
+                                    <span id="iqAccountTypeBadge" style="background:#00e676;color:#000;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600;">Demo</span>
+                                </div>
+                                <p class="small mt-3" style="color:#94a3b8;">Use the IQ Option bot settings below to connect and manage your account.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trading Session -->
+                    <div class="col-lg-4">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="status-icon-session me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #2196F3, #1976D2);">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <h4 class="mb-0">Trading Session</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="time-display mb-3">
+                                    <div class="time-item d-flex justify-content-between py-2 border-bottom">
+                                        <span>UTC:</span>
+                                        <span class="dash-utc-time">Loading...</span>
+                                    </div>
+                                    <div class="time-item d-flex justify-content-between py-2 border-bottom">
+                                        <span>Local:</span>
+                                        <span class="dash-local-time">Loading...</span>
+                                    </div>
+                                </div>
+                                <div class="market-status d-flex justify-content-between align-items-center mb-3">
+                                    <span class="dash-market-status badge bg-success">Market Open</span>
+                                    <span class="dash-timezone text-muted small">Loading...</span>
+                                </div>
+                                <div class="active-session p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);">
+                                    <div class="session-name fw-bold dash-session-name" style="color: #f8fafc;">Loading...</div>
+                                    <div class="session-time small dash-session-time" style="color: #94a3b8;">Checking...</div>
+                                    <div class="dash-session-status mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economic Calendar -->
+                    <div class="col-lg-4">
+                        <div class="dashboard-card h-100">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #4b6cb7, #182848);">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <h4 class="mb-0">Economic Calendar</h4>
+                            </div>
+                            <div class="card-body p-0" style="min-height: 300px;">
+                                <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
+                                    <div class="tradingview-widget-container__widget"></div>
+                                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                                    {
+                                        "colorTheme": "light",
+                                        "isMaximized": true,
+                                        "width": "100%",
+                                        "height": "300",
+                                        "locale": "en",
+                                        "importanceFilter": "-1,0,1",
+                                        "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD,CHF"
+                                    }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Robot Status & Performance -->
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="dashboard-card">
@@ -1998,7 +2088,7 @@
                                 <h4>IQ Option Robot Status</h4>
                             </div>
                             <div class="card-body text-center">
-                                <div class="robot-status" style="background: #fef3c7; border: 2px solid #d97706;">
+                                <div class="robot-status" style="background: rgba(217,119,6,0.1); border: 2px solid #d97706;">
                                     <i class="fas fa-pause-circle" style="color: #d97706;"></i>
                                     <h3 style="color: #d97706;">PAUSED</h3>
                                     <p>IQ Option trading robot is currently paused</p>

@@ -344,24 +344,8 @@ active_bots = {}
 @app.route('/bot-settings')
 @login_required
 def bot_settings():
-    """Bot trading settings page"""
-    # Get user's bot settings
-    settings = BotSetting.query.filter_by(user_id=current_user.id).first()
-    
-    # Available broker domains by region
-    broker_domains = {
-        'Global': 'iqoption.com',
-        'Europe': 'eu.iqoption.com', 
-        'Asia': 'iqoption.com',
-        'Brazil': 'iqoption.com.br',
-        'Indonesia': 'iqoption.com',
-        'India': 'iqoption.com'
-    }
-    
-    return render_template('bot_settings.html', 
-                         settings=settings, 
-                         broker_domains=broker_domains,
-                         current_user=current_user)
+    """Redirect to the dashboard IQ Option section"""
+    return redirect(url_for('dashboard'))
 
 @app.route('/save-bot-settings', methods=['POST'])
 @login_required

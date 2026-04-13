@@ -2211,8 +2211,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-7" id="iq-signal-input-wrap">
-                                            <label class="form-label small" style="color:#94a3b8;">Signal Input <span class="text-muted small">(CALL/PUT, menit, ASSET)</span></label>
-                                            <input type="text" id="iq-signal-content" class="form-control bg-dark border-secondary text-white" placeholder="Contoh: CALL, 1, EURUSD-OTC">
+                                            <label class="form-label small" style="color:#94a3b8;">Signal Input <span class="text-muted small">(format: datetime,asset,direction,timeframe)</span></label>
+                                            <input type="text" id="iq-signal-content" class="form-control bg-dark border-secondary text-white font-monospace" placeholder="YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME">
                                         </div>
                                         <div class="col-12" id="iq-mt4-info" style="display:none;">
                                             <div class="alert alert-info mb-0 py-2 small"><i class="fas fa-info-circle me-1"></i>Bot membaca sinyal dari <strong>MetaTrader 4 Terminal</strong> otomatis.</div>
@@ -2271,18 +2271,12 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label small" style="color:#94a3b8;">Max Steps</label>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <input type="range" id="iq-step-marti" class="form-range flex-grow-1" value="3" min="0" max="10" oninput="document.getElementById('iq-step-marti-val').textContent=this.value">
-                                                <span id="iq-step-marti-val" class="fw-bold" style="color:#a78bfa;min-width:24px;text-align:center;">3</span>
-                                            </div>
+                                            <input type="number" id="iq-step-marti" class="form-control bg-dark border-secondary text-white" value="3" min="0" max="20" step="1">
                                             <div class="small mt-1" style="color:#64748b;">Jumlah step double bet setelah kalah</div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label small" style="color:#94a3b8;">Multiplier (x)</label>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <input type="range" id="iq-multiple" class="form-range flex-grow-1" value="2.2" min="1.1" max="5" step="0.1" oninput="document.getElementById('iq-multiple-val').textContent=parseFloat(this.value).toFixed(1)+'x'">
-                                                <span id="iq-multiple-val" class="fw-bold" style="color:#a78bfa;min-width:40px;text-align:center;">2.2x</span>
-                                            </div>
+                                            <input type="number" id="iq-multiple" class="form-control bg-dark border-secondary text-white" value="2.2" min="1.1" max="10" step="0.1">
                                             <div class="small mt-1" style="color:#64748b;">Kelipatan amount setiap step martingale</div>
                                         </div>
                                     </div>

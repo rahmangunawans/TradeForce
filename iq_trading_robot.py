@@ -214,13 +214,20 @@ class IQTradingRobot:
 
         self.is_trading = False
 
-    def get_all_open_time(self) -> dict:
+    def get_all_open_time(self):
         try:
-            if self.api:
-                return self.api.get_all_open_time()
+            if not self.api:
+                return {}, 'API tidak tersedia. Silahkan koneksi ulang.'
+            data = self.api.get_all_open_time()
+            if data is None:
+                return {}, 'IQ Option tidak mengembalikan data pasar (timeout). Coba lagi.'
+            return data, None
+        except TypeError as e:
+            logger.error(f"get_all_open_time TypeError: {e}")
+            return {}, 'Gagal membaca data pasar dari IQ Option. Server mungkin timeout.'
         except Exception as e:
             logger.error(f"get_all_open_time error: {e}")
-        return {}
+            return {}, f'Error mengambil data pasar: {str(e)}'
 
     def _get_signal(self):
         cfg = self.config

@@ -697,18 +697,31 @@ def iqoption_market_open():
                                              'message': 'Gagal konek ke IQ Option. Periksa email/password.'}
                         return
                     robot.change_balance(acct)
+                    time.sleep(3)
 
-                open_time = robot.get_all_open_time()
+                open_time, error_msg = robot.get_all_open_time()
+
+                if error_msg:
+                    market_cache[uid] = {'status': 'error', 'data': None, 'message': error_msg}
+                    return
 
                 result = {}
                 for category, assets in open_time.items():
                     result[category] = {}
                     for asset_name, info in assets.items():
-                        result[category][asset_name] = info.get('open', False)
+                        if isinstance(info, dict):
+                            result[category][asset_name] = info.get('open', False)
+                        else:
+                            result[category][asset_name] = bool(info)
+
+                if not result:
+                    market_cache[uid] = {'status': 'error', 'data': None,
+                                         'message': 'Data pasar kosong. IQ Option mungkin tidak merespons. Coba lagi beberapa saat.'}
+                    return
 
                 market_cache[uid] = {'status': 'ready', 'data': result, 'message': ''}
             except Exception as ex:
-                market_cache[uid] = {'status': 'error', 'data': None, 'message': str(ex)}
+                market_cache[uid] = {'status': 'error', 'data': None, 'message': f'Error: {str(ex)}'}
 
         t = threading.Thread(target=fetch_market,
                              args=(user_id, iq_email, iq_password, account_type),

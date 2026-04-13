@@ -2243,16 +2243,27 @@
                     cfd:     {bg:'rgba(167,139,250,0.15)', border:'rgba(167,139,250,0.4)', label:'#a78bfa'},
                 };
 
+                let _iqMarketPollTimer = null;
+
                 function iqCheckMarket() {
                     const btn = document.getElementById('iq-market-btn');
                     const email = document.getElementById('iq-email').value.trim();
                     const password = document.getElementById('iq-password').value;
                     const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
 
+                    if (!email || !password) {
+                        document.getElementById('iq-market-msg').innerHTML = '<span class="text-warning">Masukkan email & password IQ Option di panel Login terlebih dahulu.</span>';
+                        return;
+                    }
+
                     btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading...';
-                    document.getElementById('iq-market-msg').textContent = 'Menghubungi IQ Option untuk data pasar live...';
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Connecting...';
+                    document.getElementById('iq-market-msg').innerHTML = '<span style="color:#94a3b8;"><i class="fas fa-circle-notch fa-spin me-1"></i>Menghubungkan ke IQ Option dan mengambil data pasar... (bisa memakan 30-60 detik)</span>';
                     document.getElementById('iq-market-grid').innerHTML = '';
+                    document.getElementById('iq-market-tabs').style.setProperty('display','none','important');
+                    document.getElementById('iq-market-summary').style.display = 'none';
+
+                    if (_iqMarketPollTimer) clearInterval(_iqMarketPollTimer);
 
                     fetch('/iqoption/market-open', {
                         method: 'POST',
@@ -2265,23 +2276,44 @@
                     })
                     .then(r => r.json())
                     .then(res => {
+                        if (!res.success) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Check Now';
+                            document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger">' + res.message + '</span>';
+                            return;
+                        }
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Fetching data...';
+                        _iqMarketPollTimer = setInterval(iqPollMarket, 3000);
+                    })
+                    .catch(() => {
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Check Now';
-                        if (res.success) {
+                        document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger">Network error. Coba lagi.</span>';
+                    });
+                }
+
+                function iqPollMarket() {
+                    fetch('/iqoption/market-status')
+                    .then(r => r.json())
+                    .then(res => {
+                        const btn = document.getElementById('iq-market-btn');
+                        if (res.status === 'ready') {
+                            clearInterval(_iqMarketPollTimer);
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Check Now';
                             _iqMarketData = res.data;
                             document.getElementById('iq-market-msg').textContent = '';
                             document.getElementById('iq-market-tabs').style.setProperty('display','flex','important');
                             document.getElementById('iq-market-summary').style.display = '';
                             iqRenderMarket(_iqActiveFilter);
-                        } else {
-                            document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger">' + res.message + '</span>';
+                        } else if (res.status === 'error') {
+                            clearInterval(_iqMarketPollTimer);
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Check Now';
+                            document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>' + (res.message || 'Terjadi error.') + '</span>';
                         }
                     })
-                    .catch(() => {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Check Now';
-                        document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger">Network error. Try again.</span>';
-                    });
+                    .catch(() => {});
                 }
 
                 function iqFilterMarket(category, btn) {

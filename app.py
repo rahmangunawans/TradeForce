@@ -340,6 +340,8 @@ def forgot_password():
 
 # Global variable to store active bots
 active_bots = {}
+# Cache for market open status per user
+market_cache = {}
 
 @app.route('/bot-settings')
 @login_required
@@ -667,45 +669,65 @@ def bot_status():
 @app.route('/iqoption/market-open', methods=['POST'])
 @login_required
 def iqoption_market_open():
-    """Fetch live market open/closed status from IQ Option"""
+    """Start a background thread to fetch live market open/closed status from IQ Option"""
     try:
         data = request.get_json() or {}
         user_id = current_user.id
+        iq_email = data.get('iq_email', '')
+        iq_password = data.get('iq_password', '')
+        account_type = data.get('account_type', 'PRACTICE')
 
-        robot = None
+        if not iq_email or not iq_password:
+            return jsonify({'success': False, 'message': 'Silahkan login IQ Option terlebih dahulu.'})
 
-        # Use existing connected bot if available
-        if user_id in active_bots and active_bots[user_id].check_connect():
-            robot = active_bots[user_id]
-        else:
-            # Connect fresh with provided credentials
-            iq_email = data.get('iq_email', '')
-            iq_password = data.get('iq_password', '')
-            account_type = data.get('account_type', 'PRACTICE')
+        if IQTradingRobot is None:
+            return jsonify({'success': False, 'message': 'IQ Option API tidak tersedia.'})
 
-            if not iq_email or not iq_password:
-                return jsonify({'success': False, 'message': 'Please login first to check market status.'})
+        market_cache[user_id] = {'status': 'loading', 'data': None, 'message': ''}
 
-            if IQTradingRobot is None:
-                return jsonify({'success': False, 'message': 'IQ Option API not available.'})
+        def fetch_market(uid, email, password, acct):
+            try:
+                robot = None
+                if uid in active_bots and active_bots[uid].check_connect():
+                    robot = active_bots[uid]
+                else:
+                    robot = IQTradingRobot(email, password)
+                    if not robot.connect():
+                        market_cache[uid] = {'status': 'error', 'data': None,
+                                             'message': 'Gagal konek ke IQ Option. Periksa email/password.'}
+                        return
+                    robot.change_balance(acct)
 
-            robot = IQTradingRobot(iq_email, iq_password)
-            if not robot.connect():
-                return jsonify({'success': False, 'message': 'Failed to connect to IQ Option.'})
-            robot.change_balance(account_type)
+                open_time = robot.get_all_open_time()
 
-        open_time = robot.get_all_open_time()
+                result = {}
+                for category, assets in open_time.items():
+                    result[category] = {}
+                    for asset_name, info in assets.items():
+                        result[category][asset_name] = info.get('open', False)
 
-        result = {}
-        for category, assets in open_time.items():
-            result[category] = {}
-            for asset_name, info in assets.items():
-                result[category][asset_name] = info.get('open', False)
+                market_cache[uid] = {'status': 'ready', 'data': result, 'message': ''}
+            except Exception as ex:
+                market_cache[uid] = {'status': 'error', 'data': None, 'message': str(ex)}
 
-        return jsonify({'success': True, 'data': result})
+        t = threading.Thread(target=fetch_market,
+                             args=(user_id, iq_email, iq_password, account_type),
+                             daemon=True)
+        t.start()
+
+        return jsonify({'success': True, 'status': 'loading'})
 
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error: {str(e)}'})
+
+
+@app.route('/iqoption/market-status', methods=['GET'])
+@login_required
+def iqoption_market_status():
+    """Poll endpoint: returns current market fetch status/data for the logged-in user"""
+    user_id = current_user.id
+    cache = market_cache.get(user_id, {'status': 'idle', 'data': None, 'message': ''})
+    return jsonify(cache)
 
 
 if __name__ == '__main__':

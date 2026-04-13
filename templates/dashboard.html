@@ -2168,6 +2168,167 @@
                     </div>
                 </div>
 
+                <!-- Row 2.5: Market Open Status -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="me-3" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;background:linear-gradient(135deg,#00b09b,#96c93d);">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <h4 class="mb-0">Check Market Open (IQ Option)</h4>
+                                <button id="iq-market-btn" class="btn btn-outline-success btn-sm ms-auto" onclick="iqCheckMarket()">
+                                    <i class="fas fa-sync-alt me-1"></i>Check Now
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="iq-market-msg" class="text-center small mb-2" style="color:#94a3b8;">Login terlebih dahulu lalu klik "Check Now" untuk melihat status pasar live dari IQ Option.</div>
+
+                                <!-- Category Tabs -->
+                                <ul class="nav nav-pills mb-3 gap-1" id="iq-market-tabs" style="display:none!important;">
+                                    <li class="nav-item"><button class="nav-link active btn-sm px-3 py-1" onclick="iqFilterMarket('all',this)">All</button></li>
+                                    <li class="nav-item"><button class="nav-link btn-sm px-3 py-1" onclick="iqFilterMarket('binary',this)">Binary</button></li>
+                                    <li class="nav-item"><button class="nav-link btn-sm px-3 py-1" onclick="iqFilterMarket('turbo',this)">Turbo</button></li>
+                                    <li class="nav-item"><button class="nav-link btn-sm px-3 py-1" onclick="iqFilterMarket('digital',this)">Digital</button></li>
+                                    <li class="nav-item"><button class="nav-link btn-sm px-3 py-1" onclick="iqFilterMarket('forex',this)">Forex</button></li>
+                                    <li class="nav-item"><button class="nav-link btn-sm px-3 py-1" onclick="iqFilterMarket('crypto',this)">Crypto</button></li>
+                                    <li class="nav-item"><button class="nav-link btn-sm px-3 py-1" onclick="iqFilterMarket('cfd',this)">CFD</button></li>
+                                </ul>
+
+                                <!-- Summary counts -->
+                                <div id="iq-market-summary" class="row g-2 mb-3" style="display:none;">
+                                    <div class="col-6 col-md-3">
+                                        <div class="p-2 rounded text-center" style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);">
+                                            <div class="fw-bold" id="iq-mkt-open-count" style="color:#4ade80;font-size:1.3rem;">0</div>
+                                            <div class="small" style="color:#94a3b8;">Open</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="p-2 rounded text-center" style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);">
+                                            <div class="fw-bold" id="iq-mkt-closed-count" style="color:#f87171;font-size:1.3rem;">0</div>
+                                            <div class="small" style="color:#94a3b8;">Closed</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="p-2 rounded text-center" style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);">
+                                            <div class="fw-bold" id="iq-mkt-total-count" style="color:#60a5fa;font-size:1.3rem;">0</div>
+                                            <div class="small" style="color:#94a3b8;">Total</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="p-2 rounded text-center" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);">
+                                            <div class="small" style="color:#94a3b8;">Last Updated</div>
+                                            <div class="small fw-bold" id="iq-mkt-updated" style="color:#fbbf24;">—</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Asset grid -->
+                                <div id="iq-market-grid" class="row g-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                let _iqMarketData = {};
+                let _iqActiveFilter = 'all';
+
+                const _iqCategoryColors = {
+                    binary:  {bg:'rgba(99,102,241,0.15)', border:'rgba(99,102,241,0.4)', label:'#818cf8'},
+                    turbo:   {bg:'rgba(245,158,11,0.15)', border:'rgba(245,158,11,0.4)', label:'#fbbf24'},
+                    digital: {bg:'rgba(16,185,129,0.15)', border:'rgba(16,185,129,0.4)', label:'#34d399'},
+                    forex:   {bg:'rgba(59,130,246,0.15)', border:'rgba(59,130,246,0.4)', label:'#60a5fa'},
+                    crypto:  {bg:'rgba(251,146,60,0.15)', border:'rgba(251,146,60,0.4)', label:'#fb923c'},
+                    cfd:     {bg:'rgba(167,139,250,0.15)', border:'rgba(167,139,250,0.4)', label:'#a78bfa'},
+                };
+
+                function iqCheckMarket() {
+                    const btn = document.getElementById('iq-market-btn');
+                    const email = document.getElementById('iq-email').value.trim();
+                    const password = document.getElementById('iq-password').value;
+                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
+
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading...';
+                    document.getElementById('iq-market-msg').textContent = 'Menghubungi IQ Option untuk data pasar live...';
+                    document.getElementById('iq-market-grid').innerHTML = '';
+
+                    fetch('/iqoption/market-open', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            iq_email: email,
+                            iq_password: password,
+                            account_type: acctType
+                        })
+                    })
+                    .then(r => r.json())
+                    .then(res => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Check Now';
+                        if (res.success) {
+                            _iqMarketData = res.data;
+                            document.getElementById('iq-market-msg').textContent = '';
+                            document.getElementById('iq-market-tabs').style.setProperty('display','flex','important');
+                            document.getElementById('iq-market-summary').style.display = '';
+                            iqRenderMarket(_iqActiveFilter);
+                        } else {
+                            document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger">' + res.message + '</span>';
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Check Now';
+                        document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger">Network error. Try again.</span>';
+                    });
+                }
+
+                function iqFilterMarket(category, btn) {
+                    _iqActiveFilter = category;
+                    document.querySelectorAll('#iq-market-tabs .nav-link').forEach(b => b.classList.remove('active'));
+                    if (btn) btn.classList.add('active');
+                    iqRenderMarket(category);
+                }
+
+                function iqRenderMarket(filter) {
+                    const grid = document.getElementById('iq-market-grid');
+                    grid.innerHTML = '';
+                    let openCount = 0, closedCount = 0, total = 0;
+
+                    const cats = filter === 'all' ? Object.keys(_iqMarketData) : [filter];
+
+                    cats.forEach(cat => {
+                        const assets = _iqMarketData[cat] || {};
+                        const clr = _iqCategoryColors[cat] || {bg:'rgba(255,255,255,0.05)',border:'rgba(255,255,255,0.1)',label:'#94a3b8'};
+                        Object.entries(assets).sort((a,b) => (b[1]===true)-(a[1]===true) || a[0].localeCompare(b[0])).forEach(([name, isOpen]) => {
+                            total++;
+                            if (isOpen) openCount++; else closedCount++;
+                            const col = document.createElement('div');
+                            col.className = 'col-6 col-md-3 col-lg-2';
+                            col.dataset.cat = cat;
+                            col.innerHTML = `
+                                <div class="p-2 rounded text-center" style="background:${isOpen ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.05)'};border:1px solid ${isOpen ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.15)'};">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="badge rounded-pill" style="font-size:0.6rem;background:${clr.bg};color:${clr.label};border:1px solid ${clr.border};">${cat.toUpperCase()}</span>
+                                        <span class="badge ${isOpen ? 'bg-success' : 'bg-danger'}" style="font-size:0.6rem;">${isOpen ? 'OPEN' : 'CLOSED'}</span>
+                                    </div>
+                                    <div class="fw-semibold text-truncate" style="color:#f8fafc;font-size:0.75rem;" title="${name}">${name}</div>
+                                    <div class="mt-1">
+                                        <i class="fas fa-circle" style="font-size:0.5rem;color:${isOpen ? '#4ade80' : '#f87171'};"></i>
+                                    </div>
+                                </div>`;
+                            grid.appendChild(col);
+                        });
+                    });
+
+                    document.getElementById('iq-mkt-open-count').textContent = openCount;
+                    document.getElementById('iq-mkt-closed-count').textContent = closedCount;
+                    document.getElementById('iq-mkt-total-count').textContent = total;
+                    document.getElementById('iq-mkt-updated').textContent = new Date().toLocaleTimeString();
+                }
+                </script>
+
                 <!-- Row 3: Bot Settings + Start/Stop -->
                 <div class="row g-4">
                     <!-- Bot Settings -->

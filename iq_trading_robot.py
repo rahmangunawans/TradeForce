@@ -214,6 +214,14 @@ class IQTradingRobot:
 
         self.is_trading = False
 
+    def get_all_open_time(self) -> dict:
+        try:
+            if self.api:
+                return self.api.get_all_open_time()
+        except Exception as e:
+            logger.error(f"get_all_open_time error: {e}")
+        return {}
+
     def _get_signal(self):
         cfg = self.config
         signal_type = cfg.signal_type

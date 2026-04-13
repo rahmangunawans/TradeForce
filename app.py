@@ -664,5 +664,49 @@ def bot_status():
             'error': f'Error getting bot status: {str(e)}'
         })
 
+@app.route('/iqoption/market-open', methods=['POST'])
+@login_required
+def iqoption_market_open():
+    """Fetch live market open/closed status from IQ Option"""
+    try:
+        data = request.get_json() or {}
+        user_id = current_user.id
+
+        robot = None
+
+        # Use existing connected bot if available
+        if user_id in active_bots and active_bots[user_id].check_connect():
+            robot = active_bots[user_id]
+        else:
+            # Connect fresh with provided credentials
+            iq_email = data.get('iq_email', '')
+            iq_password = data.get('iq_password', '')
+            account_type = data.get('account_type', 'PRACTICE')
+
+            if not iq_email or not iq_password:
+                return jsonify({'success': False, 'message': 'Please login first to check market status.'})
+
+            if IQTradingRobot is None:
+                return jsonify({'success': False, 'message': 'IQ Option API not available.'})
+
+            robot = IQTradingRobot(iq_email, iq_password)
+            if not robot.connect():
+                return jsonify({'success': False, 'message': 'Failed to connect to IQ Option.'})
+            robot.change_balance(account_type)
+
+        open_time = robot.get_all_open_time()
+
+        result = {}
+        for category, assets in open_time.items():
+            result[category] = {}
+            for asset_name, info in assets.items():
+                result[category][asset_name] = info.get('open', False)
+
+        return jsonify({'success': True, 'data': result})
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

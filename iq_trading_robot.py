@@ -295,16 +295,31 @@ class IQTradingRobot:
             content = (cfg.signal_content or "").strip()
             if not content:
                 return None
-            parts = [p.strip() for p in content.split(",")]
-            if len(parts) >= 2:
-                direction = parts[0].upper()
-                try:
-                    duration = int(parts[1])
-                except ValueError:
-                    duration = 1
-                if len(parts) >= 3:
-                    asset = parts[2].upper()
-                return (direction, asset, duration)
+            # Support multi-line: iterate until a valid signal is found
+            lines = [l.strip() for l in content.splitlines() if l.strip() and not l.strip().startswith('#')]
+            if not lines:
+                return None
+            for line in lines:
+                parts = [p.strip() for p in line.split(",")]
+                # New format: YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME (4 parts, first is datetime)
+                if len(parts) >= 4 and len(parts[0]) >= 10 and '-' in parts[0]:
+                    asset = parts[1].upper()
+                    direction = parts[2].upper()
+                    try:
+                        duration = int(parts[3])
+                    except ValueError:
+                        duration = 1
+                    return (direction, asset, duration)
+                # Legacy format: CALL/PUT,TIMEFRAME[,ASSET]
+                if len(parts) >= 2 and parts[0].upper() in ('CALL', 'PUT'):
+                    direction = parts[0].upper()
+                    try:
+                        duration = int(parts[1])
+                    except ValueError:
+                        duration = 1
+                    if len(parts) >= 3:
+                        asset = parts[2].upper()
+                    return (direction, asset, duration)
             return None
 
         return None

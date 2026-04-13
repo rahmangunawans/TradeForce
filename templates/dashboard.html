@@ -2212,7 +2212,7 @@
                                         </div>
                                         <div class="col-md-7" id="iq-signal-input-wrap">
                                             <label class="form-label small" style="color:#94a3b8;">Signal Input <span class="text-muted small">(format: datetime,asset,direction,timeframe)</span></label>
-                                            <input type="text" id="iq-signal-content" class="form-control bg-dark border-secondary text-white font-monospace" placeholder="YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME">
+                                            <textarea id="iq-signal-content" rows="3" class="form-control bg-dark border-secondary text-white font-monospace" placeholder="YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME&#10;(satu sinyal per baris — baris pertama akan dieksekusi)"></textarea>
                                         </div>
 
                                         <!-- Signal Guide -->
@@ -2293,6 +2293,44 @@
                                                     <i class="fas fa-lightbulb mt-1" style="color:#fbbf24;font-size:0.75rem;"></i>
                                                     <span class="small" style="color:#64748b;">Gunakan kode aset yang persis sama seperti yang ditampilkan di platform IQ Option. Aset OTC tersedia saat pasar tutup (akhir pekan). Timeframe 1 menit cocok untuk scalping singkat.</span>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Drag & Drop Upload Zone -->
+                                        <div class="col-12" id="iq-dropzone-wrap">
+                                            <div id="iq-drop-zone"
+                                                 onclick="document.getElementById('iq-file-input').click()"
+                                                 style="border:2px dashed rgba(96,165,250,0.35);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(37,117,252,0.03);">
+                                                <i class="fas fa-cloud-upload-alt mb-2" style="font-size:1.8rem;color:#60a5fa;display:block;"></i>
+                                                <div class="small fw-semibold" style="color:#94a3b8;">Drag &amp; Drop file sinyal di sini</div>
+                                                <div class="small mt-1" style="color:#64748b;">atau klik untuk memilih file</div>
+                                                <div class="mt-2 d-flex justify-content-center gap-2">
+                                                    <span class="badge" style="background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);font-size:0.7rem;">.CSV</span>
+                                                    <span class="badge" style="background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);font-size:0.7rem;">.TXT</span>
+                                                    <span class="badge" style="background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);font-size:0.7rem;">.JSON</span>
+                                                </div>
+                                                <input type="file" id="iq-file-input" accept=".csv,.txt,.json" style="display:none;">
+                                            </div>
+                                            <div id="iq-upload-msg" class="small mt-1 text-center"></div>
+
+                                            <!-- Signal Queue -->
+                                            <div id="iq-signal-queue" style="display:none;" class="mt-3">
+                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                    <div class="small fw-bold" style="color:#94a3b8;">
+                                                        <i class="fas fa-list me-1" style="color:#60a5fa;"></i>
+                                                        Signal Queue &nbsp;
+                                                        <span class="badge" id="iq-queue-count" style="background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);">0</span>
+                                                    </div>
+                                                    <div class="d-flex gap-2">
+                                                        <button class="btn btn-sm py-0 px-2" style="background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.3);font-size:0.72rem;" onclick="iqLoadAllToInput()">
+                                                            <i class="fas fa-file-import me-1"></i>Load All ke Input
+                                                        </button>
+                                                        <button class="btn btn-sm py-0 px-2" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.3);font-size:0.72rem;" onclick="iqClearQueue()">
+                                                            <i class="fas fa-trash me-1"></i>Clear
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div id="iq-queue-list" style="max-height:190px;overflow-y:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.07);"></div>
                                             </div>
                                         </div>
 
@@ -2614,21 +2652,177 @@
                     const val = document.getElementById('iq-strategy').value;
                     const signalWrap = document.getElementById('iq-signal-input-wrap');
                     const signalGuide = document.getElementById('iq-signal-guide');
+                    const dropzoneWrap = document.getElementById('iq-dropzone-wrap');
                     const mt4Info = document.getElementById('iq-mt4-info');
                     const tvInfo = document.getElementById('iq-tv-info');
                     signalWrap.style.display = 'none';
                     signalGuide.style.display = 'none';
+                    dropzoneWrap.style.display = 'none';
                     mt4Info.style.display = 'none';
                     tvInfo.style.display = 'none';
                     if (val === 'signal_input') {
                         signalWrap.style.display = 'block';
                         signalGuide.style.display = 'block';
+                        dropzoneWrap.style.display = 'block';
                     } else if (val.startsWith('mt4')) {
                         mt4Info.style.display = 'block';
                     } else if (val.startsWith('tv')) {
                         tvInfo.style.display = 'block';
                     }
                 }
+
+                /* ---- Drag & Drop Signal File Upload ---- */
+                let iqSignalQueue = [];
+
+                function iqParseSignalLines(text) {
+                    return text.split('\n')
+                        .map(l => l.trim())
+                        .filter(l => l && !l.startsWith('#') && !l.startsWith('//') && l.includes(','));
+                }
+
+                function iqParseSignalJSON(text) {
+                    try {
+                        const data = JSON.parse(text);
+                        const arr = Array.isArray(data) ? data : (data.signals || data.data || []);
+                        return arr.map(item => {
+                            if (typeof item === 'string') return item.trim();
+                            // Object: {datetime, asset, direction, timeframe} or {time, asset, action, duration}
+                            const dt = item.datetime || item.time || item.date || '';
+                            const asset = item.asset || item.symbol || item.pair || '';
+                            const dir = (item.direction || item.action || item.signal || '').toUpperCase();
+                            const tf = item.timeframe || item.duration || item.expiry || 1;
+                            if (dt && asset && dir) return `${dt},${asset},${dir},${tf}`;
+                            return null;
+                        }).filter(Boolean);
+                    } catch(e) {
+                        return [];
+                    }
+                }
+
+                function iqParseSignalFile(file) {
+                    if (!file) return;
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    const allowed = ['csv', 'txt', 'json'];
+                    if (!allowed.includes(ext)) {
+                        iqUploadMsg('Format tidak didukung. Gunakan CSV, TXT, atau JSON.', 'danger');
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const text = e.target.result;
+                        let signals = [];
+                        if (ext === 'json') {
+                            signals = iqParseSignalJSON(text);
+                        } else {
+                            signals = iqParseSignalLines(text);
+                        }
+                        if (signals.length === 0) {
+                            iqUploadMsg('Tidak ada sinyal valid ditemukan di file.', 'warning');
+                            return;
+                        }
+                        iqSignalQueue = signals;
+                        iqRenderQueue();
+                        iqUploadMsg(`✓ ${signals.length} sinyal berhasil dimuat dari <strong>${file.name}</strong>`, 'success');
+                        document.getElementById('iq-file-input').value = '';
+                    };
+                    reader.readAsText(file);
+                }
+
+                function iqUploadMsg(msg, type) {
+                    const el = document.getElementById('iq-upload-msg');
+                    const colors = {success:'#4ade80', danger:'#f87171', warning:'#fbbf24'};
+                    el.style.color = colors[type] || '#94a3b8';
+                    el.innerHTML = msg;
+                    setTimeout(() => { el.innerHTML = ''; }, 6000);
+                }
+
+                function iqRenderQueue() {
+                    const list = document.getElementById('iq-queue-list');
+                    const queueBox = document.getElementById('iq-signal-queue');
+                    const countEl = document.getElementById('iq-queue-count');
+                    countEl.textContent = iqSignalQueue.length;
+                    if (iqSignalQueue.length === 0) {
+                        queueBox.style.display = 'none';
+                        list.innerHTML = '';
+                        return;
+                    }
+                    queueBox.style.display = 'block';
+                    list.innerHTML = iqSignalQueue.map((sig, i) => {
+                        const parts = sig.split(',').map(p => p.trim());
+                        let dir = '', badge = '', asset = '', tf = '', dt = '';
+                        if (parts.length >= 4 && parts[0].includes('-')) {
+                            dt = parts[0]; asset = parts[1]; dir = parts[2].toUpperCase(); tf = parts[3];
+                        } else if (parts.length >= 2) {
+                            dir = parts[0].toUpperCase(); tf = parts[1]; asset = parts[2] || '';
+                        }
+                        badge = dir === 'CALL'
+                            ? '<span class="badge bg-success me-1" style="font-size:0.65rem;">CALL</span>'
+                            : '<span class="badge bg-danger me-1" style="font-size:0.65rem;">PUT</span>';
+                        return `<div class="d-flex align-items-center justify-content-between px-3 py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.78rem;">
+                            <div style="color:#94a3b8;">
+                                ${badge}
+                                <code style="color:#a5f3fc;font-size:0.74rem;">${asset || '—'}</code>
+                                <span class="ms-1 text-muted">${tf ? tf+'m' : ''}</span>
+                                ${dt ? '<span class="ms-2 text-muted" style="font-size:0.68rem;">'+dt+'</span>' : ''}
+                            </div>
+                            <div class="d-flex gap-1">
+                                <button class="btn btn-sm py-0 px-1" style="background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);font-size:0.68rem;" onclick="iqUseSignal(${i})">
+                                    <i class="fas fa-arrow-up"></i> Use
+                                </button>
+                                <button class="btn btn-sm py-0 px-1" style="background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);font-size:0.68rem;" onclick="iqRemoveSignal(${i})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+
+                function iqUseSignal(idx) {
+                    const sig = iqSignalQueue[idx];
+                    if (!sig) return;
+                    document.getElementById('iq-signal-content').value = sig;
+                }
+
+                function iqRemoveSignal(idx) {
+                    iqSignalQueue.splice(idx, 1);
+                    iqRenderQueue();
+                }
+
+                function iqClearQueue() {
+                    iqSignalQueue = [];
+                    iqRenderQueue();
+                }
+
+                function iqLoadAllToInput() {
+                    if (iqSignalQueue.length === 0) return;
+                    document.getElementById('iq-signal-content').value = iqSignalQueue.join('\n');
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const dropZone = document.getElementById('iq-drop-zone');
+                    const fileInput = document.getElementById('iq-file-input');
+                    if (!dropZone || !fileInput) return;
+
+                    dropZone.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        dropZone.style.borderColor = 'rgba(96,165,250,0.8)';
+                        dropZone.style.background = 'rgba(37,117,252,0.10)';
+                    });
+                    dropZone.addEventListener('dragleave', function() {
+                        dropZone.style.borderColor = 'rgba(96,165,250,0.35)';
+                        dropZone.style.background = 'rgba(37,117,252,0.03)';
+                    });
+                    dropZone.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        dropZone.style.borderColor = 'rgba(96,165,250,0.35)';
+                        dropZone.style.background = 'rgba(37,117,252,0.03)';
+                        const file = e.dataTransfer.files[0];
+                        if (file) iqParseSignalFile(file);
+                    });
+                    fileInput.addEventListener('change', function(e) {
+                        if (e.target.files[0]) iqParseSignalFile(e.target.files[0]);
+                    });
+                });
 
                 function iqSetMsg(elId, msg, type) {
                     const el = document.getElementById(elId);

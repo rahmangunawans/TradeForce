@@ -2214,6 +2214,88 @@
                                             <label class="form-label small" style="color:#94a3b8;">Signal Input <span class="text-muted small">(format: datetime,asset,direction,timeframe)</span></label>
                                             <input type="text" id="iq-signal-content" class="form-control bg-dark border-secondary text-white font-monospace" placeholder="YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME">
                                         </div>
+
+                                        <!-- Signal Guide -->
+                                        <div class="col-12" id="iq-signal-guide">
+                                            <div class="rounded p-3" style="background:rgba(37,117,252,0.07);border:1px solid rgba(37,117,252,0.25);">
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <i class="fas fa-book-open" style="color:#60a5fa;"></i>
+                                                    <span class="small fw-bold" style="color:#60a5fa;">Cara Menggunakan Manual Signal Input</span>
+                                                </div>
+
+                                                <!-- Format -->
+                                                <div class="mb-2">
+                                                    <div class="small mb-1" style="color:#94a3b8;">Format penulisan sinyal:</div>
+                                                    <code class="d-block px-3 py-2 rounded small" style="background:rgba(0,0,0,0.35);color:#a5f3fc;letter-spacing:0.03em;">
+                                                        YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME
+                                                    </code>
+                                                </div>
+
+                                                <!-- Field explanation table -->
+                                                <div class="mb-3">
+                                                    <div class="small fw-semibold mb-1" style="color:#94a3b8;">Keterangan kolom:</div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-sm mb-0" style="font-size:0.78rem;">
+                                                            <thead>
+                                                                <tr style="color:#64748b;border-color:rgba(255,255,255,0.06);">
+                                                                    <th style="background:transparent;border-color:rgba(255,255,255,0.06);">Kolom</th>
+                                                                    <th style="background:transparent;border-color:rgba(255,255,255,0.06);">Format</th>
+                                                                    <th style="background:transparent;border-color:rgba(255,255,255,0.06);">Keterangan</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody style="color:#94a3b8;">
+                                                                <tr style="border-color:rgba(255,255,255,0.06);">
+                                                                    <td style="border-color:rgba(255,255,255,0.06);"><code style="color:#fbbf24;">YYYY-MM-DD HH:MM:SS</code></td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);">Tanggal &amp; jam sinyal</td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);">Waktu eksekusi order, gunakan format 24 jam</td>
+                                                                </tr>
+                                                                <tr style="border-color:rgba(255,255,255,0.06);">
+                                                                    <td style="border-color:rgba(255,255,255,0.06);"><code style="color:#fbbf24;">ASSET</code></td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);">Kode aset IQ Option</td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);">Contoh: <code style="color:#a5f3fc;">EURUSD-OTC</code>, <code style="color:#a5f3fc;">GBPUSD</code>, <code style="color:#a5f3fc;">USDJPY-OTC</code></td>
+                                                                </tr>
+                                                                <tr style="border-color:rgba(255,255,255,0.06);">
+                                                                    <td style="border-color:rgba(255,255,255,0.06);"><code style="color:#fbbf24;">CALL/PUT</code></td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);">Arah order</td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);"><span class="badge bg-success me-1">CALL</span> = Naik &nbsp;|&nbsp; <span class="badge bg-danger">PUT</span> = Turun</td>
+                                                                </tr>
+                                                                <tr style="border-color:rgba(255,255,255,0.06);">
+                                                                    <td style="border-color:rgba(255,255,255,0.06);"><code style="color:#fbbf24;">TIMEFRAME</code></td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);">Durasi (menit)</td>
+                                                                    <td style="border-color:rgba(255,255,255,0.06);">Angka dalam menit, contoh: <code style="color:#a5f3fc;">1</code>, <code style="color:#a5f3fc;">5</code>, <code style="color:#a5f3fc;">15</code></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Example -->
+                                                <div class="mb-2">
+                                                    <div class="small fw-semibold mb-1" style="color:#94a3b8;">Contoh sinyal:</div>
+                                                    <div class="d-flex flex-column gap-1">
+                                                        <code class="px-3 py-1 rounded small d-flex align-items-center justify-content-between" style="background:rgba(0,0,0,0.35);color:#a5f3fc;">
+                                                            <span>2024-01-15 14:30:00,EURUSD-OTC,CALL,1</span>
+                                                            <span class="badge bg-success ms-2">CALL 1 menit</span>
+                                                        </code>
+                                                        <code class="px-3 py-1 rounded small d-flex align-items-center justify-content-between" style="background:rgba(0,0,0,0.35);color:#a5f3fc;">
+                                                            <span>2024-01-15 09:15:00,GBPUSD,PUT,5</span>
+                                                            <span class="badge bg-danger ms-2">PUT 5 menit</span>
+                                                        </code>
+                                                        <code class="px-3 py-1 rounded small d-flex align-items-center justify-content-between" style="background:rgba(0,0,0,0.35);color:#a5f3fc;">
+                                                            <span>2024-01-15 21:00:00,USDJPY-OTC,CALL,15</span>
+                                                            <span class="badge bg-success ms-2">CALL 15 menit</span>
+                                                        </code>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Tips -->
+                                                <div class="d-flex align-items-start gap-2 mt-2 pt-2" style="border-top:1px solid rgba(255,255,255,0.06);">
+                                                    <i class="fas fa-lightbulb mt-1" style="color:#fbbf24;font-size:0.75rem;"></i>
+                                                    <span class="small" style="color:#64748b;">Gunakan kode aset yang persis sama seperti yang ditampilkan di platform IQ Option. Aset OTC tersedia saat pasar tutup (akhir pekan). Timeframe 1 menit cocok untuk scalping singkat.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="col-12" id="iq-mt4-info" style="display:none;">
                                             <div class="alert alert-info mb-0 py-2 small"><i class="fas fa-info-circle me-1"></i>Bot membaca sinyal dari <strong>MetaTrader 4 Terminal</strong> otomatis.</div>
                                         </div>
@@ -2531,13 +2613,16 @@
                 function onStrategyChange() {
                     const val = document.getElementById('iq-strategy').value;
                     const signalWrap = document.getElementById('iq-signal-input-wrap');
+                    const signalGuide = document.getElementById('iq-signal-guide');
                     const mt4Info = document.getElementById('iq-mt4-info');
                     const tvInfo = document.getElementById('iq-tv-info');
                     signalWrap.style.display = 'none';
+                    signalGuide.style.display = 'none';
                     mt4Info.style.display = 'none';
                     tvInfo.style.display = 'none';
                     if (val === 'signal_input') {
                         signalWrap.style.display = 'block';
+                        signalGuide.style.display = 'block';
                     } else if (val.startsWith('mt4')) {
                         mt4Info.style.display = 'block';
                     } else if (val.startsWith('tv')) {

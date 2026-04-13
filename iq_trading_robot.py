@@ -215,19 +215,75 @@ class IQTradingRobot:
         self.is_trading = False
 
     def get_all_open_time(self):
+        if not self.api:
+            return {}, 'API tidak tersedia. Silahkan koneksi ulang.'
+
+        result = {}
+        any_success = False
+
+        # Binary & Turbo
         try:
-            if not self.api:
-                return {}, 'API tidak tersedia. Silahkan koneksi ulang.'
-            data = self.api.get_all_open_time()
-            if data is None:
-                return {}, 'IQ Option tidak mengembalikan data pasar (timeout). Coba lagi.'
-            return data, None
-        except TypeError as e:
-            logger.error(f"get_all_open_time TypeError: {e}")
-            return {}, 'Gagal membaca data pasar dari IQ Option. Server mungkin timeout.'
+            binary_data = self.api.get_all_init_v2()
+            if binary_data:
+                for option in ['binary', 'turbo']:
+                    result[option] = {}
+                    try:
+                        actives = binary_data[option]['actives']
+                        for actives_id in actives:
+                            active = actives[actives_id]
+                            name = str(active['name']).split('.')[1]
+                            if active.get('enabled'):
+                                is_open = not active.get('is_suspended', False)
+                            else:
+                                is_open = False
+                            result[option][name] = {'open': is_open}
+                        any_success = True
+                    except Exception as e:
+                        logger.warning(f"get_all_open_time [{option}] error: {e}")
         except Exception as e:
-            logger.error(f"get_all_open_time error: {e}")
-            return {}, f'Error mengambil data pasar: {str(e)}'
+            logger.warning(f"get_all_open_time [binary/turbo] error: {e}")
+
+        # Digital Option
+        try:
+            dig_raw = self.api.get_digital_underlying_list_data()
+            if dig_raw and isinstance(dig_raw, dict) and 'underlying' in dig_raw:
+                result['digital'] = {}
+                for item in dig_raw['underlying']:
+                    name = item.get('underlying', '')
+                    is_open = False
+                    for sched in item.get('schedule', []):
+                        if sched.get('open', 0) < time.time() < sched.get('close', 0):
+                            is_open = True
+                            break
+                    result['digital'][name] = {'open': is_open}
+                any_success = True
+            else:
+                logger.warning('get_all_open_time [digital]: underlying-list not supported, skipping.')
+        except Exception as e:
+            logger.warning(f"get_all_open_time [digital] error: {e}")
+
+        # Forex, Crypto, CFD
+        for ins_type in ['forex', 'crypto', 'cfd']:
+            try:
+                ins_data = self.api.get_instruments(ins_type)
+                if ins_data and isinstance(ins_data, dict) and 'instruments' in ins_data:
+                    result[ins_type] = {}
+                    for detail in ins_data['instruments']:
+                        name = detail.get('name', '')
+                        is_open = False
+                        for sched in detail.get('schedule', []):
+                            if sched.get('open', 0) < time.time() < sched.get('close', 0):
+                                is_open = True
+                                break
+                        result[ins_type][name] = {'open': is_open}
+                    any_success = True
+            except Exception as e:
+                logger.warning(f"get_all_open_time [{ins_type}] error: {e}")
+
+        if not any_success:
+            return {}, 'Tidak ada data pasar yang berhasil diambil. Coba ulangi koneksi.'
+
+        return result, None
 
     def _get_signal(self):
         cfg = self.config

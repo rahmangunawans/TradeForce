@@ -1992,34 +1992,10 @@
                     <p class="text-muted">Manage your IQ Option automated trading settings and performance.</p>
                 </div>
 
-                <!-- Trading Session & Economic Calendar -->
+                <!-- Trading Session & Economic Calendar (Integrated) -->
                 <div class="row g-4 mb-4">
-                    <!-- Connection Status -->
-                    <div class="col-lg-4">
-                        <div class="dashboard-card h-100">
-                            <div class="card-header d-flex align-items-center">
-                                <div class="me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #4CAF50, #45a049);">
-                                    <i class="fas fa-wifi"></i>
-                                </div>
-                                <h4 class="mb-0">Connection Status</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-flex align-items-center gap-2 mb-3">
-                                    <div id="iqStatusIndicator" style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0;"></div>
-                                    <span id="iqStatusText" style="color:#f8fafc;">Not Connected</span>
-                                </div>
-                                <div id="iqBalanceInfo" style="display:none; background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.2); border-radius:10px; padding:1rem;">
-                                    <div style="font-size:1.5rem; font-weight:700; color:#00c965;" id="iqBalanceAmount">$0.00</div>
-                                    <small style="color:#94a3b8;">Current Balance</small><br>
-                                    <span id="iqAccountTypeBadge" style="background:#00e676;color:#000;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600;">Demo</span>
-                                </div>
-                                <p class="small mt-3" style="color:#94a3b8;">Use the IQ Option bot settings below to connect and manage your account.</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Trading Session -->
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <div class="dashboard-card h-100">
                             <div class="card-header d-flex align-items-center">
                                 <div class="status-icon-session me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #2196F3, #1976D2);">
@@ -2052,7 +2028,7 @@
                     </div>
 
                     <!-- Economic Calendar -->
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <div class="dashboard-card h-100">
                             <div class="card-header d-flex align-items-center">
                                 <div class="me-3" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; background: linear-gradient(135deg, #4b6cb7, #182848);">
@@ -2080,7 +2056,6 @@
                     </div>
                 </div>
 
-                <!-- Robot Status & Performance -->
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="dashboard-card">
@@ -2088,13 +2063,13 @@
                                 <h4>IQ Option Robot Status</h4>
                             </div>
                             <div class="card-body text-center">
-                                <div class="robot-status" style="background: rgba(217,119,6,0.1); border: 2px solid #d97706;">
-                                    <i class="fas fa-pause-circle" style="color: #d97706;"></i>
-                                    <h3 style="color: #d97706;">PAUSED</h3>
-                                    <p>IQ Option trading robot is currently paused</p>
+                                <div class="robot-status active">
+                                    <i class="fas fa-robot"></i>
+                                    <h3>ACTIVE</h3>
+                                    <p>IQ Option trading robot is currently running</p>
                                 </div>
                                 <div class="robot-controls">
-                                    <button class="btn btn-success me-2"><i class="fas fa-play"></i> Start Robot</button>
+                                    <button class="btn btn-danger me-2"><i class="fas fa-stop"></i> Stop Robot</button>
                                     <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
                                 </div>
                             </div>

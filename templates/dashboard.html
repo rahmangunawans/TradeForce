@@ -20,6 +20,10 @@
 
     <!-- TradingView Lightweight Charts -->
     <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+        @keyframes iq-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+        .iq-live-dot { animation: iq-pulse 1.4s ease-in-out infinite; }
+    </style>
 </head>
 <body class="dashboard-body">
 
@@ -2544,10 +2548,22 @@
                                         <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-vol" onclick="iqToggleIndicator('vol')" style="font-size:0.72rem;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">VOL</button>
                                     </div>
 
-                                    <!-- Load button -->
-                                    <button id="iq-chart-load-btn" class="btn btn-sm ms-auto" onclick="iqLoadChart()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;padding:6px 16px;font-size:0.8rem;">
-                                        <i class="fas fa-sync-alt me-1"></i>Load Chart
-                                    </button>
+                                    <!-- Live controls + Load button -->
+                                    <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
+                                        <span id="iq-chart-market-badge" style="display:none;font-size:0.7rem;color:#4ade80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);padding:3px 10px;border-radius:20px;">
+                                            <i class="fas fa-satellite-dish me-1"></i><span id="iq-chart-market-badge-txt">Market Open</span>
+                                        </span>
+                                        <div id="iq-chart-rt-controls" style="display:none;align-items:center;gap:6px;">
+                                            <span id="iq-chart-live-dot" class="rounded-circle" style="width:8px;height:8px;background:#ef4444;display:inline-block;"></span>
+                                            <span id="iq-chart-countdown" style="font-size:0.72rem;color:#64748b;min-width:40px;"></span>
+                                            <button id="iq-chart-live-btn" class="btn btn-sm px-2 py-0" onclick="iqToggleLive()" style="font-size:0.72rem;background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.3);">
+                                                <i class="fas fa-pause me-1"></i>Live
+                                            </button>
+                                        </div>
+                                        <button id="iq-chart-load-btn" class="btn btn-sm" onclick="iqLoadChart()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;padding:6px 16px;font-size:0.8rem;">
+                                            <i class="fas fa-sync-alt me-1"></i>Load Chart
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -2809,11 +2825,152 @@
                     if (_iqChartData.length > 0) iqBuildCharts(_iqChartData, document.getElementById('iq-chart-asset').value, _iqChartInterval);
                 }
 
-                function iqLoadChart() {
-                    const email = document.getElementById('iq-email').value.trim();
+                /* ---- Real-Time Auto-Refresh ---- */
+                let _iqRtActive = false;
+                let _iqRtTimer = null;
+                let _iqRtCountdownTimer = null;
+                let _iqRtCountdown = 0;
+                let _iqRtFetching = false;
+
+                function iqGetRefreshRate(sec) {
+                    if (sec <= 60)   return 5;
+                    if (sec <= 300)  return 15;
+                    if (sec <= 900)  return 30;
+                    return 60;
+                }
+
+                function iqAutoRefreshStart() {
+                    iqAutoRefreshStop();
+                    _iqRtActive = true;
+                    const rtEl = document.getElementById('iq-chart-rt-controls');
+                    rtEl.style.display = 'flex';
+                    document.getElementById('iq-chart-live-dot').classList.add('iq-live-dot');
+                    document.getElementById('iq-chart-live-dot').style.background = '#22c55e';
+                    document.getElementById('iq-chart-live-btn').innerHTML = '<i class="fas fa-pause me-1"></i>Live';
+                    document.getElementById('iq-chart-live-btn').style.color = '#4ade80';
+                    iqScheduleNextRt();
+                }
+
+                function iqAutoRefreshStop() {
+                    _iqRtActive = false;
+                    if (_iqRtTimer) { clearTimeout(_iqRtTimer); _iqRtTimer = null; }
+                    if (_iqRtCountdownTimer) { clearInterval(_iqRtCountdownTimer); _iqRtCountdownTimer = null; }
+                    const dot = document.getElementById('iq-chart-live-dot');
+                    const btn = document.getElementById('iq-chart-live-btn');
+                    const cd  = document.getElementById('iq-chart-countdown');
+                    if (dot) { dot.classList.remove('iq-live-dot'); dot.style.background = '#ef4444'; }
+                    if (btn) { btn.innerHTML = '<i class="fas fa-play me-1"></i>Live'; btn.style.color = '#94a3b8'; }
+                    if (cd)  cd.textContent = '';
+                }
+
+                function iqToggleLive() {
+                    if (_iqRtActive) iqAutoRefreshStop(); else iqAutoRefreshStart();
+                }
+
+                function iqScheduleNextRt() {
+                    if (!_iqRtActive) return;
+                    const rate = iqGetRefreshRate(_iqChartInterval);
+                    _iqRtCountdown = rate;
+                    if (_iqRtCountdownTimer) clearInterval(_iqRtCountdownTimer);
+                    _iqRtCountdownTimer = setInterval(() => {
+                        _iqRtCountdown = Math.max(0, _iqRtCountdown - 1);
+                        const el = document.getElementById('iq-chart-countdown');
+                        if (el) el.textContent = 'in ' + _iqRtCountdown + 's';
+                    }, 1000);
+                    if (_iqRtTimer) clearTimeout(_iqRtTimer);
+                    _iqRtTimer = setTimeout(() => { if (_iqRtActive) iqRtFetch(); }, rate * 1000);
+                }
+
+                function iqRtFetch() {
+                    if (!_iqRtActive || _iqRtFetching) return;
+                    _iqRtFetching = true;
+                    const email    = document.getElementById('iq-email').value.trim();
                     const password = document.getElementById('iq-password').value;
                     const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
-                    const asset = document.getElementById('iq-chart-asset').value;
+                    const asset    = document.getElementById('iq-chart-asset').value;
+                    if (!email || !password) { _iqRtFetching = false; iqScheduleNextRt(); return; }
+
+                    fetch('/iqoption/candles', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            iq_email: email, iq_password: password,
+                            account_type: acctType === 'REAL' ? 'real' : 'PRACTICE',
+                            asset: asset, interval: _iqChartInterval, count: 30
+                        })
+                    }).then(r => r.json()).then(d => {
+                        if (!d.success) { _iqRtFetching = false; iqScheduleNextRt(); return; }
+                        const poll = setInterval(() => {
+                            fetch('/iqoption/candles-data').then(r => r.json()).then(res => {
+                                if (res.status === 'loading') return;
+                                clearInterval(poll);
+                                _iqRtFetching = false;
+                                if (res.status === 'ready' && res.data) iqSmartUpdate(res.data);
+                                if (_iqRtActive) iqScheduleNextRt();
+                            }).catch(() => { clearInterval(poll); _iqRtFetching = false; iqScheduleNextRt(); });
+                        }, 1000);
+                    }).catch(() => { _iqRtFetching = false; iqScheduleNextRt(); });
+                }
+
+                /* ---- Smart chart update (no full rebuild) ---- */
+                function iqSmartUpdate(freshTail) {
+                    if (!_iqCandleSeries || !freshTail || freshTail.length === 0) return;
+                    const existMap = {};
+                    _iqChartData.forEach(c => existMap[c.time] = c);
+
+                    let hasChange = false;
+                    freshTail.forEach(c => {
+                        const old = existMap[c.time];
+                        if (!old || old.open !== c.open || old.high !== c.high ||
+                            old.low !== c.low || old.close !== c.close) {
+                            existMap[c.time] = c;
+                            hasChange = true;
+                        }
+                    });
+                    if (!hasChange) return;
+
+                    _iqChartData = Object.values(existMap).sort((a, b) => a.time - b.time);
+
+                    // Update candles
+                    freshTail.forEach(c => {
+                        _iqCandleSeries.update(c);
+                        if (_iqVolSeries && _iqIndActive.vol) {
+                            _iqVolSeries.update({time: c.time, value: c.volume || 0,
+                                color: c.close >= c.open ? _iqChartColors.volUp : _iqChartColors.volDown});
+                        }
+                    });
+
+                    // Update indicator tails
+                    const tail = freshTail.length + 2;
+                    if (_iqMa20Series && _iqIndActive.ma20)
+                        _iqCalcMA(_iqChartData, 20).slice(-tail).forEach(p => _iqMa20Series.update(p));
+                    if (_iqMa50Series && _iqIndActive.ma50)
+                        _iqCalcMA(_iqChartData, 50).slice(-tail).forEach(p => _iqMa50Series.update(p));
+                    if (_iqIndActive.bb) {
+                        const bb = _iqCalcBB(_iqChartData);
+                        bb.up.slice(-tail).forEach(p => { if (_iqBbUpSeries) _iqBbUpSeries.update(p); });
+                        bb.mid.slice(-tail).forEach(p => { if (_iqBbMidSeries) _iqBbMidSeries.update(p); });
+                        bb.low.slice(-tail).forEach(p => { if (_iqBbLowSeries) _iqBbLowSeries.update(p); });
+                    }
+                    if (_iqRsiSeries && _iqIndActive.rsi)
+                        _iqCalcRSI(_iqChartData).slice(-tail).forEach(p => _iqRsiSeries.update(p));
+
+                    // Update stats
+                    const last = _iqChartData[_iqChartData.length - 1];
+                    const clr = last.close >= last.open ? '#4ade80' : '#f87171';
+                    document.getElementById('cs-close').style.color = clr;
+                    document.getElementById('cs-close').textContent = last.close.toFixed(5);
+                    document.getElementById('cs-high').textContent  = last.high.toFixed(5);
+                    document.getElementById('cs-low').textContent   = last.low.toFixed(5);
+                    document.getElementById('cs-count').textContent = _iqChartData.length;
+                }
+
+                /* ---- Initial chart load ---- */
+                function iqLoadChart() {
+                    const email    = document.getElementById('iq-email').value.trim();
+                    const password = document.getElementById('iq-password').value;
+                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
+                    const asset    = document.getElementById('iq-chart-asset').value;
                     const interval = parseInt(document.querySelector('.iq-tf-btn.active').dataset.seconds);
 
                     if (!email || !password) {
@@ -2822,6 +2979,7 @@
                         return;
                     }
 
+                    iqAutoRefreshStop();
                     const btn = document.getElementById('iq-chart-load-btn');
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading...';
@@ -2858,6 +3016,7 @@
                                 document.getElementById('iq-chart-msg').style.display = 'none';
                                 document.getElementById('iq-chart-container').style.display = 'block';
                                 iqBuildCharts(res.data, asset, interval);
+                                iqAutoRefreshStart();
                             }).catch(() => {});
                         }, 2000);
                     }).catch(() => {
@@ -2866,13 +3025,17 @@
                     });
                 }
 
-                // Timeframe button active toggle
+                // Timeframe button + asset change triggers reload
                 document.addEventListener('DOMContentLoaded', function() {
                     document.querySelectorAll('.iq-tf-btn').forEach(btn => {
                         btn.addEventListener('click', function() {
                             document.querySelectorAll('.iq-tf-btn').forEach(b => b.classList.remove('active'));
                             this.classList.add('active');
+                            if (_iqChartData.length > 0) iqLoadChart();
                         });
+                    });
+                    document.getElementById('iq-chart-asset').addEventListener('change', function() {
+                        if (_iqChartData.length > 0) iqLoadChart();
                     });
                 });
                 </script>
@@ -2970,12 +3133,58 @@
                             document.getElementById('iq-market-tabs').style.setProperty('display','flex','important');
                             document.getElementById('iq-market-summary').style.display = '';
                             iqRenderMarket(_iqActiveFilter);
+                            iqPopulateChartAssets(_iqMarketData);
                         } else if (res.status === 'error') {
                             _iqMarketResetBtn();
                             document.getElementById('iq-market-msg').innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>' + (res.message || 'Terjadi error.') + '</span>';
                         }
                     })
                     .catch(() => {});
+                }
+
+                function iqPopulateChartAssets(marketData) {
+                    const sel = document.getElementById('iq-chart-asset');
+                    if (!sel) return;
+                    const currentVal = sel.value;
+                    sel.innerHTML = '';
+
+                    const catOrder  = ['binary','turbo','digital','forex','crypto','cfd'];
+                    const catLabels = {binary:'Binary',turbo:'Turbo',digital:'Digital',forex:'Forex',crypto:'Crypto',cfd:'CFD'};
+                    let totalOpen = 0, firstOpen = null;
+
+                    catOrder.forEach(cat => {
+                        const assets = marketData[cat] || {};
+                        const open = Object.entries(assets)
+                            .filter(([,v]) => v === true)
+                            .map(([k]) => k)
+                            .sort();
+                        if (open.length === 0) return;
+                        totalOpen += open.length;
+                        const grp = document.createElement('optgroup');
+                        grp.label = catLabels[cat] + ' (' + open.length + ' open)';
+                        open.forEach(name => {
+                            const opt = document.createElement('option');
+                            opt.value = name;
+                            opt.textContent = name;
+                            if (!firstOpen) firstOpen = name;
+                            if (name === currentVal) opt.selected = true;
+                            grp.appendChild(opt);
+                        });
+                        sel.appendChild(grp);
+                    });
+
+                    if (totalOpen === 0) return;
+
+                    // Restore selection or pick first open
+                    if (!Array.from(sel.options).find(o => o.value === currentVal) && firstOpen) {
+                        sel.value = firstOpen;
+                    }
+
+                    // Show badge
+                    const badge = document.getElementById('iq-chart-market-badge');
+                    const badgeTxt = document.getElementById('iq-chart-market-badge-txt');
+                    if (badge) badge.style.display = 'inline-block';
+                    if (badgeTxt) badgeTxt.textContent = totalOpen + ' Open Assets';
                 }
 
                 function iqFilterMarket(category, btn) {

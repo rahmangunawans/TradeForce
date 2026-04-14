@@ -820,5 +820,145 @@ def iqoption_candles_data():
     return jsonify(cache)
 
 
+# ─── Real-time candle stream cache ───────────────────────────────────────────
+# user_id -> {status, robot, asset, interval, message}
+rt_stream_cache = {}
+
+
+def _rt_candle_to_dict(ts, c):
+    """Convert a real_time_candles entry to chart-ready dict."""
+    return {
+        'time':   int(c.get('from', ts)),
+        'open':   float(c.get('open',  0)),
+        'high':   float(c.get('max',   c.get('high',  0))),
+        'low':    float(c.get('min',   c.get('low',   0))),
+        'close':  float(c.get('close', 0)),
+        'volume': int(c.get('volume',  0))
+    }
+
+
+@app.route('/iqoption/rt-start', methods=['POST'])
+@login_required
+def iqoption_rt_start():
+    """Start (or reuse) a real-time WebSocket candle stream for the given asset/interval."""
+    try:
+        data         = request.get_json() or {}
+        iq_email     = data.get('iq_email', '').strip()
+        iq_password  = data.get('iq_password', '')
+        account_type = data.get('account_type', 'PRACTICE')
+        asset        = data.get('asset', 'EURUSD')
+        interval     = int(data.get('interval', 60))
+        user_id      = current_user.id
+
+        if not iq_email or not iq_password:
+            return jsonify({'success': False, 'message': 'Login IQ Option terlebih dahulu.'})
+
+        existing = rt_stream_cache.get(user_id, {})
+
+        # Reuse if same asset+interval is already active
+        if (existing.get('status') == 'active'
+                and existing.get('asset') == asset
+                and existing.get('interval') == interval):
+            return jsonify({'success': True, 'status': 'active'})
+
+        # Stop old stream if different
+        if existing.get('status') == 'active' and existing.get('robot'):
+            try:
+                existing['robot'].api.stop_candles_stream(
+                    existing['asset'], existing['interval'])
+            except Exception:
+                pass
+
+        rt_stream_cache[user_id] = {
+            'status': 'starting', 'asset': asset, 'interval': interval,
+            'robot': None, 'message': ''
+        }
+
+        def _start(uid, email, password, acct, act, ivl):
+            try:
+                robot = IQTradingRobot(email, password)
+                ok, msg = robot.connect()
+                if not ok:
+                    rt_stream_cache[uid] = {
+                        'status': 'error', 'asset': act, 'interval': ivl,
+                        'robot': None, 'message': msg
+                    }
+                    return
+                robot.change_balance(acct)
+                time.sleep(1)
+                rt_stream_cache[uid]['robot'] = robot
+                # Blocking call – waits up to 20 s for WebSocket confirmation
+                robot.api.start_candles_stream(act, ivl, 300)
+                rt_stream_cache[uid]['status'] = 'active'
+                logging.info(f'RT stream ACTIVE: user={uid} asset={act} ivl={ivl}')
+            except Exception as ex:
+                rt_stream_cache[uid] = {
+                    'status': 'error', 'asset': act, 'interval': ivl,
+                    'robot': None, 'message': str(ex)
+                }
+
+        threading.Thread(
+            target=_start,
+            args=(user_id, iq_email, iq_password, account_type, asset, interval),
+            daemon=True
+        ).start()
+
+        return jsonify({'success': True, 'status': 'starting'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+
+
+@app.route('/iqoption/rt-candles', methods=['GET'])
+@login_required
+def iqoption_rt_candles():
+    """Return the latest real-time candles from the live WebSocket stream."""
+    user_id = current_user.id
+    cache   = rt_stream_cache.get(user_id)
+
+    if not cache:
+        return jsonify({'status': 'idle'})
+
+    status = cache.get('status', 'idle')
+
+    if status == 'starting':
+        return jsonify({'status': 'starting'})
+
+    if status == 'error':
+        return jsonify({'status': 'error', 'message': cache.get('message', '')})
+
+    if status == 'active':
+        robot = cache.get('robot')
+        if not robot:
+            return jsonify({'status': 'starting'})
+        try:
+            asset    = cache['asset']
+            interval = cache['interval']
+            rt_data  = robot.api.get_realtime_candles(asset, interval)
+            if not rt_data:
+                return jsonify({'status': 'active', 'data': []})
+            candles = [_rt_candle_to_dict(ts, c) for ts, c in rt_data.items()]
+            candles.sort(key=lambda x: x['time'])
+            return jsonify({'status': 'active', 'data': candles})
+        except Exception as ex:
+            return jsonify({'status': 'error', 'message': str(ex)})
+
+    return jsonify({'status': status})
+
+
+@app.route('/iqoption/rt-stop', methods=['POST'])
+@login_required
+def iqoption_rt_stop():
+    """Stop the active real-time candle stream."""
+    user_id = current_user.id
+    cache   = rt_stream_cache.pop(user_id, None)
+    if cache and cache.get('robot'):
+        try:
+            cache['robot'].api.stop_candles_stream(
+                cache['asset'], cache['interval'])
+        except Exception:
+            pass
+    return jsonify({'success': True})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

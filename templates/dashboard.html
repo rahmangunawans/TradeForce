@@ -2909,8 +2909,9 @@
 
                 function iqBuildCharts(candles, asset, interval) {
                     iqDestroyCharts();
-                    _iqChartData = candles;
+                    _iqChartData     = candles;
                     _iqChartInterval = interval;
+                    _iqRtFirstUpdate = true;
 
                     const mainEl = document.getElementById('iq-chart-main');
                     const rsiEl  = document.getElementById('iq-chart-rsi');
@@ -3060,36 +3061,62 @@
                     if (_iqChartData.length > 0) iqBuildCharts(_iqChartData, document.getElementById('cs-asset').textContent || document.getElementById('iq-chart-asset').value, _iqChartInterval);
                 }
 
-                /* ---- Real-Time Auto-Refresh ---- */
-                let _iqRtActive = false;
-                let _iqRtTimer = null;
-                let _iqRtCountdownTimer = null;
-                let _iqRtCountdown = 0;
-                let _iqRtFetching = false;
-
-                function iqGetRefreshRate(sec) {
-                    if (sec <= 60)   return 5;
-                    if (sec <= 300)  return 15;
-                    if (sec <= 900)  return 30;
-                    return 60;
-                }
+                /* ---- Real-Time Tick Stream (WebSocket-backed) ---- */
+                let _iqRtActive   = false;
+                let _iqRtPollIv   = null;   // setInterval for GET /rt-candles
+                let _iqRtTicksEl  = null;   // countdown display el (reused)
+                let _iqRtTicksSec = 0;      // seconds since last update
+                let _iqRtStatus   = 'idle'; // idle | starting | active | error
 
                 function iqAutoRefreshStart() {
                     iqAutoRefreshStop();
-                    _iqRtActive = true;
-                    const rtEl = document.getElementById('iq-chart-rt-controls');
-                    rtEl.style.display = 'flex';
-                    document.getElementById('iq-chart-live-dot').classList.add('iq-live-dot');
-                    document.getElementById('iq-chart-live-dot').style.background = '#22c55e';
+                    _iqRtActive      = true;
+                    _iqRtStatus      = 'starting';
+                    _iqRtFirstUpdate = true;
+
+                    // Show live controls
+                    document.getElementById('iq-chart-rt-controls').style.display = 'flex';
+                    _iqRtSetDot('yellow');
                     document.getElementById('iq-chart-live-btn').innerHTML = '<i class="fas fa-pause me-1"></i>Live';
-                    document.getElementById('iq-chart-live-btn').style.color = '#4ade80';
-                    iqScheduleNextRt();
+                    document.getElementById('iq-chart-countdown').textContent = 'connecting...';
+
+                    const email    = document.getElementById('iq-email').value.trim();
+                    const password = document.getElementById('iq-password').value;
+                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
+                    const asset    = document.getElementById('iq-chart-asset').value;
+
+                    // 1. Ask backend to open a real-time WebSocket stream
+                    fetch('/iqoption/rt-start', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            iq_email: email, iq_password: password,
+                            account_type: acctType === 'REAL' ? 'real' : 'PRACTICE',
+                            asset: asset, interval: _iqChartInterval
+                        })
+                    }).then(r => r.json()).then(d => {
+                        if (!d.success) {
+                            _iqRtStatus = 'error';
+                            _iqRtSetDot('red');
+                            document.getElementById('iq-chart-countdown').textContent = 'error';
+                            return;
+                        }
+                        // 2. Start polling GET /rt-candles every 1 second
+                        _iqRtPollIv = setInterval(iqRtPollTick, 1000);
+                    }).catch(() => {
+                        _iqRtStatus = 'error';
+                        _iqRtSetDot('red');
+                        document.getElementById('iq-chart-countdown').textContent = 'error';
+                    });
                 }
 
                 function iqAutoRefreshStop() {
                     _iqRtActive = false;
-                    if (_iqRtTimer) { clearTimeout(_iqRtTimer); _iqRtTimer = null; }
-                    if (_iqRtCountdownTimer) { clearInterval(_iqRtCountdownTimer); _iqRtCountdownTimer = null; }
+                    _iqRtStatus = 'idle';
+                    if (_iqRtPollIv) { clearInterval(_iqRtPollIv); _iqRtPollIv = null; }
+                    // Tell backend to stop stream
+                    fetch('/iqoption/rt-stop', {method:'POST'}).catch(() => {});
+                    // Reset UI
                     const dot = document.getElementById('iq-chart-live-dot');
                     const btn = document.getElementById('iq-chart-live-btn');
                     const cd  = document.getElementById('iq-chart-countdown');
@@ -3102,102 +3129,151 @@
                     if (_iqRtActive) iqAutoRefreshStop(); else iqAutoRefreshStart();
                 }
 
-                function iqScheduleNextRt() {
-                    if (!_iqRtActive) return;
-                    const rate = iqGetRefreshRate(_iqChartInterval);
-                    _iqRtCountdown = rate;
-                    if (_iqRtCountdownTimer) clearInterval(_iqRtCountdownTimer);
-                    _iqRtCountdownTimer = setInterval(() => {
-                        _iqRtCountdown = Math.max(0, _iqRtCountdown - 1);
-                        const el = document.getElementById('iq-chart-countdown');
-                        if (el) el.textContent = 'in ' + _iqRtCountdown + 's';
-                    }, 1000);
-                    if (_iqRtTimer) clearTimeout(_iqRtTimer);
-                    _iqRtTimer = setTimeout(() => { if (_iqRtActive) iqRtFetch(); }, rate * 1000);
+                function _iqRtSetDot(color) {
+                    const dot = document.getElementById('iq-chart-live-dot');
+                    if (!dot) return;
+                    dot.classList.remove('iq-live-dot');
+                    if (color === 'green')  { dot.style.background = '#22c55e'; dot.classList.add('iq-live-dot'); }
+                    else if (color === 'yellow') { dot.style.background = '#fbbf24'; dot.classList.add('iq-live-dot'); }
+                    else { dot.style.background = '#ef4444'; }
                 }
 
-                function iqRtFetch() {
-                    if (!_iqRtActive || _iqRtFetching) return;
-                    _iqRtFetching = true;
-                    const email    = document.getElementById('iq-email').value.trim();
-                    const password = document.getElementById('iq-password').value;
-                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
-                    const asset    = document.getElementById('iq-chart-asset').value;
-                    if (!email || !password) { _iqRtFetching = false; iqScheduleNextRt(); return; }
-
-                    fetch('/iqoption/candles', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            iq_email: email, iq_password: password,
-                            account_type: acctType === 'REAL' ? 'real' : 'PRACTICE',
-                            asset: asset, interval: _iqChartInterval, count: 30
+                function iqRtPollTick() {
+                    if (!_iqRtActive) return;
+                    fetch('/iqoption/rt-candles')
+                        .then(r => r.json())
+                        .then(res => {
+                            const cd = document.getElementById('iq-chart-countdown');
+                            if (res.status === 'starting') {
+                                _iqRtSetDot('yellow');
+                                if (cd) cd.textContent = 'warming up...';
+                                return;
+                            }
+                            if (res.status === 'error') {
+                                _iqRtSetDot('red');
+                                if (cd) cd.textContent = 'stream error';
+                                return;
+                            }
+                            if (res.status === 'active' && res.data && res.data.length > 0) {
+                                _iqRtStatus = 'active';
+                                _iqRtSetDot('green');
+                                // Show tick count in countdown area
+                                if (cd) cd.textContent = res.data.length + ' candles';
+                                iqSmartUpdate(res.data);
+                            }
                         })
-                    }).then(r => r.json()).then(d => {
-                        if (!d.success) { _iqRtFetching = false; iqScheduleNextRt(); return; }
-                        const poll = setInterval(() => {
-                            fetch('/iqoption/candles-data').then(r => r.json()).then(res => {
-                                if (res.status === 'loading') return;
-                                clearInterval(poll);
-                                _iqRtFetching = false;
-                                if (res.status === 'ready' && res.data) iqSmartUpdate(res.data);
-                                if (_iqRtActive) iqScheduleNextRt();
-                            }).catch(() => { clearInterval(poll); _iqRtFetching = false; iqScheduleNextRt(); });
-                        }, 1000);
-                    }).catch(() => { _iqRtFetching = false; iqScheduleNextRt(); });
+                        .catch(() => {});
                 }
 
                 /* ---- Smart chart update (no full rebuild) ---- */
-                function iqSmartUpdate(freshTail) {
-                    if (!_iqCandleSeries || !freshTail || freshTail.length === 0) return;
+                let _iqRtFirstUpdate = true; // force setData on first RT tick
+
+                function iqSmartUpdate(freshData) {
+                    if (!_iqCandleSeries || !freshData || freshData.length === 0) return;
+
                     const existMap = {};
                     _iqChartData.forEach(c => existMap[c.time] = c);
 
-                    let hasChange = false;
-                    freshTail.forEach(c => {
+                    let hasChange   = false;
+                    let hasOlder    = false;
+                    const chartMin  = _iqChartData.length ? _iqChartData[0].time : Infinity;
+
+                    freshData.forEach(c => {
+                        if (c.time < chartMin) hasOlder = true;
                         const old = existMap[c.time];
-                        if (!old || old.open !== c.open || old.high !== c.high ||
-                            old.low !== c.low || old.close !== c.close) {
+                        if (!old || old.close !== c.close || old.high !== c.high || old.low !== c.low) {
                             existMap[c.time] = c;
                             hasChange = true;
                         }
                     });
-                    if (!hasChange) return;
+
+                    if (!hasChange && !_iqRtFirstUpdate) return;
 
                     _iqChartData = Object.values(existMap).sort((a, b) => a.time - b.time);
 
-                    // Update candles
-                    freshTail.forEach(c => {
-                        _iqCandleSeries.update(c);
-                        if (_iqVolSeries && _iqIndActive.vol) {
-                            _iqVolSeries.update({time: c.time, value: c.volume || 0,
-                                color: c.close >= c.open ? _iqChartColors.volUp : _iqChartColors.volDown});
+                    // If data extends backwards OR first RT update → use setData (no chart reset)
+                    if (hasOlder || _iqRtFirstUpdate) {
+                        _iqRtFirstUpdate = false;
+                        _iqSetAllSeriesData(_iqChartData);
+                    } else {
+                        // Smooth update with update() for recent candles only
+                        const recentChanged = freshData.filter(c => {
+                            const ex = existMap[c.time];
+                            return ex && (ex.close !== c.close || ex.high !== c.high || ex.low !== c.low);
+                        });
+                        // Also include any brand new candles (time > chart last)
+                        const chartMax = _iqChartData[_iqChartData.length - 1].time;
+                        const newest   = freshData.filter(c => c.time > chartMax);
+                        const toUpdate = [...recentChanged, ...newest].sort((a,b) => a.time - b.time);
+                        if (toUpdate.length === 0 && hasChange) {
+                            // fallback
+                            _iqSetAllSeriesData(_iqChartData);
+                        } else {
+                            toUpdate.forEach(c => {
+                                _iqCandleSeries.update(_iqChartType === 'line'
+                                    ? {time: c.time, value: c.close}
+                                    : (_iqChartType === 'ha' ? _iqCalcHA([c])[0] : c));
+                                if (_iqVolSeries && _iqIndActive.vol)
+                                    _iqVolSeries.update({time: c.time, value: c.volume || 0,
+                                        color: c.close >= c.open ? _iqChartColors.volUp : _iqChartColors.volDown});
+                            });
+                            const tail = toUpdate.length + 2;
+                            if (_iqMa1Series && _iqIndActive.ma1)
+                                _iqCalcMA(_iqChartData, _iqIndSettings.ma1Period).slice(-tail).forEach(p => _iqMa1Series.update(p));
+                            if (_iqMa2Series && _iqIndActive.ma2)
+                                _iqCalcMA(_iqChartData, _iqIndSettings.ma2Period).slice(-tail).forEach(p => _iqMa2Series.update(p));
+                            if (_iqIndActive.bb) {
+                                const bb = _iqCalcBB(_iqChartData);
+                                bb.up.slice(-tail).forEach(p => { if (_iqBbUpSeries) _iqBbUpSeries.update(p); });
+                                bb.mid.slice(-tail).forEach(p => { if (_iqBbMidSeries) _iqBbMidSeries.update(p); });
+                                bb.low.slice(-tail).forEach(p => { if (_iqBbLowSeries) _iqBbLowSeries.update(p); });
+                            }
+                            if (_iqRsiSeries && _iqIndActive.rsi)
+                                _iqCalcRSI(_iqChartData).slice(-tail).forEach(p => _iqRsiSeries.update(p));
                         }
-                    });
-
-                    // Update indicator tails
-                    const tail = freshTail.length + 2;
-                    if (_iqMa1Series && _iqIndActive.ma1)
-                        _iqCalcMA(_iqChartData, _iqIndSettings.ma1Period).slice(-tail).forEach(p => _iqMa1Series.update(p));
-                    if (_iqMa2Series && _iqIndActive.ma2)
-                        _iqCalcMA(_iqChartData, _iqIndSettings.ma2Period).slice(-tail).forEach(p => _iqMa2Series.update(p));
-                    if (_iqIndActive.bb) {
-                        const bb = _iqCalcBB(_iqChartData);
-                        bb.up.slice(-tail).forEach(p => { if (_iqBbUpSeries) _iqBbUpSeries.update(p); });
-                        bb.mid.slice(-tail).forEach(p => { if (_iqBbMidSeries) _iqBbMidSeries.update(p); });
-                        bb.low.slice(-tail).forEach(p => { if (_iqBbLowSeries) _iqBbLowSeries.update(p); });
                     }
-                    if (_iqRsiSeries && _iqIndActive.rsi)
-                        _iqCalcRSI(_iqChartData).slice(-tail).forEach(p => _iqRsiSeries.update(p));
 
-                    // Update stats
+                    // Stats
                     const last = _iqChartData[_iqChartData.length - 1];
                     const clr = last.close >= last.open ? '#4ade80' : '#f87171';
                     document.getElementById('cs-close').style.color = clr;
-                    document.getElementById('cs-close').textContent = last.close.toFixed(5);
-                    document.getElementById('cs-high').textContent  = last.high.toFixed(5);
-                    document.getElementById('cs-low').textContent   = last.low.toFixed(5);
-                    document.getElementById('cs-count').textContent = _iqChartData.length;
+                    document.getElementById('cs-close').textContent  = last.close.toFixed(5);
+                    document.getElementById('cs-high').textContent   = last.high.toFixed(5);
+                    document.getElementById('cs-low').textContent    = last.low.toFixed(5);
+                    document.getElementById('cs-count').textContent  = _iqChartData.length;
+                }
+
+                /* Update all LWC series data without destroying the chart */
+                function _iqSetAllSeriesData(candles) {
+                    if (!_iqChart) return;
+                    const displayData = _iqChartType === 'ha' ? _iqCalcHA(candles) : candles;
+                    if (_iqCandleSeries) {
+                        if (_iqChartType === 'line') {
+                            _iqCandleSeries.setData(candles.map(c => ({time: c.time, value: c.close})));
+                        } else {
+                            _iqCandleSeries.setData(displayData);
+                        }
+                    }
+                    if (_iqVolSeries && _iqIndActive.vol) {
+                        const volSrc = _iqChartType === 'ha' ? displayData : candles;
+                        _iqVolSeries.setData(volSrc.map(c => ({time: c.time, value: c.volume || 0,
+                            color: c.close >= c.open ? _iqChartColors.volUp : _iqChartColors.volDown})));
+                    }
+                    if (_iqMa1Series && _iqIndActive.ma1)
+                        _iqMa1Series.setData(_iqCalcMA(candles, _iqIndSettings.ma1Period));
+                    if (_iqMa2Series && _iqIndActive.ma2)
+                        _iqMa2Series.setData(_iqCalcMA(candles, _iqIndSettings.ma2Period));
+                    if (_iqIndActive.bb) {
+                        const bb = _iqCalcBB(candles);
+                        if (_iqBbUpSeries)  _iqBbUpSeries.setData(bb.up);
+                        if (_iqBbMidSeries) _iqBbMidSeries.setData(bb.mid);
+                        if (_iqBbLowSeries) _iqBbLowSeries.setData(bb.low);
+                    }
+                    if (_iqRsiSeries && _iqIndActive.rsi) {
+                        _iqRsiSeries.setData(_iqCalcRSI(candles));
+                        if (_iqRsiOB) _iqRsiOB.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOB})));
+                        if (_iqRsiOS) _iqRsiOS.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOS})));
+                    }
                 }
 
                 /* ---- Initial chart load ---- */

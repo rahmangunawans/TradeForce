@@ -17,6 +17,9 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <!-- TradingView Lightweight Charts -->
+    <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body class="dashboard-body">
 
@@ -2471,6 +2474,408 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Technical Chart Section -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center flex-wrap gap-2">
+                                    <div class="d-flex align-items-center me-2">
+                                        <div class="me-3" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+                                            <i class="fas fa-chart-candlestick"></i>
+                                        </div>
+                                        <h4 class="mb-0">Technical Chart</h4>
+                                    </div>
+
+                                    <!-- Asset selector -->
+                                    <select id="iq-chart-asset" class="form-select form-select-sm bg-dark border-secondary text-white" style="width:150px;">
+                                        <optgroup label="OTC (Weekend)">
+                                            <option value="EURUSD-OTC" selected>EURUSD-OTC</option>
+                                            <option value="GBPUSD-OTC">GBPUSD-OTC</option>
+                                            <option value="USDJPY-OTC">USDJPY-OTC</option>
+                                            <option value="USDCHF-OTC">USDCHF-OTC</option>
+                                            <option value="EURJPY-OTC">EURJPY-OTC</option>
+                                            <option value="AUDUSD-OTC">AUDUSD-OTC</option>
+                                            <option value="EURGBP-OTC">EURGBP-OTC</option>
+                                            <option value="GBPJPY-OTC">GBPJPY-OTC</option>
+                                            <option value="NZDUSD-OTC">NZDUSD-OTC</option>
+                                        </optgroup>
+                                        <optgroup label="Forex">
+                                            <option value="EURUSD">EURUSD</option>
+                                            <option value="GBPUSD">GBPUSD</option>
+                                            <option value="USDJPY">USDJPY</option>
+                                            <option value="USDCHF">USDCHF</option>
+                                            <option value="AUDUSD">AUDUSD</option>
+                                            <option value="USDCAD">USDCAD</option>
+                                            <option value="EURJPY">EURJPY</option>
+                                            <option value="GBPJPY">GBPJPY</option>
+                                            <option value="EURGBP">EURGBP</option>
+                                        </optgroup>
+                                        <optgroup label="Metals &amp; Crypto">
+                                            <option value="XAUUSD">XAUUSD (Gold)</option>
+                                            <option value="XAGUSD">XAGUSD (Silver)</option>
+                                        </optgroup>
+                                        <optgroup label="Stocks">
+                                            <option value="APPLE">APPLE</option>
+                                            <option value="GOOGLE">GOOGLE</option>
+                                            <option value="MSFT">MSFT</option>
+                                            <option value="AMAZON">AMAZON</option>
+                                            <option value="TESLA">TESLA</option>
+                                        </optgroup>
+                                    </select>
+
+                                    <!-- Timeframe buttons -->
+                                    <div class="btn-group btn-group-sm" id="iq-chart-tf-group">
+                                        <button class="btn btn-outline-secondary px-2 py-1 iq-tf-btn" data-seconds="60" style="font-size:0.75rem;">1M</button>
+                                        <button class="btn btn-outline-secondary px-2 py-1 iq-tf-btn active" data-seconds="300" style="font-size:0.75rem;">5M</button>
+                                        <button class="btn btn-outline-secondary px-2 py-1 iq-tf-btn" data-seconds="900" style="font-size:0.75rem;">15M</button>
+                                        <button class="btn btn-outline-secondary px-2 py-1 iq-tf-btn" data-seconds="1800" style="font-size:0.75rem;">30M</button>
+                                        <button class="btn btn-outline-secondary px-2 py-1 iq-tf-btn" data-seconds="3600" style="font-size:0.75rem;">1H</button>
+                                        <button class="btn btn-outline-secondary px-2 py-1 iq-tf-btn" data-seconds="14400" style="font-size:0.75rem;">4H</button>
+                                    </div>
+
+                                    <!-- Indicator toggles -->
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma20" onclick="iqToggleIndicator('ma20')" style="font-size:0.72rem;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);">MA20</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma50" onclick="iqToggleIndicator('ma50')" style="font-size:0.72rem;background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.4);">MA50</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-bb" onclick="iqToggleIndicator('bb')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">BB</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-rsi" onclick="iqToggleIndicator('rsi')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">RSI</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-vol" onclick="iqToggleIndicator('vol')" style="font-size:0.72rem;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">VOL</button>
+                                    </div>
+
+                                    <!-- Load button -->
+                                    <button id="iq-chart-load-btn" class="btn btn-sm ms-auto" onclick="iqLoadChart()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;padding:6px 16px;font-size:0.8rem;">
+                                        <i class="fas fa-sync-alt me-1"></i>Load Chart
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-0">
+                                <!-- Chart status message -->
+                                <div id="iq-chart-msg" class="text-center py-3 small" style="color:#64748b;">
+                                    Login IQ Option dan klik <strong style="color:#8b5cf6;">Load Chart</strong> untuk melihat data grafik live.
+                                </div>
+
+                                <!-- Main candlestick chart -->
+                                <div id="iq-chart-container" style="display:none;position:relative;">
+                                    <div id="iq-chart-legend" style="position:absolute;top:8px;left:12px;z-index:10;font-size:0.72rem;font-family:'Poppins',sans-serif;pointer-events:none;"></div>
+                                    <div id="iq-chart-main" style="height:420px;"></div>
+                                    <!-- RSI subchart -->
+                                    <div id="iq-chart-rsi-wrap" style="display:none;">
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#94a3b8;border-top:1px solid rgba(255,255,255,0.06);">RSI (14)</div>
+                                        <div id="iq-chart-rsi" style="height:130px;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats bar -->
+                                <div id="iq-chart-stats" style="display:none;padding:10px 16px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.15);">
+                                    <div class="d-flex flex-wrap gap-4 small" style="color:#94a3b8;">
+                                        <span>Asset: <strong id="cs-asset" class="text-white">—</strong></span>
+                                        <span>TF: <strong id="cs-tf" class="text-white">—</strong></span>
+                                        <span>Candles: <strong id="cs-count" class="text-white">—</strong></span>
+                                        <span>Open: <strong id="cs-open" class="text-white">—</strong></span>
+                                        <span>High: <strong id="cs-high" style="color:#4ade80;">—</strong></span>
+                                        <span>Low: <strong id="cs-low" style="color:#f87171;">—</strong></span>
+                                        <span>Close: <strong id="cs-close" class="text-white">—</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                /* ========================= TECHNICAL CHART ========================= */
+                let _iqChart = null, _iqChartRsi = null;
+                let _iqCandleSeries = null, _iqVolSeries = null;
+                let _iqMa20Series = null, _iqMa50Series = null;
+                let _iqBbUpSeries = null, _iqBbMidSeries = null, _iqBbLowSeries = null;
+                let _iqRsiSeries = null, _iqRsiOB = null, _iqRsiOS = null;
+                let _iqChartData = [];
+                let _iqChartInterval = 300;
+                let _iqChartPollTimer = null;
+                const _iqIndActive = {ma20: true, ma50: true, bb: false, rsi: false, vol: true};
+
+                const _iqChartColors = {
+                    bg: '#0f172a', grid: 'rgba(255,255,255,0.04)', text: '#94a3b8',
+                    upCandle: '#22c55e', downCandle: '#ef4444', upWick: '#16a34a', downWick: '#dc2626',
+                    ma20: '#fbbf24', ma50: '#60a5fa', bbUp: 'rgba(167,139,250,0.7)',
+                    bbMid: 'rgba(167,139,250,0.4)', bbLow: 'rgba(167,139,250,0.7)',
+                    rsi: '#f472b6', rsiLine: 'rgba(255,255,255,0.15)',
+                    volUp: 'rgba(34,197,94,0.4)', volDown: 'rgba(239,68,68,0.4)'
+                };
+
+                function _iqCalcMA(data, period) {
+                    return data.map((d, i) => {
+                        if (i < period - 1) return null;
+                        const slice = data.slice(i - period + 1, i + 1);
+                        const avg = slice.reduce((s, x) => s + x.close, 0) / period;
+                        return {time: d.time, value: parseFloat(avg.toFixed(5))};
+                    }).filter(Boolean);
+                }
+
+                function _iqCalcBB(data, period=20, mult=2) {
+                    const mid = [], up = [], low = [];
+                    data.forEach((d, i) => {
+                        if (i < period - 1) return;
+                        const slice = data.slice(i - period + 1, i + 1);
+                        const avg = slice.reduce((s, x) => s + x.close, 0) / period;
+                        const std = Math.sqrt(slice.reduce((s, x) => s + Math.pow(x.close - avg, 2), 0) / period);
+                        mid.push({time: d.time, value: parseFloat(avg.toFixed(5))});
+                        up.push({time: d.time, value: parseFloat((avg + mult * std).toFixed(5))});
+                        low.push({time: d.time, value: parseFloat((avg - mult * std).toFixed(5))});
+                    });
+                    return {mid, up, low};
+                }
+
+                function _iqCalcRSI(data, period=14) {
+                    const result = [];
+                    for (let i = period; i < data.length; i++) {
+                        let gains = 0, losses = 0;
+                        for (let j = i - period + 1; j <= i; j++) {
+                            const diff = data[j].close - data[j-1].close;
+                            if (diff > 0) gains += diff; else losses -= diff;
+                        }
+                        const avgGain = gains / period, avgLoss = losses / period;
+                        const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+                        const rsi = parseFloat((100 - 100 / (1 + rs)).toFixed(2));
+                        result.push({time: data[i].time, value: rsi});
+                    }
+                    return result;
+                }
+
+                function _iqTfLabel(s) {
+                    const m = {60:'1M', 300:'5M', 900:'15M', 1800:'30M', 3600:'1H', 14400:'4H'};
+                    return m[s] || s+'s';
+                }
+
+                function iqDestroyCharts() {
+                    if (_iqChart) { try { _iqChart.remove(); } catch(e){} _iqChart = null; }
+                    if (_iqChartRsi) { try { _iqChartRsi.remove(); } catch(e){} _iqChartRsi = null; }
+                    _iqCandleSeries = _iqVolSeries = null;
+                    _iqMa20Series = _iqMa50Series = null;
+                    _iqBbUpSeries = _iqBbMidSeries = _iqBbLowSeries = null;
+                    _iqRsiSeries = _iqRsiOB = _iqRsiOS = null;
+                }
+
+                function iqBuildCharts(candles, asset, interval) {
+                    iqDestroyCharts();
+                    _iqChartData = candles;
+                    _iqChartInterval = interval;
+
+                    const mainEl = document.getElementById('iq-chart-main');
+                    const rsiEl = document.getElementById('iq-chart-rsi');
+                    mainEl.innerHTML = '';
+                    rsiEl.innerHTML = '';
+
+                    const chartOpts = {
+                        layout: {background: {color: _iqChartColors.bg}, textColor: _iqChartColors.text, fontFamily: "'Poppins', sans-serif"},
+                        grid: {vertLines: {color: _iqChartColors.grid}, horzLines: {color: _iqChartColors.grid}},
+                        crosshair: {mode: LightweightCharts.CrosshairMode.Normal},
+                        timeScale: {borderColor: 'rgba(255,255,255,0.1)', timeVisible: true, secondsVisible: interval < 300},
+                        rightPriceScale: {borderColor: 'rgba(255,255,255,0.1)'},
+                        handleScroll: true, handleScale: true,
+                        width: mainEl.clientWidth, height: mainEl.clientHeight
+                    };
+
+                    _iqChart = LightweightCharts.createChart(mainEl, chartOpts);
+
+                    // Candlestick series
+                    _iqCandleSeries = _iqChart.addCandlestickSeries({
+                        upColor: _iqChartColors.upCandle, downColor: _iqChartColors.downCandle,
+                        borderUpColor: _iqChartColors.upCandle, borderDownColor: _iqChartColors.downCandle,
+                        wickUpColor: _iqChartColors.upWick, wickDownColor: _iqChartColors.downWick,
+                        priceScaleId: 'right'
+                    });
+                    _iqCandleSeries.setData(candles);
+
+                    // Volume histogram
+                    if (_iqIndActive.vol) {
+                        _iqVolSeries = _iqChart.addHistogramSeries({
+                            priceFormat: {type: 'volume'}, priceScaleId: 'vol',
+                            scaleMargins: {top: 0.8, bottom: 0}
+                        });
+                        _iqChart.priceScale('vol').applyOptions({scaleMargins: {top: 0.85, bottom: 0}});
+                        _iqVolSeries.setData(candles.map(c => ({
+                            time: c.time, value: c.volume || 0,
+                            color: c.close >= c.open ? _iqChartColors.volUp : _iqChartColors.volDown
+                        })));
+                    }
+
+                    // MA20
+                    if (_iqIndActive.ma20) {
+                        _iqMa20Series = _iqChart.addLineSeries({color: _iqChartColors.ma20, lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqMa20Series.setData(_iqCalcMA(candles, 20));
+                    }
+
+                    // MA50
+                    if (_iqIndActive.ma50) {
+                        _iqMa50Series = _iqChart.addLineSeries({color: _iqChartColors.ma50, lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqMa50Series.setData(_iqCalcMA(candles, 50));
+                    }
+
+                    // Bollinger Bands
+                    if (_iqIndActive.bb) {
+                        const bb = _iqCalcBB(candles);
+                        _iqBbUpSeries = _iqChart.addLineSeries({color: _iqChartColors.bbUp, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, lineStyle: LightweightCharts.LineStyle.Dashed});
+                        _iqBbMidSeries = _iqChart.addLineSeries({color: _iqChartColors.bbMid, lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqBbLowSeries = _iqChart.addLineSeries({color: _iqChartColors.bbLow, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, lineStyle: LightweightCharts.LineStyle.Dashed});
+                        _iqBbUpSeries.setData(bb.up);
+                        _iqBbMidSeries.setData(bb.mid);
+                        _iqBbLowSeries.setData(bb.low);
+                    }
+
+                    // Crosshair legend
+                    _iqChart.subscribeCrosshairMove(function(param) {
+                        const el = document.getElementById('iq-chart-legend');
+                        if (!param.time || !_iqCandleSeries) { el.innerHTML = ''; return; }
+                        const c = param.seriesData.get(_iqCandleSeries);
+                        if (!c) return;
+                        const clr = c.close >= c.open ? '#22c55e' : '#ef4444';
+                        el.innerHTML = `<span style="color:#94a3b8;">${asset} &nbsp;|&nbsp; </span>
+                            <span style="color:#94a3b8;">O:</span><span style="color:${clr}"> ${c.open.toFixed(5)} </span>
+                            <span style="color:#94a3b8;">H:</span><span style="color:#22c55e"> ${c.high.toFixed(5)} </span>
+                            <span style="color:#94a3b8;">L:</span><span style="color:#ef4444"> ${c.low.toFixed(5)} </span>
+                            <span style="color:#94a3b8;">C:</span><span style="color:${clr}"> ${c.close.toFixed(5)}</span>`;
+                        document.getElementById('cs-open').textContent = c.open.toFixed(5);
+                        document.getElementById('cs-high').textContent = c.high.toFixed(5);
+                        document.getElementById('cs-low').textContent = c.low.toFixed(5);
+                        document.getElementById('cs-close').textContent = c.close.toFixed(5);
+                    });
+
+                    // RSI subchart
+                    const rsiWrap = document.getElementById('iq-chart-rsi-wrap');
+                    if (_iqIndActive.rsi) {
+                        rsiWrap.style.display = 'block';
+                        _iqChartRsi = LightweightCharts.createChart(rsiEl, {
+                            ...chartOpts, height: rsiEl.clientHeight,
+                            timeScale: {...chartOpts.timeScale, visible: false}
+                        });
+                        _iqRsiSeries = _iqChartRsi.addLineSeries({color: _iqChartColors.rsi, lineWidth: 1, priceLineVisible: false, lastValueVisible: true});
+                        _iqRsiSeries.setData(_iqCalcRSI(candles));
+                        // OB/OS reference lines
+                        _iqRsiOB = _iqChartRsi.addLineSeries({color: _iqChartColors.rsiLine, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqRsiOS = _iqChartRsi.addLineSeries({color: _iqChartColors.rsiLine, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        const tRange = candles.map(c => ({time: c.time, value: 70}));
+                        const tRangeOS = candles.map(c => ({time: c.time, value: 30}));
+                        _iqRsiOB.setData(tRange);
+                        _iqRsiOS.setData(tRangeOS);
+                        // Sync RSI time scale with main
+                        _iqChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
+                            if (range && _iqChartRsi) _iqChartRsi.timeScale().setVisibleLogicalRange(range);
+                        });
+                    } else {
+                        rsiWrap.style.display = 'none';
+                    }
+
+                    _iqChart.timeScale().fitContent();
+
+                    // Stats bar last candle
+                    const last = candles[candles.length - 1];
+                    document.getElementById('cs-asset').textContent = asset;
+                    document.getElementById('cs-tf').textContent = _iqTfLabel(interval);
+                    document.getElementById('cs-count').textContent = candles.length;
+                    document.getElementById('cs-open').textContent = last.open.toFixed(5);
+                    document.getElementById('cs-high').textContent = last.high.toFixed(5);
+                    document.getElementById('cs-low').textContent = last.low.toFixed(5);
+                    document.getElementById('cs-close').textContent = last.close.toFixed(5);
+                    document.getElementById('iq-chart-stats').style.display = 'block';
+
+                    // Resize observer
+                    const ro = new ResizeObserver(() => {
+                        if (_iqChart) _iqChart.applyOptions({width: mainEl.clientWidth});
+                        if (_iqChartRsi) _iqChartRsi.applyOptions({width: rsiEl.clientWidth});
+                    });
+                    ro.observe(mainEl);
+                }
+
+                function iqToggleIndicator(ind) {
+                    _iqIndActive[ind] = !_iqIndActive[ind];
+                    const btn = document.getElementById('ind-' + ind);
+                    const activeStyles = {
+                        ma20: {bg:'rgba(251,191,36,0.15)',color:'#fbbf24',border:'rgba(251,191,36,0.4)'},
+                        ma50: {bg:'rgba(96,165,250,0.15)',color:'#60a5fa',border:'rgba(96,165,250,0.4)'},
+                        bb:   {bg:'rgba(167,139,250,0.15)',color:'#a78bfa',border:'rgba(167,139,250,0.4)'},
+                        rsi:  {bg:'rgba(244,114,182,0.15)',color:'#f472b6',border:'rgba(244,114,182,0.4)'},
+                        vol:  {bg:'rgba(74,222,128,0.12)',color:'#4ade80',border:'rgba(74,222,128,0.3)'}
+                    };
+                    if (_iqIndActive[ind]) {
+                        const s = activeStyles[ind];
+                        btn.style.background = s.bg; btn.style.color = s.color; btn.style.borderColor = s.border;
+                    } else {
+                        btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#64748b'; btn.style.borderColor = 'rgba(255,255,255,0.1)';
+                    }
+                    if (_iqChartData.length > 0) iqBuildCharts(_iqChartData, document.getElementById('iq-chart-asset').value, _iqChartInterval);
+                }
+
+                function iqLoadChart() {
+                    const email = document.getElementById('iq-email').value.trim();
+                    const password = document.getElementById('iq-password').value;
+                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
+                    const asset = document.getElementById('iq-chart-asset').value;
+                    const interval = parseInt(document.querySelector('.iq-tf-btn.active').dataset.seconds);
+
+                    if (!email || !password) {
+                        document.getElementById('iq-chart-msg').innerHTML = '<span class="text-warning">Masukkan email &amp; password IQ Option di panel Login terlebih dahulu.</span>';
+                        document.getElementById('iq-chart-msg').style.display = 'block';
+                        return;
+                    }
+
+                    const btn = document.getElementById('iq-chart-load-btn');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading...';
+                    document.getElementById('iq-chart-msg').innerHTML = '<span style="color:#94a3b8;"><i class="fas fa-circle-notch fa-spin me-1"></i>Mengambil data candle dari IQ Option...</span>';
+                    document.getElementById('iq-chart-msg').style.display = 'block';
+                    document.getElementById('iq-chart-container').style.display = 'none';
+                    document.getElementById('iq-chart-stats').style.display = 'none';
+
+                    if (_iqChartPollTimer) clearInterval(_iqChartPollTimer);
+
+                    fetch('/iqoption/candles', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            iq_email: email, iq_password: password,
+                            account_type: acctType === 'REAL' ? 'real' : 'PRACTICE',
+                            asset: asset, interval: interval, count: 150
+                        })
+                    }).then(r => r.json()).then(d => {
+                        if (!d.success) {
+                            document.getElementById('iq-chart-msg').innerHTML = '<span class="text-danger">' + d.message + '</span>';
+                            btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Load Chart';
+                            return;
+                        }
+                        _iqChartPollTimer = setInterval(() => {
+                            fetch('/iqoption/candles-data').then(r => r.json()).then(res => {
+                                if (res.status === 'loading') return;
+                                clearInterval(_iqChartPollTimer);
+                                btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Refresh';
+                                if (res.status === 'error') {
+                                    document.getElementById('iq-chart-msg').innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>' + res.message + '</span>';
+                                    return;
+                                }
+                                document.getElementById('iq-chart-msg').style.display = 'none';
+                                document.getElementById('iq-chart-container').style.display = 'block';
+                                iqBuildCharts(res.data, asset, interval);
+                            }).catch(() => {});
+                        }, 2000);
+                    }).catch(() => {
+                        document.getElementById('iq-chart-msg').innerHTML = '<span class="text-danger">Gagal menghubungi server.</span>';
+                        btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Load Chart';
+                    });
+                }
+
+                // Timeframe button active toggle
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.iq-tf-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.iq-tf-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+                });
+                </script>
 
                 <script>
                 let _iqMarketData = {};

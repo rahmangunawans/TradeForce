@@ -743,5 +743,82 @@ def iqoption_market_status():
     return jsonify(cache)
 
 
+# Chart candle cache: user_id -> {status, data, asset, interval, message}
+chart_cache = {}
+
+@app.route('/iqoption/candles', methods=['POST'])
+@login_required
+def iqoption_candles():
+    """Start background fetch of OHLC candle data from IQ Option"""
+    try:
+        data = request.get_json() or {}
+        user_id = current_user.id
+        asset = data.get('asset', 'EURUSD-OTC')
+        interval = int(data.get('interval', 60))
+        count = min(int(data.get('count', 100)), 500)
+        iq_email = data.get('iq_email', '')
+        iq_password = data.get('iq_password', '')
+        account_type = data.get('account_type', 'PRACTICE')
+
+        if not iq_email or not iq_password:
+            return jsonify({'success': False, 'message': 'Login IQ Option terlebih dahulu.'})
+
+        chart_cache[user_id] = {'status': 'loading', 'data': None, 'asset': asset, 'interval': interval, 'message': ''}
+
+        def fetch_candles(uid, email, password, acct, act, ivl, cnt):
+            try:
+                robot = None
+                if uid in active_bots and active_bots[uid].check_connect():
+                    robot = active_bots[uid]
+                else:
+                    robot = IQTradingRobot(email, password)
+                    if not robot.connect():
+                        chart_cache[uid] = {'status': 'error', 'data': None, 'asset': act, 'interval': ivl,
+                                            'message': 'Gagal konek ke IQ Option. Periksa email/password.'}
+                        return
+                    robot.change_balance(acct)
+                    time.sleep(2)
+
+                candles_raw = robot.api.get_candles(act, ivl, cnt, time.time())
+                if not candles_raw:
+                    chart_cache[uid] = {'status': 'error', 'data': None, 'asset': act, 'interval': ivl,
+                                        'message': f'Tidak ada data candle untuk {act}.'}
+                    return
+
+                result = []
+                for c in candles_raw:
+                    result.append({
+                        'time': int(c.get('from', c.get('id', 0))),
+                        'open': float(c.get('open', 0)),
+                        'high': float(c.get('max', c.get('high', 0))),
+                        'low': float(c.get('min', c.get('low', 0))),
+                        'close': float(c.get('close', 0)),
+                        'volume': int(c.get('volume', 0))
+                    })
+                result.sort(key=lambda x: x['time'])
+                chart_cache[uid] = {'status': 'ready', 'data': result, 'asset': act,
+                                    'interval': ivl, 'message': ''}
+            except Exception as ex:
+                chart_cache[uid] = {'status': 'error', 'data': None, 'asset': asset,
+                                    'interval': interval, 'message': f'Error: {str(ex)}'}
+
+        t = threading.Thread(target=fetch_candles,
+                             args=(user_id, iq_email, iq_password, account_type, asset, interval, count),
+                             daemon=True)
+        t.start()
+        return jsonify({'success': True, 'status': 'loading'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'})
+
+
+@app.route('/iqoption/candles-data', methods=['GET'])
+@login_required
+def iqoption_candles_data():
+    """Poll endpoint: returns candle fetch status/data"""
+    user_id = current_user.id
+    cache = chart_cache.get(user_id, {'status': 'idle', 'data': None, 'message': ''})
+    return jsonify(cache)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -13,6 +13,11 @@ try:
     from iq_trading_robot import IQTradingRobot
 except ImportError:
     IQTradingRobot = None
+try:
+    from strategy_scalper import AtvScalperM1, fetch_candles_range
+except ImportError:
+    AtvScalperM1 = None
+    fetch_candles_range = None
 import threading
 import json
 import time
@@ -1014,6 +1019,129 @@ def iqoption_rt_stop():
         except Exception:
             pass
     return jsonify({'success': True})
+
+
+# ─── Backtest cache: user_id → {status, progress, result, message} ────────────
+backtest_cache: dict = {}
+
+
+@app.route('/backtest/run', methods=['POST'])
+@login_required
+def backtest_run():
+    """Launch a background backtest for ATV Aggressive Scalper M1."""
+    if AtvScalperM1 is None or fetch_candles_range is None:
+        return jsonify({'success': False, 'message': 'Strategy module tidak tersedia.'})
+
+    data        = request.get_json() or {}
+    user_id     = current_user.id
+    asset       = data.get('asset', 'EURUSD-OTC')
+    months      = int(data.get('months', 12))        # 3 / 6 / 12 / 24
+    payout      = float(data.get('payout', 0.82))
+    iq_email    = data.get('iq_email', '')
+    iq_password = data.get('iq_password', '')
+    account_type = data.get('account_type', 'PRACTICE')
+
+    if not iq_email or not iq_password:
+        return jsonify({'success': False, 'message': 'Masukkan email & password IQ Option.'})
+
+    # Block if already running
+    if backtest_cache.get(user_id, {}).get('status') == 'running':
+        return jsonify({'success': False, 'message': 'Backtest sedang berjalan…'})
+
+    backtest_cache[user_id] = {
+        'status': 'running', 'progress': 0,
+        'message': 'Menginisialisasi…', 'result': None
+    }
+
+    def _run(uid, email, password, acct, ast, mon, pay):
+        def prog(pct, msg):
+            backtest_cache[uid]['progress'] = pct
+            backtest_cache[uid]['message']  = msg
+
+        try:
+            prog(2, 'Menghubungkan ke IQ Option…')
+            # Prefer existing connected robot
+            robot = None
+            rt = rt_stream_cache.get(uid)
+            if rt and rt.get('status') == 'active' and rt.get('robot'):
+                robot = rt['robot']
+            elif uid in active_bots and active_bots[uid].check_connect():
+                robot = active_bots[uid]
+
+            if robot is None:
+                robot = IQTradingRobot(email, password)
+                ok = robot.connect()
+                if not ok:
+                    backtest_cache[uid] = {
+                        'status': 'error', 'progress': 0,
+                        'message': 'Gagal konek ke IQ Option.', 'result': None
+                    }
+                    return
+                robot.change_balance(acct)
+                time.sleep(1)
+
+            prog(5, f'Mengambil data M1 {ast} ({mon} bulan)…')
+            end_ts   = time.time()
+            start_ts = end_ts - mon * 30.5 * 24 * 3600  # approximate
+
+            candles = fetch_candles_range(
+                robot, ast, 60, start_ts, end_ts, progress_cb=prog)
+
+            if not candles:
+                backtest_cache[uid] = {
+                    'status': 'error', 'progress': 0,
+                    'message': f'Tidak ada data candle untuk {ast}.', 'result': None
+                }
+                return
+
+            prog(99, f'Menjalankan backtest ({len(candles):,} candle)…')
+            strategy = AtvScalperM1()
+            result   = strategy.backtest(candles, payout=pay)
+
+            # Fill average signals/day
+            if result['total_signals'] > 0 and mon > 0:
+                trading_days = mon * 22   # ~22 trading days/month
+                result['avg_signals_day'] = round(result['total_signals'] / trading_days, 1)
+
+            result['asset']          = ast
+            result['period_months']  = mon
+            result['candles_tested'] = len(candles)
+            result['start_date']     = datetime.utcfromtimestamp(candles[0]['time']).strftime('%Y-%m-%d')
+            result['end_date']       = datetime.utcfromtimestamp(candles[-1]['time']).strftime('%Y-%m-%d')
+
+            backtest_cache[uid] = {
+                'status': 'done', 'progress': 100,
+                'message': 'Backtest selesai.', 'result': result
+            }
+            logger.info(f"Backtest done: user={uid} asset={ast} "
+                        f"win_rate={result['win_rate']}% signals={result['total_signals']}")
+
+        except Exception as ex:
+            logger.exception(f'Backtest error: {ex}')
+            backtest_cache[uid] = {
+                'status': 'error', 'progress': 0,
+                'message': f'Error: {str(ex)}', 'result': None
+            }
+
+    from datetime import datetime
+    threading.Thread(
+        target=_run,
+        args=(user_id, iq_email, iq_password, account_type,
+              asset, months, payout),
+        daemon=True
+    ).start()
+    return jsonify({'success': True})
+
+
+@app.route('/backtest/status', methods=['GET'])
+@login_required
+def backtest_status():
+    """Poll endpoint for backtest progress and result."""
+    user_id = current_user.id
+    cache   = backtest_cache.get(user_id, {
+        'status': 'idle', 'progress': 0, 'message': '', 'result': None
+    })
+    return jsonify(cache)
 
 
 if __name__ == '__main__':

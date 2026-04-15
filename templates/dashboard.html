@@ -2717,6 +2717,7 @@
                 let _iqChartPollTimer = null;
                 let _iqChartType = 'candle'; // candle | bar | line | ha
                 let _iqCandleTimerIv = null;
+                let _iqLoadingMore = false;   // guard: prevent duplicate lazy-load calls
 
                 const _iqIndActive = {ma1: true, ma2: true, bb: false, rsi: false, vol: true};
 
@@ -2912,6 +2913,7 @@
                     _iqChartData     = candles;
                     _iqChartInterval = interval;
                     _iqRtFirstUpdate = true;
+                    _iqLoadingMore   = false;
 
                     const mainEl = document.getElementById('iq-chart-main');
                     const rsiEl  = document.getElementById('iq-chart-rsi');
@@ -3011,14 +3013,22 @@
                         _iqRsiOS = _iqChartRsi.addLineSeries({color: _iqChartColors.rsiLine, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
                         _iqRsiOB.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOB})));
                         _iqRsiOS.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOS})));
-                        _iqChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
-                            if (range && _iqChartRsi) _iqChartRsi.timeScale().setVisibleLogicalRange(range);
-                        });
                     } else {
                         rsiWrap.style.display = 'none';
                     }
 
                     _iqChart.timeScale().fitContent();
+
+                    // Global time-scale subscriber: RSI sync + lazy-load
+                    _iqChart.timeScale().subscribeVisibleLogicalRangeChange(function(range) {
+                        if (!range) return;
+                        // Sync RSI pane (also handled inside RSI block, this covers non-RSI case)
+                        if (_iqChartRsi) _iqChartRsi.timeScale().setVisibleLogicalRange(range);
+                        // Trigger lazy-load when user scrolls within 30 bars of the left edge
+                        if (!_iqLoadingMore && range.from < 30) {
+                            iqLoadMoreCandles();
+                        }
+                    });
 
                     // Stats bar
                     const last = candles[candles.length - 1];
@@ -3281,6 +3291,48 @@
                         if (_iqRsiOB) _iqRsiOB.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOB})));
                         if (_iqRsiOS) _iqRsiOS.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOS})));
                     }
+                }
+
+                /* ---- Lazy-load: fetch older candles when user scrolls left ---- */
+                function iqLoadMoreCandles() {
+                    if (_iqLoadingMore || !_iqChartData.length || !_iqChart) return;
+                    const firstTime = _iqChartData[0].time;
+
+                    const email    = document.getElementById('iq-email').value.trim();
+                    const password = document.getElementById('iq-password').value;
+                    const acctType = document.querySelector('input[name="iq_account_type"]:checked').value;
+                    const asset    = document.getElementById('iq-chart-asset').value;
+
+                    _iqLoadingMore = true;
+
+                    fetch('/iqoption/candles-more', {
+                        method:  'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            iq_email:     email,
+                            iq_password:  password,
+                            account_type: acctType === 'REAL' ? 'real' : 'PRACTICE',
+                            asset:        asset,
+                            interval:     _iqChartInterval,
+                            before_time:  firstTime,
+                            count:        150
+                        })
+                    }).then(r => r.json()).then(d => {
+                        _iqLoadingMore = false;
+                        if (!d.success || !d.candles || !d.candles.length) return;
+
+                        // Filter strict: only candles BEFORE current first bar
+                        const older = d.candles.filter(c => c.time < firstTime);
+                        if (!older.length) return;
+
+                        // Prepend and refresh all series (setData is tolerant of full replace)
+                        _iqChartData = [...older, ..._iqChartData];
+                        _iqSetAllSeriesData(_iqChartData);
+
+                        // Update candle count display
+                        const el = document.getElementById('cs-count');
+                        if (el) el.textContent = _iqChartData.length;
+                    }).catch(() => { _iqLoadingMore = false; });
                 }
 
                 /* ---- Initial chart load ---- */

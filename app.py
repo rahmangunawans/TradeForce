@@ -820,6 +820,61 @@ def iqoption_candles_data():
     return jsonify(cache)
 
 
+@app.route('/iqoption/candles-more', methods=['POST'])
+@login_required
+def iqoption_candles_more():
+    """Fetch older historical candles for chart scroll-back (lazy-load)"""
+    try:
+        data        = request.get_json() or {}
+        user_id     = current_user.id
+        asset       = data.get('asset', 'EURUSD')
+        interval    = int(data.get('interval', 60))
+        before_time = float(data.get('before_time', time.time()))
+        count       = min(int(data.get('count', 150)), 500)
+        iq_email    = data.get('iq_email', '')
+        iq_password = data.get('iq_password', '')
+
+        # Reuse an already-connected robot when possible (avoids slow reconnect)
+        robot = None
+        rt = rt_stream_cache.get(user_id)
+        if rt and rt.get('status') == 'active' and rt.get('robot'):
+            robot = rt['robot']
+        elif user_id in active_bots and active_bots[user_id].check_connect():
+            robot = active_bots[user_id]
+
+        if robot is None:
+            if not iq_email or not iq_password:
+                return jsonify({'success': False, 'message': 'Login terlebih dahulu.'})
+            robot = IQTradingRobot(iq_email, iq_password)
+            if not robot.connect():
+                return jsonify({'success': False, 'message': 'Gagal konek ke IQ Option.'})
+            time.sleep(1)
+
+        # Fetch candles ending BEFORE before_time so they don't overlap
+        candles_raw = robot.api.get_candles(asset, interval, count, before_time - 1)
+        if not candles_raw:
+            return jsonify({'success': True, 'candles': []})
+
+        result = []
+        for c in candles_raw:
+            t_val = int(c.get('from', c.get('id', 0)))
+            if t_val >= before_time:      # strict: exclude any that overlap
+                continue
+            result.append({
+                'time':   t_val,
+                'open':   float(c.get('open', 0)),
+                'high':   float(c.get('max', c.get('high', 0))),
+                'low':    float(c.get('min', c.get('low', 0))),
+                'close':  float(c.get('close', 0)),
+                'volume': int(c.get('volume', 0))
+            })
+        result.sort(key=lambda x: x['time'])
+        return jsonify({'success': True, 'candles': result})
+    except Exception as e:
+        logging.exception(f'candles-more error: {e}')
+        return jsonify({'success': False, 'message': str(e)})
+
+
 # ─── Real-time candle stream cache ───────────────────────────────────────────
 # user_id -> {status, robot, asset, interval, message}
 rt_stream_cache = {}

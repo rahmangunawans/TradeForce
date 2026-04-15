@@ -18,6 +18,17 @@ try:
 except ImportError:
     AtvScalperM1 = None
     fetch_candles_range = None
+
+try:
+    from strategy_generator import (
+        StrategyGenerator, TradingConfig as GenTradingConfig,
+        INDICATOR_CATALOG, backtest_strategy
+    )
+except ImportError:
+    StrategyGenerator = None
+    GenTradingConfig = None
+    INDICATOR_CATALOG = {}
+    backtest_strategy = None
 import threading
 import json
 import time
@@ -1142,6 +1153,237 @@ def backtest_status():
         'status': 'idle', 'progress': 0, 'message': '', 'result': None
     })
     return jsonify(cache)
+
+
+# ─── Strategy Generator cache: user_id → {status, generator, progress, results} ─
+generator_cache: dict = {}
+
+
+@app.route('/strategy-generator/indicators', methods=['GET'])
+@login_required
+def strategy_generator_indicators():
+    """Return the full indicator catalog grouped by category."""
+    if not INDICATOR_CATALOG:
+        return jsonify({'success': False, 'message': 'Strategy generator tidak tersedia.'})
+    grouped = {}
+    for iid, info in INDICATOR_CATALOG.items():
+        cat = info['category']
+        if cat not in grouped:
+            grouped[cat] = []
+        grouped[cat].append({
+            'id': iid,
+            'label': info['label'],
+            'params': info['params'],
+            'defaults': info['defaults'],
+        })
+    return jsonify({'success': True, 'catalog': grouped})
+
+
+@app.route('/strategy-generator/run', methods=['POST'])
+@login_required
+def strategy_generator_run():
+    """Start the strategy generator in background."""
+    if StrategyGenerator is None:
+        return jsonify({'success': False, 'message': 'Strategy generator tidak tersedia.'})
+
+    data = request.get_json() or {}
+    user_id = current_user.id
+
+    if generator_cache.get(user_id, {}).get('status') == 'running':
+        return jsonify({'success': False, 'message': 'Generator sudah berjalan.'})
+
+    iq_email = data.get('iq_email', '')
+    iq_password = data.get('iq_password', '')
+    account_type = data.get('account_type', 'PRACTICE')
+    asset = data.get('asset', 'EURUSD-OTC')
+    interval = int(data.get('interval', 60))
+    months = int(data.get('months', 3))
+    allowed_indicators = data.get('indicators', list(INDICATOR_CATALOG.keys()))
+    min_indicators = int(data.get('min_indicators', 2))
+    max_indicators = int(data.get('max_indicators', 4))
+
+    modal = float(data.get('modal', 100.0))
+    amount = float(data.get('amount', 10.0))
+    stop_loss = float(data.get('stop_loss', 30.0))
+    stop_win = float(data.get('stop_win', 50.0))
+    martingale_steps = int(data.get('martingale_steps', 3))
+    martingale_multiplier = float(data.get('martingale_multiplier', 2.2))
+    payout = float(data.get('payout', 0.82))
+
+    if not iq_email or not iq_password:
+        return jsonify({'success': False, 'message': 'Masukkan email & password IQ Option.'})
+
+    if not allowed_indicators:
+        return jsonify({'success': False, 'message': 'Pilih minimal 1 indikator.'})
+
+    generator_cache[user_id] = {
+        'status': 'fetching',
+        'iterations': 0,
+        'found': 0,
+        'best_wr': 0.0,
+        'speed': 0.0,
+        'results': [],
+        'message': 'Mengambil data candle dari IQ Option…',
+    }
+
+    def _run(uid, email, password, acct, ast, ivl, mon,
+             allowed, min_ind, max_ind, modal, amount, sl, sw, mrt_s, mrt_m, pay):
+        try:
+            # Connect & fetch candles
+            robot = None
+            rt = rt_stream_cache.get(uid)
+            if rt and rt.get('status') == 'active' and rt.get('robot'):
+                robot = rt['robot']
+            elif uid in active_bots and active_bots[uid].check_connect():
+                robot = active_bots[uid]
+
+            if robot is None:
+                robot = IQTradingRobot(email, password)
+                if not robot.connect():
+                    generator_cache[uid] = {
+                        'status': 'error',
+                        'message': 'Gagal konek ke IQ Option.',
+                        'results': [],
+                    }
+                    return
+                robot.change_balance(acct)
+                time.sleep(1)
+
+            generator_cache[uid]['message'] = f'Mengambil candle {ast} ({mon} bulan)…'
+            end_ts = time.time()
+            start_ts = end_ts - mon * 30.5 * 24 * 3600
+
+            candles = fetch_candles_range(robot, ast, ivl, start_ts, end_ts)
+            if not candles:
+                generator_cache[uid] = {
+                    'status': 'error',
+                    'message': f'Tidak ada data candle untuk {ast}.',
+                    'results': [],
+                }
+                return
+
+            generator_cache[uid]['message'] = f'Memulai pencarian strategi ({len(candles):,} candle)…'
+            generator_cache[uid]['status'] = 'running'
+
+            trading = GenTradingConfig(
+                modal=modal, amount=amount,
+                stop_loss=sl, stop_win=sw,
+                martingale_steps=mrt_s,
+                martingale_multiplier=mrt_m,
+                payout=pay,
+            )
+
+            gen = StrategyGenerator(
+                candles=candles,
+                trading=trading,
+                allowed_indicators=allowed,
+                min_indicators=min_ind,
+                max_indicators=max_ind,
+            )
+            generator_cache[uid]['_gen'] = gen
+
+            def _progress(iterations, found, best_wr, speed):
+                if generator_cache.get(uid, {}).get('status') == 'running':
+                    generator_cache[uid].update({
+                        'iterations': iterations,
+                        'found': found,
+                        'best_wr': round(best_wr, 2),
+                        'speed': round(speed, 1),
+                        'results': gen.results_as_dicts(),
+                        'message': (
+                            f'{iterations:,} kombinasi diuji — '
+                            f'{found} strategi valid — '
+                            f'Win Rate terbaik: {best_wr:.1f}%'
+                        ),
+                    })
+
+            gen.run(progress_cb=_progress)
+
+            generator_cache[uid].update({
+                'status': 'done',
+                'results': gen.results_as_dicts(),
+                'iterations': gen.iterations,
+                'found': len(gen.best),
+                'message': (
+                    f'Selesai! {gen.iterations:,} kombinasi diuji, '
+                    f'{len(gen.best)} strategi terbaik ditemukan.'
+                ),
+            })
+
+        except Exception as ex:
+            logger.exception(f'Generator error: {ex}')
+            generator_cache[uid] = {
+                'status': 'error',
+                'message': f'Error: {str(ex)}',
+                'results': [],
+            }
+
+    threading.Thread(
+        target=_run,
+        args=(user_id, iq_email, iq_password, account_type, asset, interval, months,
+              allowed_indicators, min_indicators, max_indicators,
+              modal, amount, stop_loss, stop_win, martingale_steps, martingale_multiplier, payout),
+        daemon=True,
+    ).start()
+
+    return jsonify({'success': True})
+
+
+@app.route('/strategy-generator/status', methods=['GET'])
+@login_required
+def strategy_generator_status():
+    """Poll endpoint for generator progress."""
+    user_id = current_user.id
+    cache = generator_cache.get(user_id, {
+        'status': 'idle', 'iterations': 0, 'found': 0,
+        'best_wr': 0.0, 'speed': 0.0, 'results': [], 'message': '',
+    })
+    safe = {k: v for k, v in cache.items() if k != '_gen'}
+    return jsonify(safe)
+
+
+@app.route('/strategy-generator/stop', methods=['POST'])
+@login_required
+def strategy_generator_stop():
+    """Stop the running generator."""
+    user_id = current_user.id
+    cache = generator_cache.get(user_id, {})
+    gen = cache.get('_gen')
+    if gen:
+        gen.stop()
+    if cache.get('status') == 'running':
+        generator_cache[user_id]['status'] = 'stopped'
+        generator_cache[user_id]['message'] = 'Generator dihentikan oleh pengguna.'
+    return jsonify({'success': True})
+
+
+@app.route('/strategy-generator/apply', methods=['POST'])
+@login_required
+def strategy_generator_apply():
+    """Apply a discovered strategy's trading config to the user's bot settings."""
+    try:
+        data = request.get_json() or {}
+        user_id = current_user.id
+
+        settings = BotSetting.query.filter_by(user_id=user_id).first()
+        if not settings:
+            return jsonify({'success': False, 'message': 'Bot settings belum dikonfigurasi.'})
+
+        if 'amount' in data:
+            settings.trading_amount = float(data['amount'])
+        if 'stop_win' in data:
+            settings.stop_win = float(data['stop_win'])
+        if 'stop_loss' in data:
+            settings.stop_loss = float(data['stop_loss'])
+        if 'martingale_steps' in data:
+            settings.step_martingale = int(data['martingale_steps'])
+        if 'martingale_multiplier' in data:
+            settings.martingale_multiple = float(data['martingale_multiplier'])
+
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Konfigurasi trading berhasil diterapkan ke bot!'})
+    except Exception as ex:
+        return jsonify({'success': False, 'message': str(ex)})
 
 
 if __name__ == '__main__':

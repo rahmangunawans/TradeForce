@@ -3068,8 +3068,15 @@
                 let _iqRtTicksSec = 0;      // seconds since last update
                 let _iqRtStatus   = 'idle'; // idle | starting | active | error
 
+                /* Stop only the client-side poll (no backend stop — used inside iqAutoRefreshStart) */
+                function _iqStopPollOnly() {
+                    _iqRtActive = false;
+                    _iqRtStatus = 'idle';
+                    if (_iqRtPollIv) { clearInterval(_iqRtPollIv); _iqRtPollIv = null; }
+                }
+
                 function iqAutoRefreshStart() {
-                    iqAutoRefreshStop();
+                    _iqStopPollOnly();       // stop local poll WITHOUT sending rt-stop
                     _iqRtActive      = true;
                     _iqRtStatus      = 'starting';
                     _iqRtFirstUpdate = true;
@@ -3078,6 +3085,7 @@
                     document.getElementById('iq-chart-rt-controls').style.display = 'flex';
                     _iqRtSetDot('yellow');
                     document.getElementById('iq-chart-live-btn').innerHTML = '<i class="fas fa-pause me-1"></i>Live';
+                    document.getElementById('iq-chart-live-btn').style.color = '#4ade80';
                     document.getElementById('iq-chart-countdown').textContent = 'connecting...';
 
                     const email    = document.getElementById('iq-email').value.trim();
@@ -3086,6 +3094,7 @@
                     const asset    = document.getElementById('iq-chart-asset').value;
 
                     // 1. Ask backend to open a real-time WebSocket stream
+                    //    (backend already stops old stream if asset/interval changed)
                     fetch('/iqoption/rt-start', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -3098,11 +3107,11 @@
                         if (!d.success) {
                             _iqRtStatus = 'error';
                             _iqRtSetDot('red');
-                            document.getElementById('iq-chart-countdown').textContent = 'error';
+                            document.getElementById('iq-chart-countdown').textContent = 'stream error';
                             return;
                         }
-                        // 2. Start polling GET /rt-candles every 1 second
-                        _iqRtPollIv = setInterval(iqRtPollTick, 1000);
+                        // 2. Poll GET /rt-candles every 1 second
+                        if (_iqRtActive) _iqRtPollIv = setInterval(iqRtPollTick, 1000);
                     }).catch(() => {
                         _iqRtStatus = 'error';
                         _iqRtSetDot('red');
@@ -3111,11 +3120,9 @@
                 }
 
                 function iqAutoRefreshStop() {
-                    _iqRtActive = false;
-                    _iqRtStatus = 'idle';
-                    if (_iqRtPollIv) { clearInterval(_iqRtPollIv); _iqRtPollIv = null; }
-                    // Tell backend to stop stream
-                    fetch('/iqoption/rt-stop', {method:'POST'}).catch(() => {});
+                    _iqStopPollOnly();
+                    // Tell backend to close WebSocket stream
+                    fetch('/iqoption/rt-stop', {method: 'POST'}).catch(() => {});
                     // Reset UI
                     const dot = document.getElementById('iq-chart-live-dot');
                     const btn = document.getElementById('iq-chart-live-btn');

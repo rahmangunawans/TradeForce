@@ -877,21 +877,22 @@ def iqoption_rt_start():
         def _start(uid, email, password, acct, act, ivl):
             try:
                 robot = IQTradingRobot(email, password)
-                ok, msg = robot.connect()
+                ok = robot.connect()           # returns bool, NOT a tuple
                 if not ok:
                     rt_stream_cache[uid] = {
                         'status': 'error', 'asset': act, 'interval': ivl,
-                        'robot': None, 'message': msg
+                        'robot': None, 'message': 'Gagal konek ke IQ Option. Periksa email/password.'
                     }
                     return
-                robot.change_balance(acct)
                 time.sleep(1)
                 rt_stream_cache[uid]['robot'] = robot
-                # Blocking call – waits up to 20 s for WebSocket confirmation
+                # Blocking – subscribes to WebSocket candle-generated channel
+                # Also pre-fills real_time_candles buffer with 300 historical candles
                 robot.api.start_candles_stream(act, ivl, 300)
                 rt_stream_cache[uid]['status'] = 'active'
                 logging.info(f'RT stream ACTIVE: user={uid} asset={act} ivl={ivl}')
             except Exception as ex:
+                logging.exception(f'RT stream error: {ex}')
                 rt_stream_cache[uid] = {
                     'status': 'error', 'asset': act, 'interval': ivl,
                     'robot': None, 'message': str(ex)

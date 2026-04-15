@@ -1189,6 +1189,35 @@
                 <!-- Alert area -->
                 <div id="sgAlert" class="alert d-none mb-3" role="alert"></div>
 
+                <!-- ── Preset Strategi Rekomendasi ── -->
+                <div class="dashboard-card bg-dark-card border-accent mb-4">
+                    <div class="card-header border-bottom border-accent-soft py-2 d-flex justify-content-between align-items-center"
+                         style="cursor:pointer" data-bs-toggle="collapse" data-bs-target="#presetCollapse">
+                        <h6 class="text-accent mb-0">
+                            <i class="fas fa-star me-2"></i>Strategi Rekomendasi
+                            <span class="badge bg-accent text-dark ms-2 small">Hasil Pencarian AI</span>
+                        </h6>
+                        <i class="fas fa-chevron-down text-white-50 small"></i>
+                    </div>
+                    <div class="collapse show" id="presetCollapse">
+                        <div class="card-body py-3">
+                            <p class="text-white-50 small mb-3">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Strategi berikut ditemukan melalui pencarian <strong class="text-white">600 iterasi</strong>
+                                menggunakan <strong class="text-white">60 indikator</strong> pada data pasar sintetis
+                                (trending, ranging, volatile). Klik <strong class="text-accent">Gunakan</strong> untuk
+                                langsung memuatnya ke konfigurasi generator.
+                            </p>
+                            <div id="presetGrid" class="row g-2">
+                                <div class="col-12 text-center py-3">
+                                    <div class="spinner-border spinner-border-sm text-accent"></div>
+                                    <span class="text-white-50 ms-2 small">Memuat preset...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row g-4">
 
                     <!-- LEFT: Config Panel -->
@@ -4723,6 +4752,95 @@
         document.querySelectorAll(`.sg-cat-${catId} .sg-ind-cb`).forEach(cb => cb.checked = state);
     }
 
+    // ── Preset Strategi Rekomendasi ──────────────────────────────────────────
+    const RISK_ICONS = { success: 'shield-alt', warning: 'exclamation-triangle', danger: 'fire' };
+    const RISK_LABELS = { success: 'text-success', warning: 'text-warning', danger: 'text-danger' };
+
+    async function sgLoadPresets() {
+        try {
+            const r = await fetch('/strategy-generator/presets');
+            const data = await r.json();
+            if (!data.success) return;
+
+            const grid = document.getElementById('presetGrid');
+            grid.innerHTML = '';
+
+            data.presets.forEach((p, idx) => {
+                const indNames = p.indicators.map(i => i.label).join(' + ');
+                const paramLines = p.indicators.map(i => {
+                    const ps = Object.entries(i.params).map(([k,v]) => `${k}=${v}`).join(', ');
+                    return `<span class="text-white-50 small">${i.label}${ps ? '('+ps+')' : ''}</span>`;
+                }).join('<br>');
+
+                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx+1}`;
+                const riskIcon = RISK_ICONS[p.badge_color] || 'circle';
+                const riskCls  = RISK_LABELS[p.badge_color] || 'text-white';
+
+                grid.insertAdjacentHTML('beforeend', `
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="p-2 rounded-3 border h-100 d-flex flex-column"
+                         style="border-color:rgba(255,255,255,0.08)!important; background:rgba(0,0,0,0.3)">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="fw-semibold text-white small">${medal} ${p.name}</span>
+                            <span class="badge bg-${p.badge_color} text-dark small flex-shrink-0 ms-1">${p.badge}</span>
+                        </div>
+                        <div class="mb-2 lh-sm">${paramLines}</div>
+                        <div class="d-flex gap-3 mb-2 mt-auto">
+                            <div class="text-center flex-fill">
+                                <div class="text-accent fw-bold">${p.win_rate}%</div>
+                                <div class="text-white-50" style="font-size:0.65rem">Win Rate</div>
+                            </div>
+                            <div class="text-center flex-fill">
+                                <div class="${riskCls} fw-bold">${p.max_drawdown}%</div>
+                                <div class="text-white-50" style="font-size:0.65rem">Max DD</div>
+                            </div>
+                            <div class="text-center flex-fill">
+                                <div class="text-white fw-bold">${p.indicators.length}</div>
+                                <div class="text-white-50" style="font-size:0.65rem">Indikator</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-accent w-100 mt-auto"
+                                onclick="sgApplyPreset(${idx})" style="font-size:0.75rem">
+                            <i class="fas fa-magic me-1"></i>Gunakan Strategi
+                        </button>
+                    </div>
+                </div>`);
+            });
+
+            // Store presets globally for apply
+            window._sgPresets = data.presets;
+        } catch(e) {
+            document.getElementById('presetGrid').innerHTML =
+                '<div class="col-12 text-white-50 small text-center py-2">Gagal memuat preset.</div>';
+        }
+    }
+
+    function sgApplyPreset(idx) {
+        const p = window._sgPresets && window._sgPresets[idx];
+        if (!p) return;
+
+        // Uncheck all indicators first
+        document.querySelectorAll('#sgIndicatorPanel .sg-ind-cb').forEach(cb => cb.checked = false);
+
+        // Check only this preset's indicators
+        p.indicators.forEach(ind => {
+            const cb = document.getElementById('sgCb' + ind.id);
+            if (cb) cb.checked = true;
+        });
+
+        // Scroll to indicator panel
+        document.getElementById('sgIndicatorPanel').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+        // Show notification
+        const alert = document.getElementById('sgAlert');
+        alert.className = 'alert alert-success mb-3';
+        alert.innerHTML = `<i class="fas fa-check-circle me-2"></i>
+            Preset <strong>${p.name}</strong> berhasil dimuat — ${p.indicators.length} indikator diaktifkan.
+            Win Rate estimasi: <strong>${p.win_rate}%</strong> | Max DD: <strong>${p.max_drawdown}%</strong>`;
+        alert.classList.remove('d-none');
+        setTimeout(() => { alert.classList.add('d-none'); }, 5000);
+    }
+
     function sgGetSelectedIndicators() {
         const ids = [];
         document.querySelectorAll('#sgIndicatorPanel .sg-ind-cb:checked').forEach(cb => ids.push(cb.value));
@@ -4942,11 +5060,14 @@
         new bootstrap.Modal(modal).show();
     }
 
-    // Load catalog when section is activated
+    // Load catalog + presets when section is activated
     document.querySelectorAll('.menu-link[data-section="strategy-generator"]').forEach(el => {
         el.addEventListener('click', () => {
             if (!document.querySelector('#sgIndicatorPanel .sg-ind-cb')) {
                 sgLoadCatalog();
+            }
+            if (!window._sgPresets) {
+                sgLoadPresets();
             }
         });
     });

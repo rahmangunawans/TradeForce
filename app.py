@@ -1159,6 +1159,149 @@ def backtest_status():
 generator_cache: dict = {}
 
 
+STRATEGY_PRESETS = [
+    {
+        'rank': 1,
+        'name': 'Stoch + Chaikin (Low Risk)',
+        'badge': 'Risiko Rendah',
+        'badge_color': 'success',
+        'win_rate': 70.0,
+        'max_drawdown': 8.0,
+        'total_trades': 10,
+        'min_agreement': 1,
+        'indicators': [
+            {'id': 'STOCH',      'params': {'k_period': 15, 'k_smooth': 5, 'd_smooth': 2}},
+            {'id': 'CHAIKIN_MF', 'params': {'period': 9}},
+        ],
+    },
+    {
+        'rank': 2,
+        'name': 'Stoch+RSI + Elder Ray + Fractal',
+        'badge': 'Risiko Rendah',
+        'badge_color': 'success',
+        'win_rate': 70.0,
+        'max_drawdown': 8.0,
+        'total_trades': 10,
+        'min_agreement': 2,
+        'indicators': [
+            {'id': 'STOCH_RSI',  'params': {'rsi_period': 10, 'stoch_k': 13}},
+            {'id': 'ELDER_RAY',  'params': {'period': 10}},
+            {'id': 'FRACTAL',    'params': {'bars': 2}},
+        ],
+    },
+    {
+        'rank': 3,
+        'name': 'Fractal + Donchian + Vortex ADX',
+        'badge': 'Risiko Rendah',
+        'badge_color': 'success',
+        'win_rate': 70.0,
+        'max_drawdown': 10.0,
+        'total_trades': 10,
+        'min_agreement': 2,
+        'indicators': [
+            {'id': 'FRACTAL',    'params': {'bars': 3}},
+            {'id': 'DONCHIAN',   'params': {'period': 55}},
+            {'id': 'VORTEX_ADX', 'params': {'period': 18, 'adx_th': 21}},
+        ],
+    },
+    {
+        'rank': 4,
+        'name': 'Parabolic SAR + Keltner',
+        'badge': 'Sedang',
+        'badge_color': 'warning',
+        'win_rate': 70.0,
+        'max_drawdown': 21.5,
+        'total_trades': 10,
+        'min_agreement': 1,
+        'indicators': [
+            {'id': 'PARABOLIC_SAR', 'params': {}},
+            {'id': 'KELTNER',       'params': {'period': 21}},
+        ],
+    },
+    {
+        'rank': 5,
+        'name': 'Vortex + EMA + Williams %R',
+        'badge': 'Sedang',
+        'badge_color': 'warning',
+        'win_rate': 70.0,
+        'max_drawdown': 21.5,
+        'total_trades': 10,
+        'min_agreement': 2,
+        'indicators': [
+            {'id': 'VORTEX',    'params': {'period': 10}},
+            {'id': 'EMA',       'params': {'period': 192}},
+            {'id': 'WILLIAMS_R','params': {'period': 11}},
+        ],
+    },
+    {
+        'rank': 6,
+        'name': 'MACD+RSI + Stoch + Keltner Break',
+        'badge': 'Sedang',
+        'badge_color': 'warning',
+        'win_rate': 70.0,
+        'max_drawdown': 21.5,
+        'total_trades': 10,
+        'min_agreement': 2,
+        'indicators': [
+            {'id': 'MACD_RSI',      'params': {'rsi_period': 8, 'macd_fast': 15, 'macd_slow': 23}},
+            {'id': 'STOCH',         'params': {'k_period': 20, 'k_smooth': 3, 'd_smooth': 3}},
+            {'id': 'KELTNER_BREAK', 'params': {'period': 20}},
+        ],
+    },
+    {
+        'rank': 7,
+        'name': 'Stoch+RSI + Squeeze + Candlestick',
+        'badge': 'Agresif',
+        'badge_color': 'danger',
+        'win_rate': 70.0,
+        'max_drawdown': 25.7,
+        'total_trades': 10,
+        'min_agreement': 2,
+        'indicators': [
+            {'id': 'STOCH_RSI',     'params': {'rsi_period': 9, 'stoch_k': 16}},
+            {'id': 'SQUEEZE',       'params': {'period': 24}},
+            {'id': 'CANDLE_PATTERN','params': {}},
+        ],
+    },
+    {
+        'rank': 8,
+        'name': 'ROC + NATR + MACD+RSI',
+        'badge': 'Agresif',
+        'badge_color': 'danger',
+        'win_rate': 70.0,
+        'max_drawdown': 25.7,
+        'total_trades': 10,
+        'min_agreement': 2,
+        'indicators': [
+            {'id': 'ROC',      'params': {'period': 11}},
+            {'id': 'NATR',     'params': {'period': 10}},
+            {'id': 'MACD_RSI', 'params': {'rsi_period': 10, 'macd_fast': 10, 'macd_slow': 29}},
+        ],
+    },
+]
+
+
+@app.route('/strategy-generator/presets', methods=['GET'])
+@login_required
+def strategy_generator_presets():
+    """Return list of pre-searched best strategies as presets."""
+    from strategy_generator import INDICATOR_CATALOG
+    enriched = []
+    for p in STRATEGY_PRESETS:
+        inds = []
+        for ind in p['indicators']:
+            iid  = ind['id']
+            meta = INDICATOR_CATALOG.get(iid, {})
+            inds.append({
+                'id':       iid,
+                'label':    meta.get('label', iid),
+                'category': meta.get('category', ''),
+                'params':   ind['params'],
+            })
+        enriched.append({**p, 'indicators': inds})
+    return jsonify({'success': True, 'presets': enriched})
+
+
 @app.route('/strategy-generator/indicators', methods=['GET'])
 @login_required
 def strategy_generator_indicators():

@@ -102,6 +102,13 @@ class BotSetting(db.Model):
     
     is_active = db.Column(db.Boolean, default=False)
     balance_info = db.Column(db.Text)  # JSON string to store balance data
+
+    # Strategy Generator applied result
+    selected_strategy = db.Column(db.Text)   # JSON: list of {id, params}
+    selected_asset    = db.Column(db.String(30))
+    selected_interval = db.Column(db.Integer, default=1)  # timeframe in minutes
+    min_agreement     = db.Column(db.Integer, default=1)
+
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
@@ -1503,15 +1510,17 @@ def strategy_generator_stop():
 @app.route('/strategy-generator/apply', methods=['POST'])
 @login_required
 def strategy_generator_apply():
-    """Apply a discovered strategy's trading config to the user's bot settings."""
+    """Apply a discovered strategy (indicators + trading config) to the user's bot settings."""
+    import json as _json
     try:
         data = request.get_json() or {}
         user_id = current_user.id
 
         settings = BotSetting.query.filter_by(user_id=user_id).first()
         if not settings:
-            return jsonify({'success': False, 'message': 'Bot settings belum dikonfigurasi.'})
+            return jsonify({'success': False, 'message': 'Bot settings belum dikonfigurasi. Silakan isi Bot Settings terlebih dahulu.'})
 
+        # ── Trading config ────────────────────────────────────────────────────
         if 'amount' in data:
             settings.trading_amount = float(data['amount'])
         if 'stop_win' in data:
@@ -1523,8 +1532,27 @@ def strategy_generator_apply():
         if 'martingale_multiplier' in data:
             settings.martingale_multiple = float(data['martingale_multiplier'])
 
+        # ── Strategy (indicators) ─────────────────────────────────────────────
+        indicators = data.get('indicators', [])  # [{id, params}, ...]
+        if indicators:
+            settings.selected_strategy = _json.dumps(indicators)
+            settings.signal_type       = 'strategy_generator'
+
+        if 'asset' in data:
+            settings.selected_asset = str(data['asset'])
+        if 'interval' in data:
+            settings.selected_interval = int(data['interval'])
+        if 'min_agreement' in data:
+            settings.min_agreement = int(data['min_agreement'])
+
         db.session.commit()
-        return jsonify({'success': True, 'message': 'Konfigurasi trading berhasil diterapkan ke bot!'})
+
+        ind_names = ', '.join(i.get('id', '?') for i in indicators) if indicators else '-'
+        return jsonify({
+            'success': True,
+            'message': f'Strategi berhasil diterapkan ke robot! Indikator: {ind_names}. '
+                       f'Asset: {settings.selected_asset or "-"} | TF: M{settings.selected_interval}',
+        })
     except Exception as ex:
         return jsonify({'success': False, 'message': str(ex)})
 

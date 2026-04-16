@@ -1406,6 +1406,11 @@ class StrategyResult:
     sim_profit: float = 0.0
     sim_final_balance: float = 0.0
     sim_max_drawdown: float = 0.0
+    trades: list = None  # List of individual trade records
+
+    def __post_init__(self):
+        if self.trades is None:
+            self.trades = []
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1433,6 +1438,7 @@ def backtest_strategy(candles: list, strategy: StrategyConfig,
     total_profit  = 0.0
     max_drawdown  = 0.0
     peak          = trading.modal
+    trade_records = []
 
     for i in range(warmup, len(candles) - 1):
         votes = []
@@ -1459,6 +1465,7 @@ def backtest_strategy(candles: list, strategy: StrategyConfig,
 
         entry   = candles[i + 1]['open']
         exit_px = candles[i + 1]['close']
+        candle_time = candles[i + 1].get('time', i + 1)
         won = ((direction == 'call' and exit_px > entry) or
                (direction == 'put'  and exit_px < entry))
 
@@ -1470,7 +1477,8 @@ def backtest_strategy(candles: list, strategy: StrategyConfig,
             wins += 1
             consec_w += 1; consec_l = 0
             max_cw = max(max_cw, consec_w)
-            mrt_step  = 0
+            trade_pnl  = round(profit, 4)
+            mrt_step   = 0
             cur_amount = trading.amount
         else:
             balance      -= bet
@@ -1478,6 +1486,7 @@ def backtest_strategy(candles: list, strategy: StrategyConfig,
             losses += 1
             consec_l += 1; consec_w = 0
             max_cl = max(max_cl, consec_l)
+            trade_pnl = round(-bet, 4)
             if mrt_step < trading.martingale_steps:
                 mrt_step  += 1
                 cur_amount = trading.amount * (trading.martingale_multiplier ** mrt_step)
@@ -1488,6 +1497,20 @@ def backtest_strategy(candles: list, strategy: StrategyConfig,
         peak = max(peak, balance)
         dd   = (peak - balance) / peak * 100 if peak > 0 else 0
         max_drawdown = max(max_drawdown, dd)
+
+        # Record individual trade
+        trade_records.append({
+            'no':        len(trade_records) + 1,
+            'time':      candle_time,
+            'direction': direction.upper(),
+            'entry':     round(entry, 6),
+            'exit':      round(exit_px, 6),
+            'bet':       round(bet, 2),
+            'pnl':       trade_pnl,
+            'won':       won,
+            'balance':   round(balance, 2),
+            'mrt_step':  mrt_step,
+        })
 
         if total_profit >= trading.stop_win:
             break
@@ -1522,6 +1545,7 @@ def backtest_strategy(candles: list, strategy: StrategyConfig,
         sim_profit=round(total_profit, 2),
         sim_final_balance=round(balance, 2),
         sim_max_drawdown=round(max_drawdown, 2),
+        trades=trade_records,
     )
 
 
@@ -1651,5 +1675,6 @@ class StrategyGenerator:
                 'sim_max_drawdown':  r.sim_max_drawdown,
                 'indicators':        indicators,
                 'min_agreement':     r.config.min_agreement,
+                'trades':            r.trades,
             })
         return out

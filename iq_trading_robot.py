@@ -1,3 +1,4 @@
+import json
 import time
 import threading
 import logging
@@ -12,6 +13,13 @@ try:
 except ImportError:
     IQ_Option = None
     logger.warning("iqoptionapi not available")
+
+try:
+    from strategy_generator import INDICATOR_CATALOG, IndicatorConfig, StrategyConfig, get_signal_at
+    _SG_AVAILABLE = True
+except Exception as _e:
+    _SG_AVAILABLE = False
+    logger.warning(f"strategy_generator not available: {_e}")
 
 
 @dataclass
@@ -28,6 +36,11 @@ class TradingBotConfig:
     signal_content: str = ""
     asset: str = "EURUSD-OTC"
     duration: int = 1
+    # Strategy Generator fields
+    selected_strategy: str = ""   # JSON string: [{id, params}, ...]
+    selected_asset: str = ""
+    selected_interval: int = 1
+    min_agreement: int = 1
 
     @classmethod
     def from_db_settings(cls, settings):
@@ -42,6 +55,10 @@ class TradingBotConfig:
             martingale_multiple=settings.martingale_multiple or 2.2,
             signal_type=settings.signal_type or "signal_input",
             signal_content=settings.signal_content or "",
+            selected_strategy=settings.selected_strategy or "",
+            selected_asset=settings.selected_asset or "",
+            selected_interval=settings.selected_interval or 1,
+            min_agreement=settings.min_agreement or 1,
         )
 
 
@@ -321,5 +338,106 @@ class IQTradingRobot:
                         asset = parts[2].upper()
                     return (direction, asset, duration)
             return None
+
+        if signal_type == "strategy_generator":
+            return self._get_signal_from_strategy()
+
+        return None
+
+    def _get_signal_from_strategy(self):
+        """
+        Generate CALL/PUT signal by running the saved indicator strategy
+        on the last N candles fetched from IQ Option.
+        Returns (direction, asset, duration) or None.
+        """
+        cfg = self.config
+        if not _SG_AVAILABLE:
+            logger.warning("strategy_generator not available for signal generation")
+            return None
+
+        strategy_json = cfg.selected_strategy
+        if not strategy_json:
+            logger.warning("No selected_strategy saved in bot settings")
+            return None
+
+        asset    = cfg.selected_asset or cfg.asset or 'EURUSD-OTC'
+        interval = cfg.selected_interval or 1  # minutes
+        duration = interval  # trade duration = timeframe
+
+        try:
+            ind_list = json.loads(strategy_json)
+        except Exception:
+            logger.warning("Failed to parse selected_strategy JSON")
+            return None
+
+        if not ind_list:
+            return None
+
+        # Build IndicatorConfig objects
+        indicators = []
+        for item in ind_list:
+            iid    = item.get('id') or item.get('indicator_id')
+            params = item.get('params', {})
+            if iid:
+                indicators.append(IndicatorConfig(indicator_id=iid, params=params))
+
+        if not indicators:
+            return None
+
+        # Fetch recent candles — need at least 200 for warmup
+        candle_count = 250
+        try:
+            candles_raw = self.api.get_candles(asset, interval * 60, candle_count, time.time())
+            if not candles_raw:
+                logger.warning(f"No candles returned for {asset} M{interval}")
+                return None
+        except Exception as ex:
+            logger.warning(f"Failed to fetch candles: {ex}")
+            return None
+
+        # Normalise candle format
+        candles = []
+        for raw in candles_raw:
+            candles.append({
+                'open':   float(raw.get('open', raw.get('o', 0))),
+                'high':   float(raw.get('max',  raw.get('h', 0))),
+                'low':    float(raw.get('min',  raw.get('l', 0))),
+                'close':  float(raw.get('close',raw.get('c', 0))),
+                'volume': float(raw.get('volume', raw.get('v', 1))),
+                'time':   raw.get('from', raw.get('t', 0)),
+            })
+
+        if len(candles) < 70:
+            logger.warning(f"Not enough candles: {len(candles)}")
+            return None
+
+        c   = [x['close']  for x in candles]
+        hi  = [x['high']   for x in candles]
+        lo  = [x['low']    for x in candles]
+        op  = [x['open']   for x in candles]
+        vol = [x['volume'] for x in candles]
+        D   = {'closes': c, 'highs': hi, 'lows': lo, 'opens': op, 'volumes': vol}
+
+        # Compute votes from last candle (index = -2, so next candle = -1 is the trade)
+        i = len(candles) - 2
+        votes = []
+        for ind in indicators:
+            try:
+                s = get_signal_at(i, ind.indicator_id, ind.params, D)
+                if s != 0:
+                    votes.append(s)
+            except Exception as ex:
+                logger.debug(f"Indicator {ind.indicator_id} error: {ex}")
+
+        min_agr = max(1, cfg.min_agreement)
+        call_v  = votes.count(1)
+        put_v   = votes.count(-1)
+
+        logger.info(f"Strategy signal votes: CALL={call_v} PUT={put_v} (need {min_agr})")
+
+        if call_v >= min_agr and call_v > put_v:
+            return ('CALL', asset, duration)
+        elif put_v >= min_agr and put_v > call_v:
+            return ('PUT', asset, duration)
 
         return None

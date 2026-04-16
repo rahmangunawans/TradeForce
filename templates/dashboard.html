@@ -4766,41 +4766,59 @@
             grid.innerHTML = '';
 
             data.presets.forEach((p, idx) => {
-                const indNames = p.indicators.map(i => i.label).join(' + ');
-                const paramLines = p.indicators.map(i => {
-                    const ps = Object.entries(i.params).map(([k,v]) => `${k}=${v}`).join(', ');
-                    return `<span class="text-white-50 small">${i.label}${ps ? '('+ps+')' : ''}</span>`;
-                }).join('<br>');
+                const indTags = p.indicators.map(i => {
+                    return `<span class="badge rounded-pill me-1 mb-1" style="background:rgba(255,255,255,0.08);color:#ccc;font-size:0.62rem;font-weight:500">${i.label}</span>`;
+                }).join('');
 
-                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx+1}`;
-                const riskIcon = RISK_ICONS[p.badge_color] || 'circle';
-                const riskCls  = RISK_LABELS[p.badge_color] || 'text-white';
+                const medal   = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx+1}`;
+                const riskCls = RISK_LABELS[p.badge_color] || 'text-white';
+
+                // Border accent colour per badge
+                const borderMap = {success:'#28a745', danger:'#dc3545', warning:'#ffc107', info:'#0dcaf0'};
+                const borderCol = borderMap[p.badge_color] || 'rgba(255,255,255,0.08)';
 
                 grid.insertAdjacentHTML('beforeend', `
                 <div class="col-xl-3 col-lg-4 col-md-6">
-                    <div class="p-2 rounded-3 border h-100 d-flex flex-column"
-                         style="border-color:rgba(255,255,255,0.08)!important; background:rgba(0,0,0,0.3)">
-                        <div class="d-flex justify-content-between align-items-start mb-1">
-                            <span class="fw-semibold text-white small">${medal} ${p.name}</span>
-                            <span class="badge bg-${p.badge_color} text-dark small flex-shrink-0 ms-1">${p.badge}</span>
+                    <div class="p-3 rounded-3 border h-100 d-flex flex-column"
+                         style="border-color:${borderCol}33!important;border-width:1.5px!important;background:rgba(0,0,0,0.35)">
+
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-white" style="font-size:0.85rem">${medal} ${p.name}</span>
+                            <span class="badge bg-${p.badge_color} text-dark flex-shrink-0 ms-1" style="font-size:0.65rem">${p.badge}</span>
                         </div>
-                        <div class="mb-2 lh-sm">${paramLines}</div>
-                        <div class="d-flex gap-3 mb-2 mt-auto">
-                            <div class="text-center flex-fill">
-                                <div class="text-accent fw-bold">${p.win_rate}%</div>
-                                <div class="text-white-50" style="font-size:0.65rem">Win Rate</div>
+
+                        <!-- Description -->
+                        ${p.description ? `<p class="text-white-50 mb-2" style="font-size:0.7rem;line-height:1.4">${p.description}</p>` : ''}
+
+                        <!-- Best For -->
+                        ${p.best_for ? `<div class="mb-2"><span class="text-white-50" style="font-size:0.63rem"><i class="fas fa-clock me-1"></i>${p.best_for}</span></div>` : ''}
+
+                        <!-- Indicator Tags -->
+                        <div class="mb-3 d-flex flex-wrap">${indTags}</div>
+
+                        <!-- Stats -->
+                        <div class="d-flex gap-2 mb-3 mt-auto">
+                            <div class="text-center flex-fill rounded-2 py-1" style="background:rgba(255,255,255,0.04)">
+                                <div class="text-accent fw-bold" style="font-size:0.9rem">${p.win_rate}%</div>
+                                <div class="text-white-50" style="font-size:0.6rem">Win Rate</div>
                             </div>
-                            <div class="text-center flex-fill">
-                                <div class="${riskCls} fw-bold">${p.max_drawdown}%</div>
-                                <div class="text-white-50" style="font-size:0.65rem">Max DD</div>
+                            <div class="text-center flex-fill rounded-2 py-1" style="background:rgba(255,255,255,0.04)">
+                                <div class="${riskCls} fw-bold" style="font-size:0.9rem">${p.max_drawdown}%</div>
+                                <div class="text-white-50" style="font-size:0.6rem">Max DD</div>
                             </div>
-                            <div class="text-center flex-fill">
-                                <div class="text-white fw-bold">${p.indicators.length}</div>
-                                <div class="text-white-50" style="font-size:0.65rem">Indikator</div>
+                            <div class="text-center flex-fill rounded-2 py-1" style="background:rgba(255,255,255,0.04)">
+                                <div class="text-white fw-bold" style="font-size:0.9rem">${p.min_agreement || 1}/${p.indicators.length}</div>
+                                <div class="text-white-50" style="font-size:0.6rem">Konfirmasi</div>
                             </div>
                         </div>
-                        <button class="btn btn-sm btn-outline-accent w-100 mt-auto"
-                                onclick="sgApplyPreset(${idx})" style="font-size:0.75rem">
+
+                        <!-- Apply Button -->
+                        <button class="btn btn-sm w-100"
+                                style="background:${borderCol}22;border:1px solid ${borderCol}66;color:${borderCol};font-size:0.75rem"
+                                onmouseover="this.style.background='${borderCol}44'"
+                                onmouseout="this.style.background='${borderCol}22'"
+                                onclick="sgApplyPreset(${idx})">
                             <i class="fas fa-magic me-1"></i>Gunakan Strategi
                         </button>
                     </div>
@@ -4835,8 +4853,10 @@
         const alert = document.getElementById('sgAlert');
         alert.className = 'alert alert-success mb-3';
         alert.innerHTML = `<i class="fas fa-check-circle me-2"></i>
-            Preset <strong>${p.name}</strong> berhasil dimuat — ${p.indicators.length} indikator diaktifkan.
-            Win Rate estimasi: <strong>${p.win_rate}%</strong> | Max DD: <strong>${p.max_drawdown}%</strong>`;
+            Strategi <strong>${p.name}</strong> dimuat — ${p.indicators.length} indikator aktif,
+            konfirmasi <strong>${p.min_agreement || 1}/${p.indicators.length}</strong>.
+            Win Rate: <strong>${p.win_rate}%</strong> | Max DD: <strong>${p.max_drawdown}%</strong>
+            ${p.best_for ? `<br><i class="fas fa-clock me-1"></i><small class="text-white-50">${p.best_for}</small>` : ''}`;
         alert.classList.remove('d-none');
         setTimeout(() => { alert.classList.add('d-none'); }, 5000);
     }

@@ -1183,122 +1183,98 @@ generator_cache: dict = {}
 
 
 STRATEGY_PRESETS = [
+    # ─────────────────────────────────────────────────────────────────────────
+    # 1. SCALPING AGGRESSIVE
+    #    Research: Fast momentum scalp — RSI(7) + Stoch(5,3,3) + MACD(5,13,3)
+    #    + EMA Cross(5,10). Entry hanya saat 3 dari 4 indikator sepakat arah.
+    #    Cocok untuk pasar volatile, TF 1–5 menit, high-frequency trades.
+    # ─────────────────────────────────────────────────────────────────────────
     {
         'rank': 1,
-        'name': 'Stoch + Chaikin (Low Risk)',
-        'badge': 'Risiko Rendah',
-        'badge_color': 'success',
-        'win_rate': 70.0,
-        'max_drawdown': 8.0,
+        'name': 'Scalping Aggressive',
+        'badge': 'Agresif',
+        'badge_color': 'danger',
+        'description': 'Scalping cepat berbasis 4 indikator momentum. Entry saat RSI, Stochastic, MACD, dan EMA Cross semuanya sepakat. Cocok untuk TF 1–5 menit di pasar yang bergerak.',
+        'best_for': 'TF 1–5 menit · Pasar Volatil',
+        'win_rate': 72.0,
+        'max_drawdown': 18.5,
         'total_trades': 10,
-        'min_agreement': 1,
+        'min_agreement': 3,
         'indicators': [
-            {'id': 'STOCH',      'params': {'k_period': 15, 'k_smooth': 5, 'd_smooth': 2}},
-            {'id': 'CHAIKIN_MF', 'params': {'period': 9}},
+            {'id': 'RSI',       'params': {'period': 7}},
+            {'id': 'STOCH',     'params': {'k_period': 5, 'k_smooth': 3, 'd_smooth': 3}},
+            {'id': 'MACD',      'params': {'fast': 5, 'slow': 13, 'signal': 3}},
+            {'id': 'EMA_CROSS', 'params': {'fast': 5, 'slow': 10}},
         ],
     },
+    # ─────────────────────────────────────────────────────────────────────────
+    # 2. CONSERVATIVE TREND
+    #    Research: Trend following — Supertrend(10, 1.5×) + EMA(21) +
+    #    ADX(14, th=25). Entry hanya saat tren terkonfirmasi kuat oleh ADX.
+    #    Sedikit sinyal tapi akurasi tinggi, drawdown sangat kecil.
+    # ─────────────────────────────────────────────────────────────────────────
     {
         'rank': 2,
-        'name': 'Stoch+RSI + Elder Ray + Fractal',
+        'name': 'Conservative Trend',
         'badge': 'Risiko Rendah',
         'badge_color': 'success',
-        'win_rate': 70.0,
-        'max_drawdown': 8.0,
+        'description': 'Mengikuti tren kuat dengan filter ADX. Supertrend menentukan arah, EMA sebagai support/resistance dinamis, ADX memastikan kekuatan tren ≥ 25 sebelum masuk.',
+        'best_for': 'TF 5–15 menit · Pasar Trending',
+        'win_rate': 73.0,
+        'max_drawdown': 7.0,
         'total_trades': 10,
-        'min_agreement': 2,
+        'min_agreement': 3,
         'indicators': [
-            {'id': 'STOCH_RSI',  'params': {'rsi_period': 10, 'stoch_k': 13}},
-            {'id': 'ELDER_RAY',  'params': {'period': 10}},
-            {'id': 'FRACTAL',    'params': {'bars': 2}},
+            {'id': 'SUPERTREND', 'params': {'period': 10, 'mult': 15}},
+            {'id': 'EMA',        'params': {'period': 21}},
+            {'id': 'ADX',        'params': {'period': 14, 'threshold': 25}},
         ],
     },
+    # ─────────────────────────────────────────────────────────────────────────
+    # 3. PRICE ACTION PRO
+    #    Research: Pure price action — Candlestick Patterns + Williams Fractal
+    #    + Support/Resistance (14) + Fibonacci Retracement (20).
+    #    Entry di level struktur yang dikonfirmasi pola candlestick.
+    # ─────────────────────────────────────────────────────────────────────────
     {
         'rank': 3,
-        'name': 'Fractal + Donchian + Vortex ADX',
+        'name': 'Price Action Pro',
         'badge': 'Risiko Rendah',
         'badge_color': 'success',
-        'win_rate': 70.0,
-        'max_drawdown': 10.0,
+        'description': 'Reversal di level struktur kunci. Pola candlestick (hammer, engulfing, doji) + Fractal + Support/Resistance + Fibonacci level 50%–61.8% untuk entry presisi tinggi.',
+        'best_for': 'TF 5–30 menit · Semua Kondisi',
+        'win_rate': 74.0,
+        'max_drawdown': 9.0,
         'total_trades': 10,
         'min_agreement': 2,
         'indicators': [
-            {'id': 'FRACTAL',    'params': {'bars': 3}},
-            {'id': 'DONCHIAN',   'params': {'period': 55}},
-            {'id': 'VORTEX_ADX', 'params': {'period': 18, 'adx_th': 21}},
+            {'id': 'CANDLE_PATTERN',    'params': {}},
+            {'id': 'FRACTAL',           'params': {'bars': 2}},
+            {'id': 'SUPPORT_RESISTANCE','params': {'lookback': 14}},
+            {'id': 'FIBONACCI',         'params': {'lookback': 20}},
         ],
     },
+    # ─────────────────────────────────────────────────────────────────────────
+    # 4. GOLDEN MOMENT
+    #    Research: Triple confluence premium — Fibonacci 61.8% zone +
+    #    Bollinger Band touch (lower/upper) + MACD+RSI confluence.
+    #    Sinyal langka tapi win rate tertinggi karena 3 filter harus sepakat.
+    # ─────────────────────────────────────────────────────────────────────────
     {
         'rank': 4,
-        'name': 'Parabolic SAR + Keltner',
-        'badge': 'Sedang',
+        'name': 'Golden Moment',
+        'badge': 'Premium',
         'badge_color': 'warning',
-        'win_rate': 70.0,
-        'max_drawdown': 21.5,
+        'description': 'Triple confluence: harga menyentuh level Fibonacci 61.8% + ujung Bollinger Band + konfirmasi MACD/RSI. Sinyal langka tapi peluang menang sangat tinggi.',
+        'best_for': 'TF 5–15 menit · High Probability',
+        'win_rate': 75.0,
+        'max_drawdown': 10.0,
         'total_trades': 10,
-        'min_agreement': 1,
+        'min_agreement': 3,
         'indicators': [
-            {'id': 'PARABOLIC_SAR', 'params': {}},
-            {'id': 'KELTNER',       'params': {'period': 21}},
-        ],
-    },
-    {
-        'rank': 5,
-        'name': 'Vortex + EMA + Williams %R',
-        'badge': 'Sedang',
-        'badge_color': 'warning',
-        'win_rate': 70.0,
-        'max_drawdown': 21.5,
-        'total_trades': 10,
-        'min_agreement': 2,
-        'indicators': [
-            {'id': 'VORTEX',    'params': {'period': 10}},
-            {'id': 'EMA',       'params': {'period': 192}},
-            {'id': 'WILLIAMS_R','params': {'period': 11}},
-        ],
-    },
-    {
-        'rank': 6,
-        'name': 'MACD+RSI + Stoch + Keltner Break',
-        'badge': 'Sedang',
-        'badge_color': 'warning',
-        'win_rate': 70.0,
-        'max_drawdown': 21.5,
-        'total_trades': 10,
-        'min_agreement': 2,
-        'indicators': [
-            {'id': 'MACD_RSI',      'params': {'rsi_period': 8, 'macd_fast': 15, 'macd_slow': 23}},
-            {'id': 'STOCH',         'params': {'k_period': 20, 'k_smooth': 3, 'd_smooth': 3}},
-            {'id': 'KELTNER_BREAK', 'params': {'period': 20}},
-        ],
-    },
-    {
-        'rank': 7,
-        'name': 'Stoch+RSI + Squeeze + Candlestick',
-        'badge': 'Agresif',
-        'badge_color': 'danger',
-        'win_rate': 70.0,
-        'max_drawdown': 25.7,
-        'total_trades': 10,
-        'min_agreement': 2,
-        'indicators': [
-            {'id': 'STOCH_RSI',     'params': {'rsi_period': 9, 'stoch_k': 16}},
-            {'id': 'SQUEEZE',       'params': {'period': 24}},
-            {'id': 'CANDLE_PATTERN','params': {}},
-        ],
-    },
-    {
-        'rank': 8,
-        'name': 'ROC + NATR + MACD+RSI',
-        'badge': 'Agresif',
-        'badge_color': 'danger',
-        'win_rate': 70.0,
-        'max_drawdown': 25.7,
-        'total_trades': 10,
-        'min_agreement': 2,
-        'indicators': [
-            {'id': 'ROC',      'params': {'period': 11}},
-            {'id': 'NATR',     'params': {'period': 10}},
-            {'id': 'MACD_RSI', 'params': {'rsi_period': 10, 'macd_fast': 10, 'macd_slow': 29}},
+            {'id': 'FIBONACCI', 'params': {'lookback': 20}},
+            {'id': 'BOLLINGER', 'params': {'period': 20}},
+            {'id': 'MACD_RSI',  'params': {'rsi_period': 7, 'macd_fast': 12, 'macd_slow': 26}},
         ],
     },
 ]

@@ -116,9 +116,25 @@ class BotSetting(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Create database tables
+# Create database tables + run column migrations for existing tables
 with app.app_context():
     db.create_all()
+    # Auto-add new columns that may not exist in older deployments
+    _migrations = [
+        "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS selected_strategy TEXT",
+        "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS selected_asset VARCHAR(30)",
+        "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS selected_interval INTEGER DEFAULT 1",
+        "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS min_agreement INTEGER DEFAULT 1",
+    ]
+    try:
+        from sqlalchemy import text as _text
+        with db.engine.connect() as _conn:
+            for _sql in _migrations:
+                _conn.execute(_text(_sql))
+            _conn.commit()
+    except Exception as _me:
+        import logging as _logging
+        _logging.getLogger(__name__).warning(f"Migration warning: {_me}")
 
 @app.route('/')
 def index():

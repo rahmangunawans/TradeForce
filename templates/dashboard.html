@@ -4073,6 +4073,50 @@
                     document.getElementById('cs-high').textContent   = last.high.toFixed(5);
                     document.getElementById('cs-low').textContent    = last.low.toFixed(5);
                     document.getElementById('cs-count').textContent  = _iqChartData.length;
+
+                    // Real-time signal refresh: re-compute when last candle time changes
+                    if (_iqSignalsActive && last.time !== _iqLastSignalCandle) {
+                        _iqLastSignalCandle = last.time;
+                        _iqRtRefreshSignals();
+                    }
+                }
+
+                let _iqLastSignalCandle = 0;
+                let _iqSignalRefreshTimer = null;
+                function _iqRtRefreshSignals() {
+                    // Debounce: wait 500ms after last update before re-fetching
+                    clearTimeout(_iqSignalRefreshTimer);
+                    _iqSignalRefreshTimer = setTimeout(() => {
+                        if (!_iqSignalsActive || !_iqChartData || _iqChartData.length < 50) return;
+                        fetch('/iqoption/strategy-signals', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({candles: _iqChartData.map(c => ({time: c.time, open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume || 0}))})
+                        }).then(r => r.json()).then(res => {
+                            if (!res.success || !res.signals) return;
+                            const sigs = res.signals;
+                            _iqSignalMarkers = sigs.map(s => ({
+                                time: s.time,
+                                position: s.signal === 1 ? 'belowBar' : 'aboveBar',
+                                color: s.signal === 1 ? '#22c55e' : '#ef4444',
+                                shape: s.signal === 1 ? 'arrowUp' : 'arrowDown',
+                                text:  s.signal === 1 ? '▲ CALL' : '▼ PUT',
+                                size: 1.5
+                            }));
+                            if (_iqCandleSeries) {
+                                try { _iqCandleSeries.setMarkers(_iqSignalMarkers); } catch(e) {}
+                            }
+                            // Update count badge
+                            const calls = sigs.filter(s => s.signal === 1).length;
+                            const puts  = sigs.filter(s => s.signal !== 1).length;
+                            const sigTot = document.getElementById('sig-total');
+                            const sigC   = document.getElementById('sig-call');
+                            const sigP   = document.getElementById('sig-put');
+                            if (sigTot) sigTot.textContent = sigs.length;
+                            if (sigC)   sigC.textContent   = calls;
+                            if (sigP)   sigP.textContent   = puts;
+                        }).catch(() => {});
+                    }, 500);
                 }
 
                 /* Update all LWC series data without destroying the chart */
@@ -4537,7 +4581,7 @@
                             const col = document.createElement('div');
                             col.className = 'col-6 col-md-3 col-lg-2';
                             col.dataset.cat = cat;
-                            const iqUrl = `https://iqoption.com/traderoom#${encodeURIComponent(name)}`;
+                            const chartUrl = `/dashboard?chart_asset=${encodeURIComponent(name)}`;
                             col.innerHTML = `
                                 <div class="p-2 rounded" style="background:${isOpen ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.05)'};border:1px solid ${isOpen ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.15)'};">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
@@ -4547,8 +4591,8 @@
                                     <div class="fw-semibold text-truncate" style="color:#f8fafc;font-size:0.75rem;" title="${name}">${name}</div>
                                     <div class="mt-1 d-flex align-items-center justify-content-between">
                                         <i class="fas fa-circle" style="font-size:0.5rem;color:${isOpen ? '#4ade80' : '#f87171'};"></i>
-                                        <a href="${iqUrl}" target="_blank" rel="noopener" title="Buka ${name} di IQ Option (tab baru)" style="font-size:0.6rem;color:#60a5fa;text-decoration:none;opacity:0.8;" onclick="event.stopPropagation();">
-                                            <i class="fas fa-external-link-alt"></i>
+                                        <a href="${chartUrl}" target="_blank" rel="noopener" title="Buka chart ${name} di tab baru" style="font-size:0.6rem;color:#60a5fa;text-decoration:none;opacity:0.8;" onclick="event.stopPropagation();">
+                                            <i class="fas fa-chart-line"></i>
                                         </a>
                                     </div>
                                 </div>`;
@@ -5738,13 +5782,25 @@
             });
             const data = await resp.json();
             if (data.success) {
+                // Also add to multi-strategies list (replace strategy with same name if exists)
+                const multiPayload = {
+                    name: `Strategi #${idx+1} (${(window._sgResults[idx].win_rate||0)}% WR)`,
+                    indicators: payload.indicators,
+                    min_agreement: payload.min_agreement,
+                    asset: payload.asset,
+                    interval: payload.interval,
+                };
+                try { await fetch('/strategy-generator/multi-add', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(multiPayload)}); } catch(e2) {}
+
                 sgShowAlert('✅ ' + data.message, 'success');
                 // Auto-switch robot dropdown ke strategy_generator
                 const sel = document.getElementById('iq-strategy');
                 if (sel) {
                     sel.value = 'strategy_generator';
-                    onStrategyChange();
+                    onStrategyChange();  // shows panel + calls iqRefreshAppliedStrategy
                 }
+                // Force refresh the panel even if already visible
+                iqRefreshAppliedStrategy();
             } else {
                 sgShowAlert('❌ ' + data.message, 'danger');
             }
@@ -6165,11 +6221,10 @@
     let _iqCASignalsOn = false;
 
     function iqOpenChartAnalysisModal() {
-        // Sync indicator buttons
+        // Sync indicator buttons from _iqIndActive state
         document.querySelectorAll('.iq-ca-ind-btn').forEach(btn => {
             const ind = btn.dataset.ind;
-            const mainBtn = document.getElementById('ind-' + ind);
-            const isActive = mainBtn ? mainBtn.classList.contains('active') : false;
+            const isActive = !!_iqIndActive[ind];
             _iqCAApplyBtnStyle(btn, isActive);
         });
         // Sync signals button
@@ -6195,10 +6250,10 @@
     }
 
     function iqCAToggleInd(ind, btn) {
-        // Delegate to the real toggle function
+        // Delegate to the real toggle function (it toggles _iqIndActive[ind] internally)
         iqToggleIndicator(ind);
-        const mainBtn = document.getElementById('ind-' + ind);
-        const isActive = mainBtn ? mainBtn.classList.contains('active') : false;
+        // Read the new state from _iqIndActive directly (not from DOM class)
+        const isActive = !!_iqIndActive[ind];
         _iqCAApplyBtnStyle(btn, isActive);
     }
 
@@ -6271,6 +6326,63 @@
         });
         const panel = document.getElementById('iq-strategy-gen-panel');
         if (panel) observer.observe(panel, {attributes: true, attributeFilter:['style']});
+    })();
+
+    // ── URL param: ?chart_asset=EURUSD-OTC → auto-navigate to Technical Chart ──
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const chartAsset = params.get('chart_asset');
+        if (!chartAsset) return;
+
+        function _doChartAssetNav() {
+            // Navigate to IQ Option section
+            if (typeof showSection === 'function') showSection('iqoption');
+            else {
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                const iqSec = document.getElementById('iqoption');
+                if (iqSec) iqSec.classList.add('active');
+            }
+            // Highlight sidebar menu link
+            document.querySelectorAll('[data-section]').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.submenu-link[data-section="iqoption"]').forEach(l => l.classList.add('active'));
+
+            // Set asset dropdown
+            const sel = document.getElementById('iq-chart-asset');
+            if (sel) {
+                let found = false;
+                for (let opt of sel.options) {
+                    if (opt.value === chartAsset) { opt.selected = true; found = true; break; }
+                }
+                if (!found) {
+                    const opt = document.createElement('option');
+                    opt.value = chartAsset;
+                    opt.textContent = chartAsset;
+                    opt.selected = true;
+                    sel.insertBefore(opt, sel.firstChild);
+                    sel.value = chartAsset;
+                }
+            }
+
+            // Update the current asset label in chart header
+            const assetLabel = document.getElementById('cs-asset');
+            if (assetLabel) assetLabel.textContent = chartAsset;
+
+            // Show a toast message
+            const msg = `Chart dibuka untuk: ${chartAsset}. Klik "Load Chart" atau "Live" untuk memulai.`;
+            if (typeof showToast === 'function') showToast(msg, 'info');
+            else console.info(msg);
+
+            // Remove param from URL (clean history)
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Script is at bottom of body, DOM should already be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', _doChartAssetNav, {once: true});
+        } else {
+            // Small delay to let other DOMContentLoaded handlers run first
+            setTimeout(_doChartAssetNav, 100);
+        }
     })();
     </script>
 

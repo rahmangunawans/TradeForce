@@ -133,6 +133,16 @@ with app.app_context():
         "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS selected_interval INTEGER DEFAULT 1",
         "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS min_agreement INTEGER DEFAULT 1",
         "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS active_strategies TEXT DEFAULT '[]'",
+        # Fix legacy interval stored in seconds: convert to minutes
+        # Values > 1440 are definitely seconds (>= 1 day in minutes); 60/300/900/1800 are ambiguous
+        # but historically were stored as raw seconds (old bug)
+        "UPDATE bot_setting SET selected_interval = 1    WHERE selected_interval = 60",
+        "UPDATE bot_setting SET selected_interval = 5    WHERE selected_interval = 300",
+        "UPDATE bot_setting SET selected_interval = 15   WHERE selected_interval = 900",
+        "UPDATE bot_setting SET selected_interval = 30   WHERE selected_interval = 1800",
+        "UPDATE bot_setting SET selected_interval = 60   WHERE selected_interval = 3600",
+        "UPDATE bot_setting SET selected_interval = 240  WHERE selected_interval = 14400",
+        "UPDATE bot_setting SET selected_interval = 1440 WHERE selected_interval = 86400",
     ]
     try:
         from sqlalchemy import text as _text
@@ -140,9 +150,28 @@ with app.app_context():
             for _sql in _migrations:
                 _conn.execute(_text(_sql))
             _conn.commit()
-    except Exception as _me:
+        # Fix active_strategies JSON: convert interval from seconds to minutes
+        import json as _j
+        _secs_map = {60:1, 300:5, 900:15, 1800:30, 3600:60, 14400:240, 86400:1440}
+        with db.engine.connect() as _conn2:
+            rows = _conn2.execute(_text("SELECT id, active_strategies FROM bot_setting WHERE active_strategies IS NOT NULL AND active_strategies != '[]'")).fetchall()
+            for row in rows:
+                try:
+                    strats = _j.loads(row[1] or '[]')
+                    changed = False
+                    for s in strats:
+                        iv = s.get('interval', 1)
+                        if iv in _secs_map:
+                            s['interval'] = _secs_map[iv]
+                            changed = True
+                    if changed:
+                        _conn2.execute(_text("UPDATE bot_setting SET active_strategies = :v WHERE id = :id"), {'v': _j.dumps(strats), 'id': row[0]})
+                except Exception:
+                    pass
+            _conn2.commit()
+    except Exception as _e:
         import logging as _logging
-        _logging.getLogger(__name__).warning(f"Migration warning: {_me}")
+        _logging.getLogger(__name__).warning(f"Migration warning: {_e}")
 
 @app.route('/')
 def index():
@@ -774,11 +803,13 @@ def bot_trades():
     trades = []
     for t in robot.trades_history[-30:]:
         trades.append({
-            'order_id': str(t.get('order_id', '')),
+            'order_id':  str(t.get('order_id', '')),
             'asset':     t.get('asset', ''),
             'direction': t.get('direction', ''),
             'amount':    t.get('amount', 0),
-            'profit':    t.get('profit', 0),
+            'profit':    t.get('profit'),   # None = pending
+            'status':    t.get('status', 'done'),
+            'opened_at': t.get('opened_at', ''),
         })
     return jsonify({
         'success': True,
@@ -1667,14 +1698,16 @@ def strategy_generator_apply():
             settings.selected_strategy = _json.dumps(indicators)
             settings.signal_type       = 'strategy_generator'
 
-        asset    = str(data.get('asset', settings.selected_asset or 'EURUSD-OTC'))
-        interval = int(data.get('interval', settings.selected_interval or 1))
+        asset       = str(data.get('asset', settings.selected_asset or 'EURUSD-OTC'))
+        # sgInterval sends seconds (60=M1, 300=M5, 3600=H1); convert to minutes for storage
+        raw_interval = int(data.get('interval', (settings.selected_interval or 1) * 60))
+        interval_mins = max(1, raw_interval // 60) if raw_interval >= 60 else max(1, raw_interval)
         min_agr  = int(data.get('min_agreement', settings.min_agreement or 1))
 
         if 'asset' in data:
             settings.selected_asset = asset
         if 'interval' in data:
-            settings.selected_interval = interval
+            settings.selected_interval = interval_mins
         if 'min_agreement' in data:
             settings.min_agreement = min_agr
 
@@ -1727,11 +1760,15 @@ def multi_strategies_add():
         except Exception:
             strategies = []
 
+        # Convert interval: frontend sends seconds (60=M1), we store minutes
+        raw_iv = int(data.get('interval', 60))
+        interval_mins = max(1, raw_iv // 60) if raw_iv >= 60 else max(1, raw_iv)
+
         new_entry = {
             'id': str(_uuid.uuid4())[:8],
             'name': data.get('name', f'Strategi #{len(strategies)+1}'),
             'asset': str(data.get('asset', 'EURUSD-OTC')),
-            'interval': int(data.get('interval', 1)),
+            'interval': interval_mins,
             'min_agreement': int(data.get('min_agreement', 1)),
             'indicators': indicators,
         }

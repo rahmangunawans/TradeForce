@@ -190,23 +190,32 @@ class IQTradingRobot:
                     self.is_trading = False
                     break
 
+                import time as _time
                 status, order_id = self.buy(current_amount, asset, direction, duration)
                 if not status:
                     logger.warning("Buy failed, retrying...")
                     time.sleep(2)
                     continue
 
-                time.sleep(duration * 60 + 2)
-
-                win_amount = self.check_win(order_id)
+                # Add as pending immediately so Live panel shows the trade right away
                 trade_result = {
                     'order_id': order_id,
                     'asset': asset,
                     'direction': direction,
                     'amount': current_amount,
-                    'profit': win_amount,
+                    'profit': None,   # None = pending
+                    'status': 'pending',
+                    'opened_at': _time.strftime('%H:%M:%S'),
                 }
                 self.trades_history.append(trade_result)
+
+                # Wait for candle to close (duration in minutes) + small buffer
+                time.sleep(duration * 60 + 2)
+
+                win_amount = self.check_win(order_id)
+                # Update existing record in-place
+                trade_result['profit'] = win_amount
+                trade_result['status'] = 'win' if win_amount > 0 else 'loss'
                 self.profit_total += win_amount
 
                 if win_amount > 0:

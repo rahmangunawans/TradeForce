@@ -4361,12 +4361,23 @@
                         const dot = document.getElementById('tp-status-dot');
                         const lbl = document.getElementById('tp-status-lbl');
                         const profEl = document.getElementById('tp-profit');
-                        if (dot) dot.style.background = res.is_trading ? '#22c55e' : '#ef4444';
+                        const toggleBtn = document.getElementById('iq-trade-toggle-btn');
+                        if (dot) { dot.style.background = res.is_trading ? '#22c55e' : '#ef4444'; }
                         if (lbl) lbl.textContent = res.is_trading ? 'Bot aktif (trading)' : 'Bot tidak aktif';
                         if (profEl) {
                             const p = parseFloat(res.profit_total || 0).toFixed(2);
                             profEl.textContent = (p >= 0 ? '+' : '') + p;
                             profEl.style.color = p >= 0 ? '#4ade80' : '#f87171';
+                        }
+                        // Show badge on toggle button for pending trades
+                        const pending = (res.trades || []).filter(t => t.status === 'pending').length;
+                        if (toggleBtn && pending > 0) {
+                            toggleBtn.innerHTML = `<i class="fas fa-bolt me-1"></i>Panel Eksekusi Trade <span class="badge rounded-pill ms-1" style="background:#fbbf24;color:#000;font-size:0.6rem;">${pending} pending</span>`;
+                            // Auto-open panel if new pending trade
+                            const panel = document.getElementById('iq-trade-panel');
+                            if (panel && panel.style.display === 'none') panel.style.display = 'block';
+                        } else if (toggleBtn) {
+                            toggleBtn.innerHTML = `<i class="fas fa-bolt me-1"></i>Panel Eksekusi Trade`;
                         }
                         const tbody = document.getElementById('tp-tbody');
                         if (!tbody) return;
@@ -4377,24 +4388,27 @@
                         }
                         tbody.innerHTML = trades.slice().reverse().map(t => {
                             const isCall = (t.direction || '').toUpperCase() === 'CALL';
-                            const pnlStr = (t.profit != null) ? ((t.profit >= 0 ? '+' : '') + parseFloat(t.profit).toFixed(2)) : '—';
-                            const pnlClr = (t.profit >= 0) ? '#4ade80' : '#f87171';
-                            return `<tr style="border-color:rgba(255,255,255,0.06);">
-                                <td style="font-family:monospace;font-size:0.65rem;color:#64748b;">${(t.order_id||'').slice(-8)}</td>
+                            const isPending = t.status === 'pending' || t.profit === null;
+                            const pnlStr = isPending
+                                ? '<span class="badge" style="background:rgba(251,191,36,0.2);color:#fbbf24;font-size:0.6rem;"><i class="fas fa-spinner fa-spin me-1"></i>Menunggu</span>'
+                                : ((t.profit >= 0 ? '<span style="color:#4ade80;font-weight:600;">+' : '<span style="color:#f87171;font-weight:600;">') + parseFloat(t.profit).toFixed(2) + '</span>');
+                            const rowBg = isPending ? 'rgba(251,191,36,0.05)' : (t.status === 'win' ? 'rgba(34,197,94,0.04)' : 'rgba(239,68,68,0.04)');
+                            return `<tr style="border-color:rgba(255,255,255,0.06);background:${rowBg};">
+                                <td style="font-family:monospace;font-size:0.65rem;color:#64748b;">${t.opened_at || (t.order_id||'').slice(-8)}</td>
                                 <td style="color:#e2e8f0;">${t.asset||'—'}</td>
                                 <td style="font-weight:600;color:${isCall?'#22c55e':'#ef4444'};">${isCall?'▲ CALL':'▼ PUT'}</td>
                                 <td style="color:#94a3b8;">$${parseFloat(t.amount||0).toFixed(2)}</td>
-                                <td style="color:${pnlClr};font-weight:600;">${pnlStr}</td>
+                                <td>${pnlStr}</td>
                             </tr>`;
                         }).join('');
                     }).catch(() => {});
                 }
 
-                // Auto-update trade panel every 10 seconds if visible
+                // Auto-update trade panel every 2 seconds if visible (faster for pending trades)
                 setInterval(() => {
                     const panel = document.getElementById('iq-trade-panel');
                     if (panel && panel.style.display !== 'none') iqUpdateTradePanel();
-                }, 10000);
+                }, 2000);
 
                 // Timeframe button + asset change triggers reload
                 document.addEventListener('DOMContentLoaded', function() {

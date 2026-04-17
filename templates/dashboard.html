@@ -2888,11 +2888,23 @@
 
                                     <!-- Indicator toggles + Settings -->
                                     <div class="d-flex gap-1 flex-wrap align-items-center">
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma1" onclick="iqToggleIndicator('ma1')" style="font-size:0.72rem;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);">MA<span id="lbl-ma1">20</span></button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma2" onclick="iqToggleIndicator('ma2')" style="font-size:0.72rem;background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.4);">MA<span id="lbl-ma2">50</span></button>
+                                        <span style="font-size:0.68rem;color:#64748b;">Ind:</span>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma1" onclick="iqToggleIndicator('ma1')" style="font-size:0.72rem;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);">SMA<span id="lbl-ma1">20</span></button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma2" onclick="iqToggleIndicator('ma2')" style="font-size:0.72rem;background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.4);">SMA<span id="lbl-ma2">50</span></button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-ema3" onclick="iqToggleIndicator('ema3')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">EMA<span id="lbl-ema3">21</span></button>
                                         <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-bb" onclick="iqToggleIndicator('bb')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">BB</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-sar" onclick="iqToggleIndicator('sar')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">SAR</button>
+                                        <span style="font-size:0.68rem;color:#475569;">|</span>
                                         <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-rsi" onclick="iqToggleIndicator('rsi')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">RSI</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-macd" onclick="iqToggleIndicator('macd')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">MACD</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-stoch" onclick="iqToggleIndicator('stoch')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">Stoch</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-cci" onclick="iqToggleIndicator('cci')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">CCI</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-mom" onclick="iqToggleIndicator('mom')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">Mom</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-willr" onclick="iqToggleIndicator('willr')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">%R</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-atr" onclick="iqToggleIndicator('atr')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">ATR</button>
                                         <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-vol" onclick="iqToggleIndicator('vol')" style="font-size:0.72rem;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">VOL</button>
+                                        <span style="font-size:0.68rem;color:#475569;">|</span>
+                                        <button class="btn btn-sm px-2 py-0" id="ind-signals" onclick="iqToggleStrategySignals()" title="Tampilkan sinyal beli/jual dari strategi yang diterapkan" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-chart-line me-1"></i>Sinyal</button>
                                         <button class="btn btn-sm px-2 py-0" onclick="iqOpenIndSettings()" title="Pengaturan Indikator" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-sliders-h"></i></button>
                                     </div>
 
@@ -2927,8 +2939,38 @@
                                     <div id="iq-chart-main" style="height:420px;"></div>
                                     <!-- RSI subchart -->
                                     <div id="iq-chart-rsi-wrap" style="display:none;">
-                                        <div style="padding:4px 12px;font-size:0.7rem;color:#94a3b8;border-top:1px solid rgba(255,255,255,0.06);">RSI (14)</div>
-                                        <div id="iq-chart-rsi" style="height:130px;"></div>
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#f472b6;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:6px;"><span id="iq-rsi-label">RSI (14)</span><span style="font-size:0.65rem;color:#64748b;">OB/OS: <span id="iq-rsi-ob-lbl">70</span>/<span id="iq-rsi-os-lbl">30</span></span></div>
+                                        <div id="iq-chart-rsi" style="height:110px;"></div>
+                                    </div>
+                                    <!-- MACD subchart -->
+                                    <div id="iq-chart-macd-wrap" style="display:none;">
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#38bdf8;border-top:1px solid rgba(255,255,255,0.06);"><span id="iq-macd-label">MACD (12,26,9)</span></div>
+                                        <div id="iq-chart-macd" style="height:110px;"></div>
+                                    </div>
+                                    <!-- Stochastic subchart -->
+                                    <div id="iq-chart-stoch-wrap" style="display:none;">
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#fb923c;border-top:1px solid rgba(255,255,255,0.06);"><span id="iq-stoch-label">Stochastic (%K=14, %D=3)</span></div>
+                                        <div id="iq-chart-stoch" style="height:110px;"></div>
+                                    </div>
+                                    <!-- CCI subchart -->
+                                    <div id="iq-chart-cci-wrap" style="display:none;">
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#c084fc;border-top:1px solid rgba(255,255,255,0.06);"><span id="iq-cci-label">CCI (20)</span></div>
+                                        <div id="iq-chart-cci" style="height:110px;"></div>
+                                    </div>
+                                    <!-- Momentum subchart -->
+                                    <div id="iq-chart-mom-wrap" style="display:none;">
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#34d399;border-top:1px solid rgba(255,255,255,0.06);"><span id="iq-mom-label">Momentum (10)</span></div>
+                                        <div id="iq-chart-mom" style="height:100px;"></div>
+                                    </div>
+                                    <!-- Williams %R subchart -->
+                                    <div id="iq-chart-willr-wrap" style="display:none;">
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#fb7185;border-top:1px solid rgba(255,255,255,0.06);"><span id="iq-willr-label">Williams %R (14)</span></div>
+                                        <div id="iq-chart-willr" style="height:100px;"></div>
+                                    </div>
+                                    <!-- ATR subchart -->
+                                    <div id="iq-chart-atr-wrap" style="display:none;">
+                                        <div style="padding:4px 12px;font-size:0.7rem;color:#fbbf24;border-top:1px solid rgba(255,255,255,0.06);"><span id="iq-atr-label">ATR (14)</span></div>
+                                        <div id="iq-chart-atr" style="height:100px;"></div>
                                     </div>
                                 </div>
 
@@ -2944,20 +2986,66 @@
                                         <span>Close: <strong id="cs-close" class="text-white">—</strong></span>
                                     </div>
                                 </div>
+
+                                <!-- Signal Overlay Info Bar -->
+                                <div id="iq-signal-bar" style="display:none;padding:6px 16px;background:rgba(99,102,241,0.08);border-top:1px solid rgba(99,102,241,0.2);">
+                                    <div class="d-flex align-items-center gap-3" style="font-size:0.72rem;">
+                                        <span style="color:#6366f1;"><i class="fas fa-chart-line me-1"></i>Sinyal Strategi Aktif</span>
+                                        <span style="color:#64748b;">Total: <strong id="sig-total" class="text-white">0</strong></span>
+                                        <span><span style="color:#22c55e;">▲ CALL: <strong id="sig-call">0</strong></span> &nbsp; <span style="color:#ef4444;">▼ PUT: <strong id="sig-put">0</strong></span></span>
+                                        <button onclick="iqToggleStrategySignals()" style="margin-left:auto;font-size:0.7rem;background:none;border:none;color:#64748b;cursor:pointer;">✕ Hapus</button>
+                                    </div>
+                                </div>
+
+                                <!-- Trade Execution Panel -->
+                                <div id="iq-trade-panel" style="display:none;border-top:1px solid rgba(255,255,255,0.06);">
+                                    <div class="d-flex align-items-center justify-content-between px-3 py-2" style="background:rgba(0,0,0,0.2);">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span style="font-size:0.75rem;font-weight:600;color:#94a3b8;"><i class="fas fa-bolt me-1" style="color:#fbbf24;"></i>Eksekusi Trade (Live)</span>
+                                            <span style="font-size:0.72rem;color:#64748b;">Total P&L: <strong id="tp-profit" style="color:#4ade80;">+0.00</strong></span>
+                                            <span id="tp-status-dot" style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+                                            <span id="tp-status-lbl" style="font-size:0.7rem;color:#64748b;">Bot tidak aktif</span>
+                                        </div>
+                                        <button onclick="document.getElementById('iq-trade-panel').style.display='none'" style="background:none;border:none;color:#64748b;font-size:0.7rem;cursor:pointer;">✕</button>
+                                    </div>
+                                    <div style="max-height:180px;overflow-y:auto;padding:8px 12px;">
+                                        <table class="table table-sm mb-0" style="font-size:0.72rem;color:#94a3b8;--bs-table-bg:transparent;--bs-table-color:#94a3b8;">
+                                            <thead>
+                                                <tr style="border-color:rgba(255,255,255,0.08);">
+                                                    <th style="color:#64748b;font-weight:500;">ID Trade</th>
+                                                    <th style="color:#64748b;font-weight:500;">Aset</th>
+                                                    <th style="color:#64748b;font-weight:500;">Arah</th>
+                                                    <th style="color:#64748b;font-weight:500;">Jumlah</th>
+                                                    <th style="color:#64748b;font-weight:500;">P&L</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tp-tbody">
+                                                <tr><td colspan="5" class="text-center" style="color:#475569;padding:12px;">Belum ada trade</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Trade Panel Toggle Button (below chart section) -->
+                <div class="mt-2 text-end pe-1">
+                    <button id="iq-trade-toggle-btn" onclick="iqToggleTradePanel()" style="font-size:0.72rem;background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.25);border-radius:6px;padding:4px 12px;cursor:pointer;display:none;">
+                        <i class="fas fa-bolt me-1"></i>Panel Eksekusi Trade
+                    </button>
+                </div>
+
                 <!-- Indicator Settings Modal -->
                 <div class="modal fade" id="iqIndSettingsModal" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered" style="max-width:460px;">
-                        <div class="modal-content" style="background:#1e293b;border:1px solid rgba(255,255,255,0.1);color:#e2e8f0;">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width:500px;">
+                        <div class="modal-content" style="background:#1e293b;border:1px solid rgba(255,255,255,0.1);color:#e2e8f0;max-height:85vh;">
                             <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.08);">
                                 <h6 class="modal-title mb-0"><i class="fas fa-sliders-h me-2" style="color:#8b5cf6;"></i>Pengaturan Indikator</h6>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body" style="overflow-y:auto;">
                                 <!-- MA 1 -->
                                 <div class="mb-3 p-2 rounded" style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);">
                                     <div class="d-flex align-items-center gap-2 mb-2">
@@ -3009,7 +3097,7 @@
                                     </div>
                                 </div>
                                 <!-- RSI -->
-                                <div class="mb-1 p-2 rounded" style="background:rgba(244,114,182,0.06);border:1px solid rgba(244,114,182,0.2);">
+                                <div class="mb-2 p-2 rounded" style="background:rgba(244,114,182,0.06);border:1px solid rgba(244,114,182,0.2);">
                                     <div class="mb-2"><span style="font-size:0.75rem;font-weight:600;color:#f472b6;">RSI</span></div>
                                     <div class="row g-2">
                                         <div class="col-4">
@@ -3026,6 +3114,83 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- EMA3 -->
+                                <div class="mb-2 p-2 rounded" style="background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2);">
+                                    <div class="mb-2"><span style="font-size:0.75rem;font-weight:600;color:#f97316;">EMA (Eksponensial MA)</span></div>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">Period</label>
+                                            <input type="number" id="set-ema3-period" class="form-control form-control-sm" value="21" min="2" max="500" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">Warna</label>
+                                            <input type="color" id="set-ema3-color" class="form-control form-control-sm form-control-color w-100" value="#f97316" style="background:#0f172a;border-color:rgba(255,255,255,0.1);">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- MACD -->
+                                <div class="mb-2 p-2 rounded" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);">
+                                    <div class="mb-2"><span style="font-size:0.75rem;font-weight:600;color:#38bdf8;">MACD</span></div>
+                                    <div class="row g-2">
+                                        <div class="col-4">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">Fast</label>
+                                            <input type="number" id="set-macd-fast" class="form-control form-control-sm" value="12" min="2" max="100" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">Slow</label>
+                                            <input type="number" id="set-macd-slow" class="form-control form-control-sm" value="26" min="2" max="200" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">Signal</label>
+                                            <input type="number" id="set-macd-signal" class="form-control form-control-sm" value="9" min="2" max="50" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Stochastic -->
+                                <div class="mb-2 p-2 rounded" style="background:rgba(251,146,60,0.06);border:1px solid rgba(251,146,60,0.2);">
+                                    <div class="mb-2"><span style="font-size:0.75rem;font-weight:600;color:#fb923c;">Stochastic</span></div>
+                                    <div class="row g-2">
+                                        <div class="col-4">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">%K Period</label>
+                                            <input type="number" id="set-stoch-k" class="form-control form-control-sm" value="14" min="2" max="100" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">%D Period</label>
+                                            <input type="number" id="set-stoch-d" class="form-control form-control-sm" value="3" min="1" max="20" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label" style="font-size:0.7rem;color:#94a3b8;">Smooth</label>
+                                            <input type="number" id="set-stoch-smooth" class="form-control form-control-sm" value="3" min="1" max="10" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- CCI, Momentum, Williams %R, ATR -->
+                                <div class="row g-2 mb-1">
+                                    <div class="col-6">
+                                        <div class="p-2 rounded h-100" style="background:rgba(192,132,252,0.06);border:1px solid rgba(192,132,252,0.2);">
+                                            <div class="mb-1"><span style="font-size:0.72rem;font-weight:600;color:#c084fc;">CCI</span></div>
+                                            <input type="number" id="set-cci-period" class="form-control form-control-sm" value="20" min="2" max="200" placeholder="Period" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;font-size:0.72rem;">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 rounded h-100" style="background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);">
+                                            <div class="mb-1"><span style="font-size:0.72rem;font-weight:600;color:#34d399;">Momentum</span></div>
+                                            <input type="number" id="set-mom-period" class="form-control form-control-sm" value="10" min="1" max="100" placeholder="Period" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;font-size:0.72rem;">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 rounded h-100" style="background:rgba(251,113,133,0.06);border:1px solid rgba(251,113,133,0.2);">
+                                            <div class="mb-1"><span style="font-size:0.72rem;font-weight:600;color:#fb7185;">Williams %R</span></div>
+                                            <input type="number" id="set-willr-period" class="form-control form-control-sm" value="14" min="2" max="100" placeholder="Period" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;font-size:0.72rem;">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 rounded h-100" style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);">
+                                            <div class="mb-1"><span style="font-size:0.72rem;font-weight:600;color:#fbbf24;">ATR</span></div>
+                                            <input type="number" id="set-atr-period" class="form-control form-control-sm" value="14" min="2" max="100" placeholder="Period" style="background:#0f172a;border-color:rgba(255,255,255,0.1);color:#e2e8f0;font-size:0.72rem;">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer" style="border-top:1px solid rgba(255,255,255,0.08);">
                                 <button class="btn btn-sm" data-bs-dismiss="modal" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">Batal</button>
@@ -3038,24 +3203,47 @@
                 <script>
                 /* ========================= TECHNICAL CHART ========================= */
                 let _iqChart = null, _iqChartRsi = null;
+                let _iqChartMacd = null, _iqChartStoch = null, _iqChartCci = null;
+                let _iqChartMom = null, _iqChartWillr = null, _iqChartAtr = null;
                 let _iqCandleSeries = null, _iqVolSeries = null;
-                let _iqMa1Series = null, _iqMa2Series = null;
+                let _iqMa1Series = null, _iqMa2Series = null, _iqEma3Series = null;
                 let _iqBbUpSeries = null, _iqBbMidSeries = null, _iqBbLowSeries = null;
+                let _iqSarSeries = null;
                 let _iqRsiSeries = null, _iqRsiOB = null, _iqRsiOS = null;
+                let _iqMacdLineSeries = null, _iqMacdSignalSeries = null, _iqMacdHistSeries = null;
+                let _iqStochKSeries = null, _iqStochDSeries = null, _iqStochOB = null, _iqStochOS = null;
+                let _iqCciSeries = null, _iqCciZ = null;
+                let _iqMomSeries = null, _iqMomZ = null;
+                let _iqWillrSeries = null, _iqWillrOB = null, _iqWillrOS = null;
+                let _iqAtrSeries = null;
                 let _iqChartData = [];
                 let _iqChartInterval = 300;
                 let _iqChartPollTimer = null;
-                let _iqChartType = 'candle'; // candle | bar | line | ha
+                let _iqChartType = 'candle';
                 let _iqCandleTimerIv = null;
-                let _iqLoadingMore = false;   // guard: prevent duplicate lazy-load calls
+                let _iqLoadingMore = false;
+                let _iqSignalsActive = false;
+                let _iqSignalMarkers = [];
+                let _iqTradePollIv = null;
 
-                const _iqIndActive = {ma1: true, ma2: true, bb: false, rsi: false, vol: true};
+                const _iqIndActive = {
+                    ma1: true, ma2: true, bb: false, rsi: false, vol: true,
+                    ema3: false, sar: false, macd: false, stoch: false,
+                    cci: false, mom: false, willr: false, atr: false
+                };
 
                 const _iqIndSettings = {
                     ma1Period: 20, ma1Color: '#fbbf24',
                     ma2Period: 50, ma2Color: '#60a5fa',
                     bbPeriod: 20, bbMult: 2, bbColor: '#a78bfa',
-                    rsiPeriod: 14, rsiOB: 70, rsiOS: 30
+                    rsiPeriod: 14, rsiOB: 70, rsiOS: 30,
+                    ema3Period: 21, ema3Color: '#f97316',
+                    macdFast: 12, macdSlow: 26, macdSignal: 9,
+                    stochK: 14, stochD: 3, stochSmooth: 3,
+                    cciPeriod: 20,
+                    momPeriod: 10,
+                    willrPeriod: 14,
+                    atrPeriod: 14
                 };
 
                 const _iqChartColors = {
@@ -3130,6 +3318,156 @@
                     return m[s] || s+'s';
                 }
 
+                /* ---- New Indicator Calculations ---- */
+                function _iqCalcEMA(data, period) {
+                    const k = 2 / (period + 1);
+                    const result = [];
+                    let ema = 0, sum = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        if (i < period - 1) { sum += data[i].close; continue; }
+                        if (i === period - 1) { sum += data[i].close; ema = sum / period; }
+                        else { ema = data[i].close * k + ema * (1 - k); }
+                        result.push({time: data[i].time, value: parseFloat(ema.toFixed(5))});
+                    }
+                    return result;
+                }
+
+                function _iqCalcMACD(data) {
+                    const fast = _iqIndSettings.macdFast, slow = _iqIndSettings.macdSlow, sig = _iqIndSettings.macdSignal;
+                    const emaFast = _iqEmaRaw(data.map(d => d.close), fast);
+                    const emaSlow = _iqEmaRaw(data.map(d => d.close), slow);
+                    const macdLine = [], times = [];
+                    const offset = slow - fast;
+                    for (let i = 0; i < emaSlow.length; i++) {
+                        macdLine.push(emaFast[i + offset] - emaSlow[i]);
+                        times.push(data[i + slow - 1].time);
+                    }
+                    const signalArr = _iqEmaRaw(macdLine, sig);
+                    const out = [];
+                    const sOffset = sig - 1;
+                    for (let i = sOffset; i < macdLine.length; i++) {
+                        const t = times[i];
+                        const m = macdLine[i];
+                        const s = signalArr[i - sOffset];
+                        const h = m - s;
+                        out.push({time: t, macd: parseFloat(m.toFixed(6)), signal: parseFloat(s.toFixed(6)), hist: parseFloat(h.toFixed(6))});
+                    }
+                    return out;
+                }
+
+                function _iqEmaRaw(arr, period) {
+                    const k = 2 / (period + 1);
+                    const result = [];
+                    let ema = arr.slice(0, period).reduce((a, b) => a + b, 0) / period;
+                    result.push(ema);
+                    for (let i = period; i < arr.length; i++) {
+                        ema = arr[i] * k + ema * (1 - k);
+                        result.push(ema);
+                    }
+                    return result;
+                }
+
+                function _iqCalcStoch(data) {
+                    const kp = _iqIndSettings.stochK, dp = _iqIndSettings.stochD, sp = _iqIndSettings.stochSmooth;
+                    const rawK = [];
+                    for (let i = kp - 1; i < data.length; i++) {
+                        const sl = data.slice(i - kp + 1, i + 1);
+                        const hi = Math.max(...sl.map(d => d.high));
+                        const lo = Math.min(...sl.map(d => d.low));
+                        const k = hi === lo ? 50 : ((data[i].close - lo) / (hi - lo)) * 100;
+                        rawK.push({time: data[i].time, value: parseFloat(k.toFixed(2))});
+                    }
+                    const smoothK = [];
+                    for (let i = sp - 1; i < rawK.length; i++) {
+                        const avg = rawK.slice(i - sp + 1, i + 1).reduce((s, x) => s + x.value, 0) / sp;
+                        smoothK.push({time: rawK[i].time, value: parseFloat(avg.toFixed(2))});
+                    }
+                    const dLine = [];
+                    for (let i = dp - 1; i < smoothK.length; i++) {
+                        const avg = smoothK.slice(i - dp + 1, i + 1).reduce((s, x) => s + x.value, 0) / dp;
+                        dLine.push({time: smoothK[i].time, value: parseFloat(avg.toFixed(2))});
+                    }
+                    return {k: smoothK, d: dLine};
+                }
+
+                function _iqCalcCCI(data) {
+                    const period = _iqIndSettings.cciPeriod;
+                    const result = [];
+                    for (let i = period - 1; i < data.length; i++) {
+                        const sl = data.slice(i - period + 1, i + 1);
+                        const tp = sl.map(d => (d.high + d.low + d.close) / 3);
+                        const avg = tp.reduce((s, x) => s + x, 0) / period;
+                        const md = tp.reduce((s, x) => s + Math.abs(x - avg), 0) / period;
+                        const cci = md === 0 ? 0 : (tp[tp.length - 1] - avg) / (0.015 * md);
+                        result.push({time: data[i].time, value: parseFloat(cci.toFixed(2))});
+                    }
+                    return result;
+                }
+
+                function _iqCalcMomentum(data) {
+                    const p = _iqIndSettings.momPeriod;
+                    return data.slice(p).map((d, i) => ({
+                        time: d.time, value: parseFloat((d.close - data[i].close).toFixed(6))
+                    }));
+                }
+
+                function _iqCalcWillR(data) {
+                    const p = _iqIndSettings.willrPeriod;
+                    const result = [];
+                    for (let i = p - 1; i < data.length; i++) {
+                        const sl = data.slice(i - p + 1, i + 1);
+                        const hi = Math.max(...sl.map(d => d.high));
+                        const lo = Math.min(...sl.map(d => d.low));
+                        const wr = hi === lo ? -50 : ((hi - data[i].close) / (hi - lo)) * -100;
+                        result.push({time: data[i].time, value: parseFloat(wr.toFixed(2))});
+                    }
+                    return result;
+                }
+
+                function _iqCalcATR(data) {
+                    const p = _iqIndSettings.atrPeriod;
+                    const trs = data.map((d, i) => {
+                        if (i === 0) return d.high - d.low;
+                        const prev = data[i - 1];
+                        return Math.max(d.high - d.low, Math.abs(d.high - prev.close), Math.abs(d.low - prev.close));
+                    });
+                    const result = [];
+                    let atr = trs.slice(0, p).reduce((s, x) => s + x, 0) / p;
+                    result.push({time: data[p - 1].time, value: parseFloat(atr.toFixed(6))});
+                    for (let i = p; i < data.length; i++) {
+                        atr = (atr * (p - 1) + trs[i]) / p;
+                        result.push({time: data[i].time, value: parseFloat(atr.toFixed(6))});
+                    }
+                    return result;
+                }
+
+                function _iqCalcSAR(data) {
+                    if (data.length < 3) return [];
+                    const step = 0.02, maxStep = 0.2;
+                    let isUp = data[1].close >= data[0].close;
+                    let sar = isUp ? data[0].low : data[0].high;
+                    let ep = isUp ? data[0].high : data[0].low;
+                    let af = step;
+                    const result = [];
+                    for (let i = 1; i < data.length; i++) {
+                        const pSar = sar;
+                        sar = pSar + af * (ep - pSar);
+                        if (isUp) {
+                            sar = Math.min(sar, data[i-1].low, i >= 2 ? data[i-2].low : data[i-1].low);
+                            if (data[i].low < sar) {
+                                isUp = false; sar = ep; ep = data[i].low; af = step;
+                            } else if (data[i].high > ep) { ep = data[i].high; af = Math.min(af + step, maxStep); }
+                        } else {
+                            sar = Math.max(sar, data[i-1].high, i >= 2 ? data[i-2].high : data[i-1].high);
+                            if (data[i].high > sar) {
+                                isUp = true; sar = ep; ep = data[i].high; af = step;
+                            } else if (data[i].low < ep) { ep = data[i].low; af = Math.min(af + step, maxStep); }
+                        }
+                        result.push({time: data[i].time, value: parseFloat(sar.toFixed(5)), isUp});
+                    }
+                    return result;
+                }
+
                 /* ---- Candle Timer ---- */
                 function iqStartCandleTimer() {
                     if (_iqCandleTimerIv) clearInterval(_iqCandleTimerIv);
@@ -3197,45 +3535,93 @@
 
                 /* ---- Indicator Settings ---- */
                 function iqOpenIndSettings() {
-                    document.getElementById('set-ma1-period').value = _iqIndSettings.ma1Period;
-                    document.getElementById('set-ma1-color').value  = _iqIndSettings.ma1Color;
-                    document.getElementById('set-ma2-period').value = _iqIndSettings.ma2Period;
-                    document.getElementById('set-ma2-color').value  = _iqIndSettings.ma2Color;
-                    document.getElementById('set-bb-period').value  = _iqIndSettings.bbPeriod;
-                    document.getElementById('set-bb-mult').value    = _iqIndSettings.bbMult;
-                    document.getElementById('set-bb-color').value   = _iqIndSettings.bbColor;
-                    document.getElementById('set-rsi-period').value = _iqIndSettings.rsiPeriod;
-                    document.getElementById('set-rsi-ob').value     = _iqIndSettings.rsiOB;
-                    document.getElementById('set-rsi-os').value     = _iqIndSettings.rsiOS;
+                    document.getElementById('set-ma1-period').value  = _iqIndSettings.ma1Period;
+                    document.getElementById('set-ma1-color').value   = _iqIndSettings.ma1Color;
+                    document.getElementById('set-ma2-period').value  = _iqIndSettings.ma2Period;
+                    document.getElementById('set-ma2-color').value   = _iqIndSettings.ma2Color;
+                    document.getElementById('set-bb-period').value   = _iqIndSettings.bbPeriod;
+                    document.getElementById('set-bb-mult').value     = _iqIndSettings.bbMult;
+                    document.getElementById('set-bb-color').value    = _iqIndSettings.bbColor;
+                    document.getElementById('set-rsi-period').value  = _iqIndSettings.rsiPeriod;
+                    document.getElementById('set-rsi-ob').value      = _iqIndSettings.rsiOB;
+                    document.getElementById('set-rsi-os').value      = _iqIndSettings.rsiOS;
+                    document.getElementById('set-ema3-period').value = _iqIndSettings.ema3Period;
+                    document.getElementById('set-ema3-color').value  = _iqIndSettings.ema3Color;
+                    document.getElementById('set-macd-fast').value   = _iqIndSettings.macdFast;
+                    document.getElementById('set-macd-slow').value   = _iqIndSettings.macdSlow;
+                    document.getElementById('set-macd-signal').value = _iqIndSettings.macdSignal;
+                    document.getElementById('set-stoch-k').value     = _iqIndSettings.stochK;
+                    document.getElementById('set-stoch-d').value     = _iqIndSettings.stochD;
+                    document.getElementById('set-stoch-smooth').value= _iqIndSettings.stochSmooth;
+                    document.getElementById('set-cci-period').value  = _iqIndSettings.cciPeriod;
+                    document.getElementById('set-mom-period').value  = _iqIndSettings.momPeriod;
+                    document.getElementById('set-willr-period').value= _iqIndSettings.willrPeriod;
+                    document.getElementById('set-atr-period').value  = _iqIndSettings.atrPeriod;
                     new bootstrap.Modal(document.getElementById('iqIndSettingsModal')).show();
                 }
 
                 function iqSaveIndSettings() {
-                    _iqIndSettings.ma1Period = parseInt(document.getElementById('set-ma1-period').value) || 20;
-                    _iqIndSettings.ma1Color  = document.getElementById('set-ma1-color').value;
-                    _iqIndSettings.ma2Period = parseInt(document.getElementById('set-ma2-period').value) || 50;
-                    _iqIndSettings.ma2Color  = document.getElementById('set-ma2-color').value;
-                    _iqIndSettings.bbPeriod  = parseInt(document.getElementById('set-bb-period').value) || 20;
-                    _iqIndSettings.bbMult    = parseFloat(document.getElementById('set-bb-mult').value) || 2;
-                    _iqIndSettings.bbColor   = document.getElementById('set-bb-color').value;
-                    _iqIndSettings.rsiPeriod = parseInt(document.getElementById('set-rsi-period').value) || 14;
-                    _iqIndSettings.rsiOB     = parseInt(document.getElementById('set-rsi-ob').value) || 70;
-                    _iqIndSettings.rsiOS     = parseInt(document.getElementById('set-rsi-os').value) || 30;
+                    _iqIndSettings.ma1Period   = parseInt(document.getElementById('set-ma1-period').value) || 20;
+                    _iqIndSettings.ma1Color    = document.getElementById('set-ma1-color').value;
+                    _iqIndSettings.ma2Period   = parseInt(document.getElementById('set-ma2-period').value) || 50;
+                    _iqIndSettings.ma2Color    = document.getElementById('set-ma2-color').value;
+                    _iqIndSettings.bbPeriod    = parseInt(document.getElementById('set-bb-period').value) || 20;
+                    _iqIndSettings.bbMult      = parseFloat(document.getElementById('set-bb-mult').value) || 2;
+                    _iqIndSettings.bbColor     = document.getElementById('set-bb-color').value;
+                    _iqIndSettings.rsiPeriod   = parseInt(document.getElementById('set-rsi-period').value) || 14;
+                    _iqIndSettings.rsiOB       = parseInt(document.getElementById('set-rsi-ob').value) || 70;
+                    _iqIndSettings.rsiOS       = parseInt(document.getElementById('set-rsi-os').value) || 30;
+                    _iqIndSettings.ema3Period  = parseInt(document.getElementById('set-ema3-period').value) || 21;
+                    _iqIndSettings.ema3Color   = document.getElementById('set-ema3-color').value;
+                    _iqIndSettings.macdFast    = parseInt(document.getElementById('set-macd-fast').value) || 12;
+                    _iqIndSettings.macdSlow    = parseInt(document.getElementById('set-macd-slow').value) || 26;
+                    _iqIndSettings.macdSignal  = parseInt(document.getElementById('set-macd-signal').value) || 9;
+                    _iqIndSettings.stochK      = parseInt(document.getElementById('set-stoch-k').value) || 14;
+                    _iqIndSettings.stochD      = parseInt(document.getElementById('set-stoch-d').value) || 3;
+                    _iqIndSettings.stochSmooth = parseInt(document.getElementById('set-stoch-smooth').value) || 3;
+                    _iqIndSettings.cciPeriod   = parseInt(document.getElementById('set-cci-period').value) || 20;
+                    _iqIndSettings.momPeriod   = parseInt(document.getElementById('set-mom-period').value) || 10;
+                    _iqIndSettings.willrPeriod = parseInt(document.getElementById('set-willr-period').value) || 14;
+                    _iqIndSettings.atrPeriod   = parseInt(document.getElementById('set-atr-period').value) || 14;
                     // Update button labels
-                    document.getElementById('lbl-ma1').textContent = _iqIndSettings.ma1Period;
-                    document.getElementById('lbl-ma2').textContent = _iqIndSettings.ma2Period;
+                    document.getElementById('lbl-ma1').textContent  = _iqIndSettings.ma1Period;
+                    document.getElementById('lbl-ma2').textContent  = _iqIndSettings.ma2Period;
+                    document.getElementById('lbl-ema3').textContent = _iqIndSettings.ema3Period;
+                    // Update sub-chart labels
+                    const macdLbl = document.getElementById('iq-macd-label');
+                    const rsiLbl  = document.getElementById('iq-rsi-label');
+                    const obLbl   = document.getElementById('iq-rsi-ob-lbl');
+                    const osLbl   = document.getElementById('iq-rsi-os-lbl');
+                    if (macdLbl) macdLbl.textContent = `MACD (${_iqIndSettings.macdFast},${_iqIndSettings.macdSlow},${_iqIndSettings.macdSignal})`;
+                    if (rsiLbl)  rsiLbl.textContent  = `RSI (${_iqIndSettings.rsiPeriod})`;
+                    if (obLbl)   obLbl.textContent   = _iqIndSettings.rsiOB;
+                    if (osLbl)   osLbl.textContent   = _iqIndSettings.rsiOS;
                     bootstrap.Modal.getInstance(document.getElementById('iqIndSettingsModal')).hide();
                     if (_iqChartData.length > 0) iqBuildCharts(_iqChartData, document.getElementById('cs-asset').textContent, _iqChartInterval);
                 }
 
                 function iqDestroyCharts() {
                     iqStopCandleTimer();
-                    if (_iqChart) { try { _iqChart.remove(); } catch(e){} _iqChart = null; }
-                    if (_iqChartRsi) { try { _iqChartRsi.remove(); } catch(e){} _iqChartRsi = null; }
+                    const _rm = (c) => { if (c) { try { c.remove(); } catch(e){} } };
+                    _rm(_iqChart); _iqChart = null;
+                    _rm(_iqChartRsi); _iqChartRsi = null;
+                    _rm(_iqChartMacd); _iqChartMacd = null;
+                    _rm(_iqChartStoch); _iqChartStoch = null;
+                    _rm(_iqChartCci); _iqChartCci = null;
+                    _rm(_iqChartMom); _iqChartMom = null;
+                    _rm(_iqChartWillr); _iqChartWillr = null;
+                    _rm(_iqChartAtr); _iqChartAtr = null;
                     _iqCandleSeries = _iqVolSeries = null;
-                    _iqMa1Series = _iqMa2Series = null;
+                    _iqMa1Series = _iqMa2Series = _iqEma3Series = _iqSarSeries = null;
                     _iqBbUpSeries = _iqBbMidSeries = _iqBbLowSeries = null;
                     _iqRsiSeries = _iqRsiOB = _iqRsiOS = null;
+                    _iqMacdLineSeries = _iqMacdSignalSeries = _iqMacdHistSeries = null;
+                    _iqStochKSeries = _iqStochDSeries = _iqStochOB = _iqStochOS = null;
+                    _iqCciSeries = _iqCciZ = null;
+                    _iqMomSeries = _iqMomZ = null;
+                    _iqWillrSeries = _iqWillrOB = _iqWillrOS = null;
+                    _iqAtrSeries = null;
+                    _iqSignalMarkers = [];
                 }
 
                 function iqBuildCharts(candles, asset, interval) {
@@ -3279,22 +3665,27 @@
                         })));
                     }
 
-                    // MA1
+                    // MA1 (SMA)
                     if (_iqIndActive.ma1) {
                         _iqMa1Series = _iqChart.addLineSeries({color: _iqIndSettings.ma1Color, lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
                         _iqMa1Series.setData(_iqCalcMA(candles, _iqIndSettings.ma1Period));
                     }
 
-                    // MA2
+                    // MA2 (SMA)
                     if (_iqIndActive.ma2) {
                         _iqMa2Series = _iqChart.addLineSeries({color: _iqIndSettings.ma2Color, lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
                         _iqMa2Series.setData(_iqCalcMA(candles, _iqIndSettings.ma2Period));
                     }
 
+                    // EMA3
+                    if (_iqIndActive.ema3) {
+                        _iqEma3Series = _iqChart.addLineSeries({color: _iqIndSettings.ema3Color, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqEma3Series.setData(_iqCalcEMA(candles, _iqIndSettings.ema3Period));
+                    }
+
                     // Bollinger Bands
                     if (_iqIndActive.bb) {
                         const bc = _iqIndSettings.bbColor;
-                        const bbAlpha = bc + '99'; // slight transparency for outer bands
                         const bb = _iqCalcBB(candles);
                         _iqBbUpSeries  = _iqChart.addLineSeries({color: bc, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, lineStyle: LightweightCharts.LineStyle.Dashed});
                         _iqBbMidSeries = _iqChart.addLineSeries({color: bc + '88', lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
@@ -3302,6 +3693,16 @@
                         _iqBbUpSeries.setData(bb.up);
                         _iqBbMidSeries.setData(bb.mid);
                         _iqBbLowSeries.setData(bb.low);
+                    }
+
+                    // Parabolic SAR (dots)
+                    if (_iqIndActive.sar) {
+                        _iqSarSeries = _iqChart.addLineSeries({
+                            color: 'transparent', lineWidth: 0, priceLineVisible: false, lastValueVisible: false,
+                            pointMarkersVisible: true, pointMarkersRadius: 2
+                        });
+                        const sarData = _iqCalcSAR(candles);
+                        _iqSarSeries.setData(sarData.map(d => ({time: d.time, value: d.value})));
                     }
 
                     // Crosshair legend
@@ -3328,36 +3729,110 @@
                         document.getElementById('cs-close').textContent = c.close.toFixed(5);
                     });
 
+                    // Helper: create sub-chart
+                    const _mkSub = (elId) => LightweightCharts.createChart(document.getElementById(elId), {
+                        ...chartOpts, height: document.getElementById(elId).clientHeight,
+                        timeScale: {...chartOpts.timeScale, visible: false}
+                    });
+
                     // RSI subchart
                     const rsiWrap = document.getElementById('iq-chart-rsi-wrap');
                     if (_iqIndActive.rsi) {
                         rsiWrap.style.display = 'block';
-                        document.querySelector('#iq-chart-rsi-wrap div').textContent = `RSI (${_iqIndSettings.rsiPeriod})`;
-                        _iqChartRsi = LightweightCharts.createChart(rsiEl, {
-                            ...chartOpts, height: rsiEl.clientHeight,
-                            timeScale: {...chartOpts.timeScale, visible: false}
-                        });
+                        _iqChartRsi = _mkSub('iq-chart-rsi');
                         _iqRsiSeries = _iqChartRsi.addLineSeries({color: '#f472b6', lineWidth: 1, priceLineVisible: false, lastValueVisible: true});
                         _iqRsiSeries.setData(_iqCalcRSI(candles));
                         _iqRsiOB = _iqChartRsi.addLineSeries({color: _iqChartColors.rsiLine, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
                         _iqRsiOS = _iqChartRsi.addLineSeries({color: _iqChartColors.rsiLine, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
                         _iqRsiOB.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOB})));
                         _iqRsiOS.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOS})));
-                    } else {
-                        rsiWrap.style.display = 'none';
-                    }
+                    } else { rsiWrap.style.display = 'none'; }
+
+                    // MACD subchart
+                    const macdWrap = document.getElementById('iq-chart-macd-wrap');
+                    if (_iqIndActive.macd) {
+                        macdWrap.style.display = 'block';
+                        _iqChartMacd = _mkSub('iq-chart-macd');
+                        const macdData = _iqCalcMACD(candles);
+                        _iqMacdLineSeries   = _iqChartMacd.addLineSeries({color: '#38bdf8', lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqMacdSignalSeries = _iqChartMacd.addLineSeries({color: '#f87171', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqMacdHistSeries   = _iqChartMacd.addHistogramSeries({
+                            priceScaleId: 'macdh', scaleMargins: {top: 0, bottom: 0},
+                            color: '#22c55e'
+                        });
+                        _iqMacdLineSeries.setData(macdData.map(d => ({time: d.time, value: d.macd})));
+                        _iqMacdSignalSeries.setData(macdData.map(d => ({time: d.time, value: d.signal})));
+                        _iqMacdHistSeries.setData(macdData.map(d => ({time: d.time, value: d.hist, color: d.hist >= 0 ? 'rgba(34,197,94,0.5)' : 'rgba(239,68,68,0.5)'})));
+                    } else { macdWrap.style.display = 'none'; }
+
+                    // Stochastic subchart
+                    const stochWrap = document.getElementById('iq-chart-stoch-wrap');
+                    if (_iqIndActive.stoch) {
+                        stochWrap.style.display = 'block';
+                        _iqChartStoch = _mkSub('iq-chart-stoch');
+                        const st = _iqCalcStoch(candles);
+                        _iqStochKSeries = _iqChartStoch.addLineSeries({color: '#fb923c', lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqStochDSeries = _iqChartStoch.addLineSeries({color: '#a78bfa', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqStochOB = _iqChartStoch.addLineSeries({color: 'rgba(255,255,255,0.12)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqStochOS = _iqChartStoch.addLineSeries({color: 'rgba(255,255,255,0.12)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqStochKSeries.setData(st.k);
+                        _iqStochDSeries.setData(st.d);
+                        _iqStochOB.setData(candles.map(c => ({time: c.time, value: 80})));
+                        _iqStochOS.setData(candles.map(c => ({time: c.time, value: 20})));
+                    } else { stochWrap.style.display = 'none'; }
+
+                    // CCI subchart
+                    const cciWrap = document.getElementById('iq-chart-cci-wrap');
+                    if (_iqIndActive.cci) {
+                        cciWrap.style.display = 'block';
+                        _iqChartCci = _mkSub('iq-chart-cci');
+                        _iqCciSeries = _iqChartCci.addLineSeries({color: '#c084fc', lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqCciZ     = _iqChartCci.addLineSeries({color: 'rgba(255,255,255,0.12)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqCciSeries.setData(_iqCalcCCI(candles));
+                        _iqCciZ.setData(candles.map(c => ({time: c.time, value: 0})));
+                    } else { cciWrap.style.display = 'none'; }
+
+                    // Momentum subchart
+                    const momWrap = document.getElementById('iq-chart-mom-wrap');
+                    if (_iqIndActive.mom) {
+                        momWrap.style.display = 'block';
+                        _iqChartMom = _mkSub('iq-chart-mom');
+                        _iqMomSeries = _iqChartMom.addLineSeries({color: '#34d399', lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqMomZ     = _iqChartMom.addLineSeries({color: 'rgba(255,255,255,0.12)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqMomSeries.setData(_iqCalcMomentum(candles));
+                        _iqMomZ.setData(candles.map(c => ({time: c.time, value: 0})));
+                    } else { momWrap.style.display = 'none'; }
+
+                    // Williams %R subchart
+                    const willrWrap = document.getElementById('iq-chart-willr-wrap');
+                    if (_iqIndActive.willr) {
+                        willrWrap.style.display = 'block';
+                        _iqChartWillr = _mkSub('iq-chart-willr');
+                        _iqWillrSeries = _iqChartWillr.addLineSeries({color: '#fb7185', lineWidth: 1, priceLineVisible: false, lastValueVisible: false});
+                        _iqWillrOB = _iqChartWillr.addLineSeries({color: 'rgba(255,255,255,0.12)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqWillrOS = _iqChartWillr.addLineSeries({color: 'rgba(255,255,255,0.12)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false});
+                        _iqWillrSeries.setData(_iqCalcWillR(candles));
+                        _iqWillrOB.setData(candles.map(c => ({time: c.time, value: -20})));
+                        _iqWillrOS.setData(candles.map(c => ({time: c.time, value: -80})));
+                    } else { willrWrap.style.display = 'none'; }
+
+                    // ATR subchart
+                    const atrWrap = document.getElementById('iq-chart-atr-wrap');
+                    if (_iqIndActive.atr) {
+                        atrWrap.style.display = 'block';
+                        _iqChartAtr = _mkSub('iq-chart-atr');
+                        _iqAtrSeries = _iqChartAtr.addLineSeries({color: '#fbbf24', lineWidth: 1, priceLineVisible: false, lastValueVisible: true});
+                        _iqAtrSeries.setData(_iqCalcATR(candles));
+                    } else { atrWrap.style.display = 'none'; }
 
                     _iqChart.timeScale().fitContent();
 
-                    // Global time-scale subscriber: RSI sync + lazy-load
+                    // Global time-scale subscriber: sync all sub-charts + lazy-load
                     _iqChart.timeScale().subscribeVisibleLogicalRangeChange(function(range) {
                         if (!range) return;
-                        // Sync RSI pane (also handled inside RSI block, this covers non-RSI case)
-                        if (_iqChartRsi) _iqChartRsi.timeScale().setVisibleLogicalRange(range);
-                        // Trigger lazy-load when user scrolls within 30 bars of the left edge
-                        if (!_iqLoadingMore && range.from < 30) {
-                            iqLoadMoreCandles();
-                        }
+                        const subs = [_iqChartRsi, _iqChartMacd, _iqChartStoch, _iqChartCci, _iqChartMom, _iqChartWillr, _iqChartAtr];
+                        subs.forEach(s => { if (s) try { s.timeScale().setVisibleLogicalRange(range); } catch(e){} });
+                        if (!_iqLoadingMore && range.from < 30) iqLoadMoreCandles();
                     });
 
                     // Stats bar
@@ -3371,10 +3846,23 @@
                     document.getElementById('cs-close').textContent  = last.close.toFixed(5);
                     document.getElementById('iq-chart-stats').style.display = 'block';
 
+                    // Show trade panel toggle button
+                    const tpToggle = document.getElementById('iq-trade-toggle-btn');
+                    if (tpToggle) tpToggle.style.display = 'block';
+
                     // Resize observer
                     const ro = new ResizeObserver(() => {
                         if (_iqChart) _iqChart.applyOptions({width: mainEl.clientWidth});
-                        if (_iqChartRsi) _iqChartRsi.applyOptions({width: rsiEl.clientWidth});
+                        const allSubs = [
+                            {c: _iqChartRsi,   id: 'iq-chart-rsi'},
+                            {c: _iqChartMacd,  id: 'iq-chart-macd'},
+                            {c: _iqChartStoch, id: 'iq-chart-stoch'},
+                            {c: _iqChartCci,   id: 'iq-chart-cci'},
+                            {c: _iqChartMom,   id: 'iq-chart-mom'},
+                            {c: _iqChartWillr, id: 'iq-chart-willr'},
+                            {c: _iqChartAtr,   id: 'iq-chart-atr'},
+                        ];
+                        allSubs.forEach(s => { if (s.c) { const el = document.getElementById(s.id); if (el) s.c.applyOptions({width: el.clientWidth}); }});
                     });
                     ro.observe(mainEl);
 
@@ -3386,19 +3874,30 @@
                     _iqIndActive[ind] = !_iqIndActive[ind];
                     const btn = document.getElementById('ind-' + ind);
                     const styles = {
-                        ma1:  {bg:'rgba(251,191,36,0.15)',  color:'#fbbf24', border:'rgba(251,191,36,0.4)'},
-                        ma2:  {bg:'rgba(96,165,250,0.15)',  color:'#60a5fa', border:'rgba(96,165,250,0.4)'},
-                        bb:   {bg:'rgba(167,139,250,0.15)', color:'#a78bfa', border:'rgba(167,139,250,0.4)'},
-                        rsi:  {bg:'rgba(244,114,182,0.15)', color:'#f472b6', border:'rgba(244,114,182,0.4)'},
-                        vol:  {bg:'rgba(74,222,128,0.12)',  color:'#4ade80', border:'rgba(74,222,128,0.3)'}
+                        ma1:   {bg:'rgba(251,191,36,0.15)',  color:'#fbbf24', border:'rgba(251,191,36,0.4)'},
+                        ma2:   {bg:'rgba(96,165,250,0.15)',  color:'#60a5fa', border:'rgba(96,165,250,0.4)'},
+                        bb:    {bg:'rgba(167,139,250,0.15)', color:'#a78bfa', border:'rgba(167,139,250,0.4)'},
+                        rsi:   {bg:'rgba(244,114,182,0.15)', color:'#f472b6', border:'rgba(244,114,182,0.4)'},
+                        vol:   {bg:'rgba(74,222,128,0.12)',  color:'#4ade80', border:'rgba(74,222,128,0.3)'},
+                        ema3:  {bg:'rgba(249,115,22,0.15)',  color:'#f97316', border:'rgba(249,115,22,0.4)'},
+                        sar:   {bg:'rgba(244,63,94,0.15)',   color:'#f43f5e', border:'rgba(244,63,94,0.4)'},
+                        macd:  {bg:'rgba(56,189,248,0.15)',  color:'#38bdf8', border:'rgba(56,189,248,0.4)'},
+                        stoch: {bg:'rgba(251,146,60,0.15)',  color:'#fb923c', border:'rgba(251,146,60,0.4)'},
+                        cci:   {bg:'rgba(192,132,252,0.15)', color:'#c084fc', border:'rgba(192,132,252,0.4)'},
+                        mom:   {bg:'rgba(52,211,153,0.15)',  color:'#34d399', border:'rgba(52,211,153,0.4)'},
+                        willr: {bg:'rgba(251,113,133,0.15)', color:'#fb7185', border:'rgba(251,113,133,0.4)'},
+                        atr:   {bg:'rgba(251,191,36,0.12)',  color:'#fbbf24', border:'rgba(251,191,36,0.35)'}
                     };
-                    if (_iqIndActive[ind] && styles[ind]) {
-                        const s = styles[ind];
-                        btn.style.background = s.bg; btn.style.color = s.color; btn.style.borderColor = s.border;
-                    } else {
-                        btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#64748b'; btn.style.borderColor = 'rgba(255,255,255,0.1)';
+                    if (btn) {
+                        if (_iqIndActive[ind] && styles[ind]) {
+                            const s = styles[ind];
+                            btn.style.background = s.bg; btn.style.color = s.color; btn.style.borderColor = s.border;
+                        } else {
+                            btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#64748b'; btn.style.borderColor = 'rgba(255,255,255,0.1)';
+                        }
                     }
-                    if (_iqChartData.length > 0) iqBuildCharts(_iqChartData, document.getElementById('cs-asset').textContent || document.getElementById('iq-chart-asset').value, _iqChartInterval);
+                    const curAsset = document.getElementById('cs-asset').textContent || document.getElementById('iq-chart-asset').value;
+                    if (_iqChartData.length > 0) iqBuildCharts(_iqChartData, curAsset, _iqChartInterval);
                 }
 
                 /* ---- Real-Time Tick Stream (WebSocket-backed) ---- */
@@ -3606,10 +4105,10 @@
                         _iqVolSeries.setData(volSrc.map(c => ({time: c.time, value: c.volume || 0,
                             color: c.close >= c.open ? _iqChartColors.volUp : _iqChartColors.volDown})));
                     }
-                    if (_iqMa1Series && _iqIndActive.ma1)
-                        _iqMa1Series.setData(_iqCalcMA(candles, _iqIndSettings.ma1Period));
-                    if (_iqMa2Series && _iqIndActive.ma2)
-                        _iqMa2Series.setData(_iqCalcMA(candles, _iqIndSettings.ma2Period));
+                    if (_iqMa1Series && _iqIndActive.ma1)  _iqMa1Series.setData(_iqCalcMA(candles, _iqIndSettings.ma1Period));
+                    if (_iqMa2Series && _iqIndActive.ma2)  _iqMa2Series.setData(_iqCalcMA(candles, _iqIndSettings.ma2Period));
+                    if (_iqEma3Series && _iqIndActive.ema3) _iqEma3Series.setData(_iqCalcEMA(candles, _iqIndSettings.ema3Period));
+                    if (_iqSarSeries && _iqIndActive.sar)  _iqSarSeries.setData(_iqCalcSAR(candles).map(d => ({time: d.time, value: d.value})));
                     if (_iqIndActive.bb) {
                         const bb = _iqCalcBB(candles);
                         if (_iqBbUpSeries)  _iqBbUpSeries.setData(bb.up);
@@ -3620,6 +4119,37 @@
                         _iqRsiSeries.setData(_iqCalcRSI(candles));
                         if (_iqRsiOB) _iqRsiOB.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOB})));
                         if (_iqRsiOS) _iqRsiOS.setData(candles.map(c => ({time: c.time, value: _iqIndSettings.rsiOS})));
+                    }
+                    if (_iqIndActive.macd && _iqMacdLineSeries) {
+                        const macdData = _iqCalcMACD(candles);
+                        _iqMacdLineSeries.setData(macdData.map(d => ({time: d.time, value: d.macd})));
+                        if (_iqMacdSignalSeries) _iqMacdSignalSeries.setData(macdData.map(d => ({time: d.time, value: d.signal})));
+                        if (_iqMacdHistSeries)   _iqMacdHistSeries.setData(macdData.map(d => ({time: d.time, value: d.hist, color: d.hist >= 0 ? 'rgba(34,197,94,0.5)' : 'rgba(239,68,68,0.5)'})));
+                    }
+                    if (_iqIndActive.stoch && _iqStochKSeries) {
+                        const st = _iqCalcStoch(candles);
+                        _iqStochKSeries.setData(st.k);
+                        if (_iqStochDSeries) _iqStochDSeries.setData(st.d);
+                        if (_iqStochOB) _iqStochOB.setData(candles.map(c => ({time: c.time, value: 80})));
+                        if (_iqStochOS) _iqStochOS.setData(candles.map(c => ({time: c.time, value: 20})));
+                    }
+                    if (_iqCciSeries && _iqIndActive.cci) {
+                        _iqCciSeries.setData(_iqCalcCCI(candles));
+                        if (_iqCciZ) _iqCciZ.setData(candles.map(c => ({time: c.time, value: 0})));
+                    }
+                    if (_iqMomSeries && _iqIndActive.mom) {
+                        _iqMomSeries.setData(_iqCalcMomentum(candles));
+                        if (_iqMomZ) _iqMomZ.setData(candles.map(c => ({time: c.time, value: 0})));
+                    }
+                    if (_iqWillrSeries && _iqIndActive.willr) {
+                        _iqWillrSeries.setData(_iqCalcWillR(candles));
+                        if (_iqWillrOB) _iqWillrOB.setData(candles.map(c => ({time: c.time, value: -20})));
+                        if (_iqWillrOS) _iqWillrOS.setData(candles.map(c => ({time: c.time, value: -80})));
+                    }
+                    if (_iqAtrSeries && _iqIndActive.atr) _iqAtrSeries.setData(_iqCalcATR(candles));
+                    // Re-apply signal markers after data update
+                    if (_iqSignalsActive && _iqSignalMarkers.length > 0 && _iqCandleSeries) {
+                        _iqCandleSeries.setMarkers(_iqSignalMarkers);
                     }
                 }
 
@@ -3724,6 +4254,117 @@
                         btn.disabled = false; btn.innerHTML = '<i class="fas fa-sync-alt me-1"></i>Load Chart';
                     });
                 }
+
+                /* ---- Strategy Signals Overlay ---- */
+                function iqToggleStrategySignals() {
+                    if (_iqSignalsActive) {
+                        // Remove signals
+                        _iqSignalsActive = false;
+                        _iqSignalMarkers = [];
+                        if (_iqCandleSeries) try { _iqCandleSeries.setMarkers([]); } catch(e){}
+                        const bar = document.getElementById('iq-signal-bar');
+                        if (bar) bar.style.display = 'none';
+                        const btn = document.getElementById('ind-signals');
+                        if (btn) { btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#94a3b8'; btn.style.borderColor = 'rgba(255,255,255,0.1)'; }
+                        return;
+                    }
+                    if (!_iqChartData || _iqChartData.length < 50) {
+                        alert('Load chart terlebih dahulu sebelum menampilkan sinyal strategi.');
+                        return;
+                    }
+                    const btn = document.getElementById('ind-signals');
+                    if (btn) { btn.style.background = 'rgba(99,102,241,0.15)'; btn.style.color = '#6366f1'; btn.style.borderColor = 'rgba(99,102,241,0.4)'; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sinyal'; }
+                    fetch('/iqoption/strategy-signals', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({candles: _iqChartData.map(c => ({time: c.time, open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume || 0}))})
+                    }).then(r => r.json()).then(res => {
+                        if (btn) btn.innerHTML = '<i class="fas fa-chart-line me-1"></i>Sinyal';
+                        if (!res.success || !res.signals) {
+                            alert(res.message || 'Gagal memuat sinyal. Pastikan strategi sudah diterapkan di Generator Strategi.');
+                            if (btn) { btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#94a3b8'; btn.style.borderColor = 'rgba(255,255,255,0.1)'; }
+                            return;
+                        }
+                        _iqSignalsActive = true;
+                        const sigs = res.signals;
+                        let calls = 0, puts = 0;
+                        _iqSignalMarkers = sigs.map(s => {
+                            const isCall = s.signal === 1;
+                            if (isCall) calls++; else puts++;
+                            return {
+                                time: s.time,
+                                position: isCall ? 'belowBar' : 'aboveBar',
+                                color: isCall ? '#22c55e' : '#ef4444',
+                                shape: isCall ? 'arrowUp' : 'arrowDown',
+                                text: isCall ? 'CALL' : 'PUT',
+                                size: 1
+                            };
+                        });
+                        if (_iqCandleSeries) {
+                            try { _iqCandleSeries.setMarkers(_iqSignalMarkers); } catch(e) { console.error('Marker error:', e); }
+                        }
+                        // Update signal info bar
+                        const bar = document.getElementById('iq-signal-bar');
+                        if (bar) {
+                            bar.style.display = 'block';
+                            document.getElementById('sig-total').textContent = sigs.length;
+                            document.getElementById('sig-call').textContent  = calls;
+                            document.getElementById('sig-put').textContent   = puts;
+                        }
+                    }).catch(err => {
+                        if (btn) { btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#94a3b8'; btn.style.borderColor = 'rgba(255,255,255,0.1)'; btn.innerHTML = '<i class="fas fa-chart-line me-1"></i>Sinyal'; }
+                        alert('Error: ' + err.message);
+                    });
+                }
+
+                /* ---- Trade Execution Panel ---- */
+                function iqToggleTradePanel() {
+                    const panel = document.getElementById('iq-trade-panel');
+                    if (!panel) return;
+                    const visible = panel.style.display !== 'none';
+                    panel.style.display = visible ? 'none' : 'block';
+                    if (!visible) iqUpdateTradePanel();
+                }
+
+                function iqUpdateTradePanel() {
+                    fetch('/bot-trades').then(r => r.json()).then(res => {
+                        const dot = document.getElementById('tp-status-dot');
+                        const lbl = document.getElementById('tp-status-lbl');
+                        const profEl = document.getElementById('tp-profit');
+                        if (dot) dot.style.background = res.is_trading ? '#22c55e' : '#ef4444';
+                        if (lbl) lbl.textContent = res.is_trading ? 'Bot aktif (trading)' : 'Bot tidak aktif';
+                        if (profEl) {
+                            const p = parseFloat(res.profit_total || 0).toFixed(2);
+                            profEl.textContent = (p >= 0 ? '+' : '') + p;
+                            profEl.style.color = p >= 0 ? '#4ade80' : '#f87171';
+                        }
+                        const tbody = document.getElementById('tp-tbody');
+                        if (!tbody) return;
+                        const trades = res.trades || [];
+                        if (!trades.length) {
+                            tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="color:#475569;padding:12px;">Belum ada trade</td></tr>';
+                            return;
+                        }
+                        tbody.innerHTML = trades.slice().reverse().map(t => {
+                            const isCall = (t.direction || '').toUpperCase() === 'CALL';
+                            const pnlStr = (t.profit != null) ? ((t.profit >= 0 ? '+' : '') + parseFloat(t.profit).toFixed(2)) : '—';
+                            const pnlClr = (t.profit >= 0) ? '#4ade80' : '#f87171';
+                            return `<tr style="border-color:rgba(255,255,255,0.06);">
+                                <td style="font-family:monospace;font-size:0.65rem;color:#64748b;">${(t.order_id||'').slice(-8)}</td>
+                                <td style="color:#e2e8f0;">${t.asset||'—'}</td>
+                                <td style="font-weight:600;color:${isCall?'#22c55e':'#ef4444'};">${isCall?'▲ CALL':'▼ PUT'}</td>
+                                <td style="color:#94a3b8;">$${parseFloat(t.amount||0).toFixed(2)}</td>
+                                <td style="color:${pnlClr};font-weight:600;">${pnlStr}</td>
+                            </tr>`;
+                        }).join('');
+                    }).catch(() => {});
+                }
+
+                // Auto-update trade panel every 10 seconds if visible
+                setInterval(() => {
+                    const panel = document.getElementById('iq-trade-panel');
+                    if (panel && panel.style.display !== 'none') iqUpdateTradePanel();
+                }, 10000);
 
                 // Timeframe button + asset change triggers reload
                 document.addEventListener('DOMContentLoaded', function() {

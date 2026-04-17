@@ -40,6 +40,10 @@ Key design patterns include the use of static data for fixed content, environmen
 - **ENHANCEMENT (Aug 11, 2025)**: Implemented full Martingale functionality with configurable steps, multipliers, and proper reset logic.
 - **DATABASE FIX (Aug 11, 2025)**: Fixed bot_setting table schema to properly apply all default values from Flask model definitions.
 - **DATABASE CLEANUP (Aug 11, 2025)**: Removed unnecessary columns (asset, strategy, max_consecutive_losses) from bot_setting table to clean up the schema.
+- **CHART ENHANCEMENT (Apr 17, 2026)**: Added 8 new technical indicators to the IQ Option chart: EMA (Exponential MA), MACD (with histogram + signal line), Stochastic (%K/%D), CCI, Momentum, Williams %R, ATR, Parabolic SAR. Each indicator has a dedicated sub-chart or overlay with its own color theme.
+- **SIGNAL OVERLAY (Apr 17, 2026)**: Added strategy buy/sell signal markers (▲ CALL / ▼ PUT arrows) directly on the candlestick chart via `/iqoption/strategy-signals` endpoint. Uses the applied strategy from Generator Strategi.
+- **TRADE EXECUTION PANEL (Apr 17, 2026)**: Added live trade execution panel below the chart showing bot's real-time trade history, P&L, and bot status via `/bot-trades` endpoint.
+- **INDICATOR SETTINGS (Apr 17, 2026)**: Extended indicator settings modal with parameters for all new indicators (EMA period/color, MACD fast/slow/signal, Stochastic K/D/smooth, CCI/Momentum/Williams%R/ATR periods). Modal is now scrollable.
 
 ## External Dependencies
 

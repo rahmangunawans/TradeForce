@@ -22,13 +22,18 @@ except ImportError:
 try:
     from strategy_generator import (
         StrategyGenerator, TradingConfig as GenTradingConfig,
-        INDICATOR_CATALOG, backtest_strategy
+        INDICATOR_CATALOG, backtest_strategy,
+        IndicatorConfig, get_signal_at
     )
+    _SG_AVAILABLE = True
 except ImportError:
     StrategyGenerator = None
     GenTradingConfig = None
     INDICATOR_CATALOG = {}
     backtest_strategy = None
+    IndicatorConfig = None
+    get_signal_at = None
+    _SG_AVAILABLE = False
 import threading
 import json
 import time
@@ -687,6 +692,99 @@ def stop_bot():
             'success': False,
             'message': f'Error stopping bot: {str(e)}'
         })
+
+@app.route('/iqoption/strategy-signals', methods=['POST'])
+@login_required
+def strategy_signals_for_chart():
+    """Compute buy/sell signal markers from applied strategy over provided candle data."""
+    import json as _j
+    if not _SG_AVAILABLE or get_signal_at is None:
+        return jsonify({'success': False, 'message': 'Strategy generator tidak tersedia.', 'signals': []})
+
+    settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+    if not settings or not settings.selected_strategy:
+        return jsonify({'success': False, 'message': 'Belum ada strategi yang diterapkan.', 'signals': []})
+
+    try:
+        ind_list = _j.loads(settings.selected_strategy)
+    except Exception:
+        return jsonify({'success': False, 'message': 'Error parsing strategi.', 'signals': []})
+
+    if not ind_list:
+        return jsonify({'success': True, 'signals': []})
+
+    data = request.get_json() or {}
+    candles = data.get('candles', [])
+    if len(candles) < 50:
+        return jsonify({'success': False, 'message': 'Data candle tidak cukup.', 'signals': []})
+
+    indicators = []
+    for item in ind_list:
+        iid = item.get('id') or item.get('indicator_id')
+        params = item.get('params', {})
+        if iid and IndicatorConfig:
+            indicators.append(IndicatorConfig(indicator_id=iid, params=params))
+
+    if not indicators:
+        return jsonify({'success': True, 'signals': []})
+
+    min_agr = max(1, settings.min_agreement or 1)
+    try:
+        c   = [float(x.get('close', 0))  for x in candles]
+        hi  = [float(x.get('high',  x.get('close', 0))) for x in candles]
+        lo  = [float(x.get('low',   x.get('close', 0))) for x in candles]
+        op  = [float(x.get('open',  x.get('close', 0))) for x in candles]
+        vol = [float(x.get('volume', 1)) for x in candles]
+        D   = {'closes': c, 'highs': hi, 'lows': lo, 'opens': op, 'volumes': vol}
+
+        signals = []
+        warmup = 60
+        for i in range(warmup, len(candles) - 1):
+            votes = []
+            for ind in indicators:
+                try:
+                    s = get_signal_at(i, ind.indicator_id, ind.params, D)
+                    if s != 0:
+                        votes.append(s)
+                except Exception:
+                    pass
+            call_v = votes.count(1)
+            put_v  = votes.count(-1)
+            if call_v >= min_agr and call_v > put_v:
+                signals.append({'time': int(candles[i]['time']), 'signal': 1})
+            elif put_v >= min_agr and put_v > call_v:
+                signals.append({'time': int(candles[i]['time']), 'signal': -1})
+
+        return jsonify({'success': True, 'signals': signals, 'count': len(signals)})
+    except Exception as ex:
+        return jsonify({'success': False, 'message': str(ex), 'signals': []})
+
+
+@app.route('/bot-trades')
+@login_required
+def bot_trades():
+    """Return current bot trade history for the trade execution panel."""
+    user_id = current_user.id
+    if user_id not in active_bots:
+        return jsonify({'success': True, 'trades': [], 'is_trading': False, 'profit_total': 0})
+    robot = active_bots[user_id]
+    trades = []
+    for t in robot.trades_history[-30:]:
+        trades.append({
+            'order_id': str(t.get('order_id', '')),
+            'asset':     t.get('asset', ''),
+            'direction': t.get('direction', ''),
+            'amount':    t.get('amount', 0),
+            'profit':    t.get('profit', 0),
+        })
+    return jsonify({
+        'success': True,
+        'trades': trades,
+        'is_trading': robot.is_trading,
+        'profit_total': robot.profit_total,
+        'balance': robot.balance,
+    })
+
 
 @app.route('/get-applied-strategy')
 @login_required

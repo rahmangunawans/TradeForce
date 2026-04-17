@@ -2496,12 +2496,60 @@
                                                 <option value="mt4_next_signal">MT4 TERMINAL [NEXT SIGNAL]</option>
                                                 <option value="tv_next_candle">TRADINGVIEW [NEXT CANDLE]</option>
                                                 <option value="tv_next_signal">TRADINGVIEW [NEXT SIGNAL]</option>
-                                                <option value="signal_input" selected>MANUAL SIGNAL INPUT</option>
+                                                <option value="signal_input" {% if bot_signal_type not in ('strategy_generator',) %}selected{% endif %}>MANUAL SIGNAL INPUT</option>
+                                                <option value="strategy_generator" {% if bot_signal_type == 'strategy_generator' %}selected{% endif %}>&#x1F916; STRATEGI GENERATE [AUTO SIGNAL]</option>
                                             </select>
                                         </div>
                                         <div class="col-md-7" id="iq-signal-input-wrap">
                                             <label class="form-label small" style="color:#94a3b8;">Signal Input <span class="text-muted small">(format: datetime,asset,direction,timeframe)</span></label>
                                             <textarea id="iq-signal-content" rows="3" class="form-control bg-dark border-secondary text-white font-monospace" placeholder="YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME&#10;(satu sinyal per baris — baris pertama akan dieksekusi)"></textarea>
+                                        </div>
+
+                                        <!-- Strategy Generator Panel -->
+                                        <div class="col-12" id="iq-strategy-gen-panel" style="display:none;">
+                                            <div class="rounded p-3" style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.3);">
+                                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <i class="fas fa-robot" style="color:#34d399;"></i>
+                                                        <span class="small fw-bold" style="color:#34d399;">Strategi Generate Aktif</span>
+                                                    </div>
+                                                    <button class="btn btn-sm py-0 px-2" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-size:0.72rem;" onclick="iqRefreshAppliedStrategy()">
+                                                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                                                    </button>
+                                                </div>
+                                                <div id="iq-strategy-info-body">
+                                                    {% if bot_signal_type == 'strategy_generator' and bot_strategy_indicators %}
+                                                    <div class="row g-2 mb-2">
+                                                        <div class="col-6">
+                                                            <div class="small" style="color:#94a3b8;">Asset</div>
+                                                            <div class="small fw-bold text-white">{{ bot_selected_asset or '-' }}</div>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="small" style="color:#94a3b8;">Timeframe</div>
+                                                            <div class="small fw-bold text-white">M{{ bot_selected_interval or 1 }}</div>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="small" style="color:#94a3b8;">Min. Agree</div>
+                                                            <div class="small fw-bold text-white">{{ bot_min_agreement or 1 }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="small mb-1" style="color:#94a3b8;">Indikator Aktif:</div>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        {% for ind in bot_strategy_indicators %}
+                                                        <span class="badge" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.35);font-size:0.7rem;">{{ ind.get('id', ind.get('label','?')) }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="small text-center py-2" style="color:#64748b;">
+                                                        <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
+                                                        Belum ada strategi yang diterapkan. Buka <strong>Generate Strategi</strong>, jalankan generator, lalu klik <strong>Terapkan ke Robot</strong>.
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="mt-2 pt-2" style="border-top:1px solid rgba(16,185,129,0.15);">
+                                                    <div class="small" style="color:#64748b;"><i class="fas fa-info-circle me-1"></i>Robot akan membaca sinyal CALL/PUT langsung dari indikator strategi secara real-time menggunakan candle live IQ Option.</div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Signal Guide -->
@@ -3921,19 +3969,56 @@
                     const dropzoneWrap = document.getElementById('iq-dropzone-wrap');
                     const mt4Info = document.getElementById('iq-mt4-info');
                     const tvInfo = document.getElementById('iq-tv-info');
+                    const stratGenPanel = document.getElementById('iq-strategy-gen-panel');
                     signalWrap.style.display = 'none';
                     signalGuide.style.display = 'none';
                     dropzoneWrap.style.display = 'none';
                     mt4Info.style.display = 'none';
                     tvInfo.style.display = 'none';
+                    stratGenPanel.style.display = 'none';
                     if (val === 'signal_input') {
                         signalWrap.style.display = 'block';
                         signalGuide.style.display = 'block';
                         dropzoneWrap.style.display = 'block';
+                    } else if (val === 'strategy_generator') {
+                        stratGenPanel.style.display = 'block';
+                        iqRefreshAppliedStrategy();
                     } else if (val.startsWith('mt4')) {
                         mt4Info.style.display = 'block';
                     } else if (val.startsWith('tv')) {
                         tvInfo.style.display = 'block';
+                    }
+                }
+
+                async function iqRefreshAppliedStrategy() {
+                    try {
+                        const r = await fetch('/get-applied-strategy');
+                        const data = await r.json();
+                        const body = document.getElementById('iq-strategy-info-body');
+                        if (!body) return;
+                        if (!data.success || !data.indicators || data.indicators.length === 0) {
+                            body.innerHTML = `<div class="small text-center py-2" style="color:#64748b;"><i class="fas fa-exclamation-triangle me-1 text-warning"></i>Belum ada strategi yang diterapkan. Buka <strong>Generate Strategi</strong>, jalankan generator, lalu klik <strong>Terapkan ke Robot</strong>.</div>`;
+                            return;
+                        }
+                        // Sync dropdown jika signal_type di DB adalah strategy_generator
+                        if (data.signal_type === 'strategy_generator') {
+                            const sel = document.getElementById('iq-strategy');
+                            if (sel && sel.value !== 'strategy_generator') sel.value = 'strategy_generator';
+                        }
+                        const badges = data.indicators.map(ind => {
+                            const nm = ind.id || ind.label || ind.indicator_id || '?';
+                            return `<span class="badge" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.35);font-size:0.7rem;">${nm}</span>`;
+                        }).join('');
+                        body.innerHTML = `
+                            <div class="row g-2 mb-2">
+                                <div class="col-6"><div class="small" style="color:#94a3b8;">Asset</div><div class="small fw-bold text-white">${data.asset || '-'}</div></div>
+                                <div class="col-3"><div class="small" style="color:#94a3b8;">Timeframe</div><div class="small fw-bold text-white">M${data.interval || 1}</div></div>
+                                <div class="col-3"><div class="small" style="color:#94a3b8;">Min. Agree</div><div class="small fw-bold text-white">${data.min_agreement || 1}</div></div>
+                            </div>
+                            <div class="small mb-1" style="color:#94a3b8;">Indikator Aktif:</div>
+                            <div class="d-flex flex-wrap gap-1">${badges}</div>`;
+                    } catch(e) {
+                        console.warn('iqRefreshAppliedStrategy error:', e);
                     }
                 }
 
@@ -4063,6 +4148,11 @@
                     if (iqSignalQueue.length === 0) return;
                     document.getElementById('iq-signal-content').value = iqSignalQueue.join('\n');
                 }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize signal source UI based on pre-selected value
+                    onStrategyChange();
+                });
 
                 document.addEventListener('DOMContentLoaded', function() {
                     const dropZone = document.getElementById('iq-drop-zone');
@@ -5040,6 +5130,12 @@
             const data = await resp.json();
             if (data.success) {
                 sgShowAlert('✅ ' + data.message, 'success');
+                // Auto-switch robot dropdown ke strategy_generator
+                const sel = document.getElementById('iq-strategy');
+                if (sel) {
+                    sel.value = 'strategy_generator';
+                    onStrategyChange();
+                }
             } else {
                 sgShowAlert('❌ ' + data.message, 'danger');
             }

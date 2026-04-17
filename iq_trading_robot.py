@@ -308,7 +308,7 @@ class IQTradingRobot:
         asset = getattr(cfg, 'asset', 'EURUSD-OTC')
         duration = getattr(cfg, 'duration', 1)
 
-        if signal_type == "signal_input":
+        if signal_type in ("signal_input", "manual_input"):
             content = (cfg.signal_content or "").strip()
             if not content:
                 return None

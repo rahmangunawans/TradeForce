@@ -343,11 +343,28 @@ def dashboard():
     bot_configured = bot_settings is not None
     bot_active = current_user.id in active_bots and active_bots[current_user.id].is_trading if current_user.id in active_bots else False
     
+    import json as _json_mod
+    bot_signal_type = bot_settings.signal_type if bot_settings else 'signal_input'
+    bot_selected_asset = bot_settings.selected_asset if bot_settings else ''
+    bot_selected_interval = bot_settings.selected_interval if bot_settings else 1
+    bot_min_agreement = bot_settings.min_agreement if bot_settings else 1
+    bot_strategy_indicators = []
+    if bot_settings and bot_settings.selected_strategy:
+        try:
+            bot_strategy_indicators = _json_mod.loads(bot_settings.selected_strategy)
+        except Exception:
+            bot_strategy_indicators = []
+
     return render_template('dashboard.html', 
                          user_stats=user_stats, 
                          current_user=current_user,
                          bot_configured=bot_configured,
-                         bot_active=bot_active)
+                         bot_active=bot_active,
+                         bot_signal_type=bot_signal_type,
+                         bot_selected_asset=bot_selected_asset,
+                         bot_selected_interval=bot_selected_interval,
+                         bot_min_agreement=bot_min_agreement,
+                         bot_strategy_indicators=bot_strategy_indicators)
 
 @app.route('/forgot-password', methods=['POST'])
 def forgot_password():
@@ -603,11 +620,6 @@ def start_bot():
         config = TradingBotConfig.from_db_settings(settings)
         config.iq_password = iq_password  # Set password dari request
         
-        # Pastikan ada signal content untuk testing jika kosong
-        if not config.signal_content or config.signal_content.strip() == '':
-            config.signal_content = 'CALL,1'  # Signal default untuk testing
-            print(f"⚠️ Menggunakan signal default: {config.signal_content}")
-            
         robot = IQTradingRobot(settings.iq_email, iq_password, config)
         
         # Connect to IQ Option
@@ -675,6 +687,30 @@ def stop_bot():
             'success': False,
             'message': f'Error stopping bot: {str(e)}'
         })
+
+@app.route('/get-applied-strategy')
+@login_required
+def get_applied_strategy():
+    """Return current applied strategy from DB for the robot UI panel."""
+    import json as _j
+    settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+    if not settings:
+        return jsonify({'success': False, 'signal_type': 'signal_input', 'indicators': [], 'asset': '', 'interval': 1, 'min_agreement': 1})
+    indicators = []
+    if settings.selected_strategy:
+        try:
+            indicators = _j.loads(settings.selected_strategy)
+        except Exception:
+            indicators = []
+    return jsonify({
+        'success': True,
+        'signal_type': settings.signal_type or 'signal_input',
+        'indicators': indicators,
+        'asset': settings.selected_asset or '',
+        'interval': settings.selected_interval or 1,
+        'min_agreement': settings.min_agreement or 1,
+    })
+
 
 @app.route('/bot-status')
 @login_required

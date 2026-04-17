@@ -364,6 +364,15 @@ class IQTradingRobot:
         interval = cfg.selected_interval or 1  # minutes
         duration = interval  # trade duration = timeframe
 
+        # ── Candle-level cooldown: trade at most once per closed candle ────────
+        candle_boundary = int(time.time() // (interval * 60)) * (interval * 60)
+        last_key = f"{asset}_{interval}"
+        if not hasattr(self, '_last_signal_candle'):
+            self._last_signal_candle = {}
+        if self._last_signal_candle.get(last_key) == candle_boundary:
+            return None  # already traded this candle
+        # ─────────────────────────────────────────────────────────────────────
+
         try:
             ind_list = json.loads(strategy_json)
         except Exception:
@@ -436,8 +445,10 @@ class IQTradingRobot:
         logger.info(f"Strategy signal votes: CALL={call_v} PUT={put_v} (need {min_agr})")
 
         if call_v >= min_agr and call_v > put_v:
+            self._last_signal_candle[last_key] = candle_boundary
             return ('CALL', asset, duration)
         elif put_v >= min_agr and put_v > call_v:
+            self._last_signal_candle[last_key] = candle_boundary
             return ('PUT', asset, duration)
 
         return None

@@ -2505,49 +2505,31 @@
                                             <textarea id="iq-signal-content" rows="3" class="form-control bg-dark border-secondary text-white font-monospace" placeholder="YYYY-MM-DD HH:MM:SS,ASSET,CALL/PUT,TIMEFRAME&#10;(satu sinyal per baris — baris pertama akan dieksekusi)"></textarea>
                                         </div>
 
-                                        <!-- Strategy Generator Panel -->
+                                        <!-- Multi-Strategy Generator Panel -->
                                         <div class="col-12" id="iq-strategy-gen-panel" style="display:none;">
                                             <div class="rounded p-3" style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.3);">
                                                 <div class="d-flex align-items-center justify-content-between mb-2">
                                                     <div class="d-flex align-items-center gap-2">
                                                         <i class="fas fa-robot" style="color:#34d399;"></i>
                                                         <span class="small fw-bold" style="color:#34d399;">Strategi Generate Aktif</span>
+                                                        <span id="iq-multi-strat-count" class="badge" style="background:rgba(16,185,129,0.3);color:#34d399;font-size:0.65rem;display:none;">0</span>
                                                     </div>
-                                                    <button class="btn btn-sm py-0 px-2" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-size:0.72rem;" onclick="iqRefreshAppliedStrategy()">
-                                                        <i class="fas fa-sync-alt me-1"></i>Refresh
-                                                    </button>
+                                                    <div class="d-flex gap-1">
+                                                        <button class="btn btn-sm py-0 px-2" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-size:0.72rem;" onclick="iqRefreshAppliedStrategy()">
+                                                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                                                        </button>
+                                                    </div>
                                                 </div>
+                                                <!-- Multi-strategy list (loaded dynamically) -->
                                                 <div id="iq-strategy-info-body">
-                                                    {% if bot_signal_type == 'strategy_generator' and bot_strategy_indicators %}
-                                                    <div class="row g-2 mb-2">
-                                                        <div class="col-6">
-                                                            <div class="small" style="color:#94a3b8;">Asset</div>
-                                                            <div class="small fw-bold text-white">{{ bot_selected_asset or '-' }}</div>
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <div class="small" style="color:#94a3b8;">Timeframe</div>
-                                                            <div class="small fw-bold text-white">M{{ bot_selected_interval or 1 }}</div>
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <div class="small" style="color:#94a3b8;">Min. Agree</div>
-                                                            <div class="small fw-bold text-white">{{ bot_min_agreement or 1 }}</div>
+                                                    <div id="iq-multi-strat-list">
+                                                        <div class="small text-center py-2" style="color:#64748b;">
+                                                            <i class="fas fa-spinner fa-spin me-1"></i>Memuat strategi...
                                                         </div>
                                                     </div>
-                                                    <div class="small mb-1" style="color:#94a3b8;">Indikator Aktif:</div>
-                                                    <div class="d-flex flex-wrap gap-1">
-                                                        {% for ind in bot_strategy_indicators %}
-                                                        <span class="badge" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.35);font-size:0.7rem;">{{ ind.get('id', ind.get('label','?')) }}</span>
-                                                        {% endfor %}
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="small text-center py-2" style="color:#64748b;">
-                                                        <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
-                                                        Belum ada strategi yang diterapkan. Buka <strong>Generate Strategi</strong>, jalankan generator, lalu klik <strong>Terapkan ke Robot</strong>.
-                                                    </div>
-                                                    {% endif %}
                                                 </div>
                                                 <div class="mt-2 pt-2" style="border-top:1px solid rgba(16,185,129,0.15);">
-                                                    <div class="small" style="color:#64748b;"><i class="fas fa-info-circle me-1"></i>Robot akan membaca sinyal CALL/PUT langsung dari indikator strategi secara real-time menggunakan candle live IQ Option.</div>
+                                                    <div class="small" style="color:#64748b;"><i class="fas fa-info-circle me-1"></i>Robot membaca sinyal dari semua strategi aktif secara real-time. Tambahkan strategi dari <strong>Generate Strategi</strong> → <strong>Tambah ke Daftar</strong>.</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2869,16 +2851,12 @@
                                         <button class="btn btn-outline-secondary px-2 py-1 iq-tf-btn" data-seconds="14400" style="font-size:0.75rem;">4H</button>
                                     </div>
 
-                                    <!-- Chart Type buttons -->
-                                    <div class="d-flex gap-1 align-items-center">
-                                        <span style="font-size:0.68rem;color:#64748b;white-space:nowrap;">Type:</span>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn px-2 py-0 iq-chart-type-btn active" data-type="candle" onclick="iqSetChartType('candle')" title="Candlestick" style="font-size:0.72rem;background:rgba(139,92,246,0.2);color:#a78bfa;border:1px solid rgba(139,92,246,0.4);"><i class="fas fa-chart-bar"></i> Candle</button>
-                                            <button class="btn px-2 py-0 iq-chart-type-btn" data-type="bar" onclick="iqSetChartType('bar')" title="Bar/OHLC" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#64748b;border:1px solid rgba(255,255,255,0.1);">Bar</button>
-                                            <button class="btn px-2 py-0 iq-chart-type-btn" data-type="line" onclick="iqSetChartType('line')" title="Line with Shadow" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#64748b;border:1px solid rgba(255,255,255,0.1);">Line</button>
-                                            <button class="btn px-2 py-0 iq-chart-type-btn" data-type="ha" onclick="iqSetChartType('ha')" title="Heikin-Ashi" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#64748b;border:1px solid rgba(255,255,255,0.1);">HA</button>
-                                        </div>
-                                    </div>
+                                    <!-- Chart Type button → opens modal -->
+                                    <button onclick="iqOpenChartTypeModal()" class="btn btn-sm d-flex align-items-center gap-1" id="iq-chart-type-btn-main" style="font-size:0.78rem;background:rgba(139,92,246,0.18);color:#a78bfa;border:1px solid rgba(139,92,246,0.4);padding:4px 10px;">
+                                        <i class="fas fa-chart-bar"></i>
+                                        <span id="iq-chart-type-label">Candlestick</span>
+                                        <i class="fas fa-chevron-down" style="font-size:0.6rem;opacity:0.7;"></i>
+                                    </button>
 
                                     <!-- Candle Timer -->
                                     <div class="d-flex align-items-center gap-1" title="Waktu tersisa candle berikutnya">
@@ -2886,26 +2864,34 @@
                                         <span id="iq-candle-timer" style="font-size:0.8rem;font-weight:600;color:#64748b;font-family:monospace;min-width:38px;">—</span>
                                     </div>
 
-                                    <!-- Indicator toggles + Settings -->
-                                    <div class="d-flex gap-1 flex-wrap align-items-center">
-                                        <span style="font-size:0.68rem;color:#64748b;">Ind:</span>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma1" onclick="iqToggleIndicator('ma1')" style="font-size:0.72rem;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);">SMA<span id="lbl-ma1">20</span></button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma2" onclick="iqToggleIndicator('ma2')" style="font-size:0.72rem;background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.4);">SMA<span id="lbl-ma2">50</span></button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-ema3" onclick="iqToggleIndicator('ema3')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">EMA<span id="lbl-ema3">21</span></button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-bb" onclick="iqToggleIndicator('bb')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">BB</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-sar" onclick="iqToggleIndicator('sar')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">SAR</button>
-                                        <span style="font-size:0.68rem;color:#475569;">|</span>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-rsi" onclick="iqToggleIndicator('rsi')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">RSI</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-macd" onclick="iqToggleIndicator('macd')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">MACD</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-stoch" onclick="iqToggleIndicator('stoch')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">Stoch</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-cci" onclick="iqToggleIndicator('cci')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">CCI</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-mom" onclick="iqToggleIndicator('mom')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">Mom</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-willr" onclick="iqToggleIndicator('willr')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">%R</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-atr" onclick="iqToggleIndicator('atr')" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);">ATR</button>
-                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-vol" onclick="iqToggleIndicator('vol')" style="font-size:0.72rem;background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">VOL</button>
-                                        <span style="font-size:0.68rem;color:#475569;">|</span>
-                                        <button class="btn btn-sm px-2 py-0" id="ind-signals" onclick="iqToggleStrategySignals()" title="Tampilkan sinyal beli/jual dari strategi yang diterapkan" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-chart-line me-1"></i>Sinyal</button>
-                                        <button class="btn btn-sm px-2 py-0" onclick="iqOpenIndSettings()" title="Pengaturan Indikator" style="font-size:0.72rem;background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1);"><i class="fas fa-sliders-h"></i></button>
+                                    <!-- Chart Analysis button → opens modal -->
+                                    <button onclick="iqOpenChartAnalysisModal()" class="btn btn-sm d-flex align-items-center gap-1" style="font-size:0.78rem;background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.4);padding:4px 10px;">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span>Chart Analysis</span>
+                                        <span id="iq-analysis-badge" class="badge rounded-pill ms-1" style="background:rgba(16,185,129,0.3);color:#34d399;font-size:0.6rem;display:none;">0</span>
+                                        <i class="fas fa-chevron-down" style="font-size:0.6rem;opacity:0.7;"></i>
+                                    </button>
+
+                                    <!-- Hidden indicator buttons (keep for JS compatibility) -->
+                                    <div style="display:none;">
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma1" onclick="iqToggleIndicator('ma1')">SMA<span id="lbl-ma1">20</span></button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-ma2" onclick="iqToggleIndicator('ma2')">SMA<span id="lbl-ma2">50</span></button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-ema3" onclick="iqToggleIndicator('ema3')">EMA<span id="lbl-ema3">21</span></button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-bb" onclick="iqToggleIndicator('bb')">BB</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-sar" onclick="iqToggleIndicator('sar')">SAR</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-rsi" onclick="iqToggleIndicator('rsi')">RSI</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-macd" onclick="iqToggleIndicator('macd')">MACD</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-stoch" onclick="iqToggleIndicator('stoch')">Stoch</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-cci" onclick="iqToggleIndicator('cci')">CCI</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-mom" onclick="iqToggleIndicator('mom')">Mom</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-willr" onclick="iqToggleIndicator('willr')">%R</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn" id="ind-atr" onclick="iqToggleIndicator('atr')">ATR</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-ind-btn active" id="ind-vol" onclick="iqToggleIndicator('vol')">VOL</button>
+                                        <button class="btn btn-sm px-2 py-0" id="ind-signals" onclick="iqToggleStrategySignals()">Sinyal</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-chart-type-btn active" data-type="candle" onclick="iqSetChartType('candle')">Candle</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-chart-type-btn" data-type="bar" onclick="iqSetChartType('bar')">Bar</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-chart-type-btn" data-type="line" onclick="iqSetChartType('line')">Line</button>
+                                        <button class="btn btn-sm px-2 py-0 iq-chart-type-btn" data-type="ha" onclick="iqSetChartType('ha')">HA</button>
                                     </div>
 
                                     <!-- Live controls + Load button -->
@@ -4551,15 +4537,19 @@
                             const col = document.createElement('div');
                             col.className = 'col-6 col-md-3 col-lg-2';
                             col.dataset.cat = cat;
+                            const iqUrl = `https://iqoption.com/traderoom#${encodeURIComponent(name)}`;
                             col.innerHTML = `
-                                <div class="p-2 rounded text-center" style="background:${isOpen ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.05)'};border:1px solid ${isOpen ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.15)'};">
+                                <div class="p-2 rounded" style="background:${isOpen ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.05)'};border:1px solid ${isOpen ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.15)'};">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <span class="badge rounded-pill" style="font-size:0.6rem;background:${clr.bg};color:${clr.label};border:1px solid ${clr.border};">${cat.toUpperCase()}</span>
                                         <span class="badge ${isOpen ? 'bg-success' : 'bg-danger'}" style="font-size:0.6rem;">${isOpen ? 'OPEN' : 'CLOSED'}</span>
                                     </div>
                                     <div class="fw-semibold text-truncate" style="color:#f8fafc;font-size:0.75rem;" title="${name}">${name}</div>
-                                    <div class="mt-1">
+                                    <div class="mt-1 d-flex align-items-center justify-content-between">
                                         <i class="fas fa-circle" style="font-size:0.5rem;color:${isOpen ? '#4ade80' : '#f87171'};"></i>
+                                        <a href="${iqUrl}" target="_blank" rel="noopener" title="Buka ${name} di IQ Option (tab baru)" style="font-size:0.6rem;color:#60a5fa;text-decoration:none;opacity:0.8;" onclick="event.stopPropagation();">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
                                     </div>
                                 </div>`;
                             grid.appendChild(col);
@@ -4633,31 +4623,9 @@
 
                 async function iqRefreshAppliedStrategy() {
                     try {
-                        const r = await fetch('/get-applied-strategy');
-                        const data = await r.json();
-                        const body = document.getElementById('iq-strategy-info-body');
-                        if (!body) return;
-                        if (!data.success || !data.indicators || data.indicators.length === 0) {
-                            body.innerHTML = `<div class="small text-center py-2" style="color:#64748b;"><i class="fas fa-exclamation-triangle me-1 text-warning"></i>Belum ada strategi yang diterapkan. Buka <strong>Generate Strategi</strong>, jalankan generator, lalu klik <strong>Terapkan ke Robot</strong>.</div>`;
-                            return;
-                        }
-                        // Sync dropdown jika signal_type di DB adalah strategy_generator
-                        if (data.signal_type === 'strategy_generator') {
-                            const sel = document.getElementById('iq-strategy');
-                            if (sel && sel.value !== 'strategy_generator') sel.value = 'strategy_generator';
-                        }
-                        const badges = data.indicators.map(ind => {
-                            const nm = ind.id || ind.label || ind.indicator_id || '?';
-                            return `<span class="badge" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.35);font-size:0.7rem;">${nm}</span>`;
-                        }).join('');
-                        body.innerHTML = `
-                            <div class="row g-2 mb-2">
-                                <div class="col-6"><div class="small" style="color:#94a3b8;">Asset</div><div class="small fw-bold text-white">${data.asset || '-'}</div></div>
-                                <div class="col-3"><div class="small" style="color:#94a3b8;">Timeframe</div><div class="small fw-bold text-white">M${data.interval || 1}</div></div>
-                                <div class="col-3"><div class="small" style="color:#94a3b8;">Min. Agree</div><div class="small fw-bold text-white">${data.min_agreement || 1}</div></div>
-                            </div>
-                            <div class="small mb-1" style="color:#94a3b8;">Indikator Aktif:</div>
-                            <div class="d-flex flex-wrap gap-1">${badges}</div>`;
+                        const resp = await fetch('/strategy-generator/multi-strategies');
+                        const data = await resp.json();
+                        iqRenderMultiStrategyList(data.strategies || []);
                     } catch(e) {
                         console.warn('iqRefreshAppliedStrategy error:', e);
                     }
@@ -5862,9 +5830,12 @@
         }
 
         // ── Apply button inside modal ────────────────────────────────────────
-        html += `<div class="mt-3 d-flex gap-2">
+        html += `<div class="mt-3 d-flex gap-2 flex-wrap">
             <button class="btn btn-accent flex-fill" onclick="sgApply(${idx}); bootstrap.Modal.getInstance(document.getElementById('sgDetailModal')).hide()">
-                <i class="fas fa-robot me-2"></i>Terapkan ke Robot Sekarang
+                <i class="fas fa-robot me-2"></i>Terapkan ke Robot (Ganti)
+            </button>
+            <button class="btn btn-sm flex-fill" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.4);" onclick="sgAddToMulti(${idx}); bootstrap.Modal.getInstance(document.getElementById('sgDetailModal')).hide()">
+                <i class="fas fa-plus me-1"></i>Tambah ke Daftar Multi-Strategi
             </button>
         </div>`;
 
@@ -5904,6 +5875,403 @@
             }
         });
     });
+
+    // ── Add strategy to multi-list ───────────────────────────────────────────
+    async function sgAddToMulti(idx) {
+        const r = window._sgResults && window._sgResults[idx];
+        if (!r) return;
+        const payload = {
+            name: `Strategi #${idx+1} (${r.win_rate}% WR)`,
+            indicators: (r.indicators || []).map(ind => ({id: ind.id, params: ind.params})),
+            min_agreement: r.min_agreement || 1,
+            asset: document.getElementById('sgAsset').value || 'EURUSD-OTC',
+            interval: parseInt(document.getElementById('sgInterval').value) || 1,
+        };
+        try {
+            const resp = await fetch('/strategy-generator/multi-add', {
+                method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload),
+            });
+            const data = await resp.json();
+            if (data.success) {
+                sgShowAlert('✅ ' + data.message, 'success');
+                const sel = document.getElementById('iq-strategy');
+                if (sel) { sel.value = 'strategy_generator'; onStrategyChange(); }
+                iqRefreshAppliedStrategy();
+            } else {
+                sgShowAlert('❌ ' + data.message, 'danger');
+            }
+        } catch(e) { sgShowAlert('Error: ' + e.message); }
+    }
+
+    // ── Delete from multi-list ───────────────────────────────────────────────
+    async function iqDeleteMultiStrategy(id) {
+        if (!confirm('Hapus strategi ini?')) return;
+        try {
+            const resp = await fetch('/strategy-generator/multi-delete', {
+                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id}),
+            });
+            const data = await resp.json();
+            if (data.success) { iqRefreshAppliedStrategy(); }
+            else { alert(data.message); }
+        } catch(e) { alert(e.message); }
+    }
+
+    // ── Render multi-strategy list ──────────────────────────────────────────
+    function iqRenderMultiStrategyList(strategies) {
+        const container = document.getElementById('iq-multi-strat-list');
+        const countBadge = document.getElementById('iq-multi-strat-count');
+        if (!container) return;
+
+        if (!strategies || strategies.length === 0) {
+            container.innerHTML = `<div class="small text-center py-2" style="color:#64748b;">
+                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
+                Belum ada strategi aktif. Buka <strong>Generate Strategi</strong>, jalankan generator, lalu klik <strong>Tambah ke Daftar</strong>.
+            </div>`;
+            if (countBadge) countBadge.style.display = 'none';
+            const analysisBadge = document.getElementById('iq-analysis-badge');
+            if (analysisBadge) analysisBadge.style.display = 'none';
+            return;
+        }
+
+        if (countBadge) { countBadge.textContent = strategies.length; countBadge.style.display = ''; }
+        const analysisBadge = document.getElementById('iq-analysis-badge');
+        if (analysisBadge) { analysisBadge.textContent = strategies.length; analysisBadge.style.display = ''; }
+
+        container.innerHTML = strategies.map((s, i) => {
+            const indBadges = (s.indicators || []).map(ind =>
+                `<span class="badge me-1" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.35);font-size:0.65rem;">${ind.id || '?'}</span>`
+            ).join('');
+            return `<div class="mb-2 p-2 rounded" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="small fw-bold text-white">${s.name || 'Strategi #' + (i+1)}</span>
+                        <span class="badge bg-secondary" style="font-size:0.6rem;">${s.asset}</span>
+                        <span class="badge bg-info" style="font-size:0.6rem;">M${s.interval}</span>
+                        <span class="badge" style="background:rgba(167,139,250,0.2);color:#a78bfa;font-size:0.6rem;">Agree:${s.min_agreement}</span>
+                    </div>
+                    <button class="btn btn-sm py-0 px-1" style="font-size:0.7rem;background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);" onclick="iqDeleteMultiStrategy('${s.id}')" title="Hapus strategi ini">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="d-flex flex-wrap gap-1">${indBadges}</div>
+            </div>`;
+        }).join('');
+    }
+    </script>
+
+    <!-- ── Chart Type Modal ─────────────────────────────────────────────────── -->
+    <div class="modal fade" id="iqChartTypeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:360px;">
+            <div class="modal-content" style="background:#1e293b;border:1px solid rgba(139,92,246,0.35);border-radius:16px;">
+                <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <h5 class="modal-title" style="color:#a78bfa;font-size:1rem;"><i class="fas fa-chart-bar me-2"></i>Chart Type</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pb-3">
+                    <!-- Chart Type Selector -->
+                    <div class="mb-3">
+                        <div class="small fw-semibold mb-2" style="color:#94a3b8;">Tipe Grafik</div>
+                        <div class="row g-2" id="iq-ct-type-grid">
+                            <div class="col-6">
+                                <button class="btn w-100 py-3 iq-ct-btn active" data-ct="candle" onclick="iqSetChartTypeModal('candle')" style="background:rgba(139,92,246,0.2);border:2px solid rgba(139,92,246,0.6);border-radius:12px;color:#a78bfa;">
+                                    <i class="fas fa-chart-bar d-block mb-1" style="font-size:1.4rem;"></i>
+                                    <div class="small fw-semibold">Candlestick</div>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn w-100 py-3 iq-ct-btn" data-ct="bar" onclick="iqSetChartTypeModal('bar')" style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:12px;color:#94a3b8;">
+                                    <i class="fas fa-bars d-block mb-1" style="font-size:1.4rem;"></i>
+                                    <div class="small fw-semibold">Bars</div>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn w-100 py-3 iq-ct-btn" data-ct="line" onclick="iqSetChartTypeModal('line')" style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:12px;color:#94a3b8;">
+                                    <i class="fas fa-chart-line d-block mb-1" style="font-size:1.4rem;"></i>
+                                    <div class="small fw-semibold">Line with Shadow</div>
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn w-100 py-3 iq-ct-btn" data-ct="ha" onclick="iqSetChartTypeModal('ha')" style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:12px;color:#94a3b8;">
+                                    <i class="fas fa-chart-area d-block mb-1" style="font-size:1.4rem;"></i>
+                                    <div class="small fw-semibold">Heikin-Ashi</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Candle Time / Timeframe -->
+                    <div class="mb-3">
+                        <div class="small fw-semibold mb-2" style="color:#94a3b8;">Candle Time (Timeframe)</div>
+                        <div class="d-flex flex-wrap gap-2" id="iq-ct-tf-group">
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="60" onclick="iqSetTFModal(60)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">1m</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="120" onclick="iqSetTFModal(120)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">2m</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="300" onclick="iqSetTFModal(300)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">5m</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="600" onclick="iqSetTFModal(600)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">10m</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="900" onclick="iqSetTFModal(900)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">15m</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="1800" onclick="iqSetTFModal(1800)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">30m</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="3600" onclick="iqSetTFModal(3600)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">1h</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="14400" onclick="iqSetTFModal(14400)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">4h</button>
+                            <button class="btn btn-sm iq-ct-tf-btn" data-secs="86400" onclick="iqSetTFModal(86400)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:20px;min-width:44px;">1D</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Chart Analysis Modal ──────────────────────────────────────────────── -->
+    <div class="modal fade" id="iqChartAnalysisModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="background:#1e293b;border:1px solid rgba(16,185,129,0.35);border-radius:16px;">
+                <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <h5 class="modal-title" style="color:#34d399;font-size:1rem;"><i class="fas fa-chart-line me-2"></i>Chart Analysis</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs px-3 pt-3" id="iq-ca-tabs" style="border-bottom:1px solid rgba(255,255,255,0.08);">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="ca-tab-indicators" data-tab="indicators" onclick="iqCATab('indicators')" style="color:#94a3b8;border:none;background:transparent;font-size:0.85rem;">
+                                <i class="fas fa-chart-bar me-1"></i>Indikator
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="ca-tab-strategies" data-tab="strategies" onclick="iqCATab('strategies')" style="color:#94a3b8;border:none;background:transparent;font-size:0.85rem;">
+                                <i class="fas fa-robot me-1"></i>Strategi Aktif
+                                <span id="ca-strat-badge" class="badge rounded-pill ms-1" style="background:rgba(16,185,129,0.3);color:#34d399;font-size:0.6rem;display:none;">0</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Indicators Panel -->
+                    <div id="ca-panel-indicators" class="p-3">
+                        <div class="small text-muted mb-3"><i class="fas fa-info-circle me-1"></i>Pilih indikator untuk ditampilkan pada chart. Klik untuk aktifkan/nonaktifkan.</div>
+                        <!-- Overlay Indicators -->
+                        <div class="mb-3">
+                            <div class="small fw-semibold mb-2" style="color:#fbbf24;"><i class="fas fa-layer-group me-1"></i>Moving Averages & Overlay</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-sm iq-ca-ind-btn active" data-ind="ma1" onclick="iqCAToggleInd('ma1',this)" style="background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);border-radius:8px;font-size:0.78rem;">
+                                    <i class="fas fa-minus me-1"></i>SMA <span id="ca-ma1-period">20</span>
+                                </button>
+                                <button class="btn btn-sm iq-ca-ind-btn active" data-ind="ma2" onclick="iqCAToggleInd('ma2',this)" style="background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.4);border-radius:8px;font-size:0.78rem;">
+                                    <i class="fas fa-minus me-1"></i>SMA <span id="ca-ma2-period">50</span>
+                                </button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="ema3" onclick="iqCAToggleInd('ema3',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">
+                                    <i class="fas fa-minus me-1"></i>EMA <span id="ca-ema3-period">21</span>
+                                </button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="bb" onclick="iqCAToggleInd('bb',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">
+                                    <i class="fas fa-band-aid me-1"></i>Bollinger Bands
+                                </button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="sar" onclick="iqCAToggleInd('sar',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">
+                                    <i class="fas fa-dot-circle me-1"></i>Parabolic SAR
+                                </button>
+                                <button class="btn btn-sm iq-ca-ind-btn active" data-ind="vol" onclick="iqCAToggleInd('vol',this)" style="background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.3);border-radius:8px;font-size:0.78rem;">
+                                    <i class="fas fa-chart-column me-1"></i>Volume
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Oscillators -->
+                        <div class="mb-3">
+                            <div class="small fw-semibold mb-2" style="color:#f472b6;"><i class="fas fa-wave-square me-1"></i>Oscillators</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="rsi" onclick="iqCAToggleInd('rsi',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">RSI</button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="macd" onclick="iqCAToggleInd('macd',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">MACD</button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="stoch" onclick="iqCAToggleInd('stoch',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">Stochastic</button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="cci" onclick="iqCAToggleInd('cci',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">CCI</button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="mom" onclick="iqCAToggleInd('mom',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">Momentum</button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="willr" onclick="iqCAToggleInd('willr',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">Williams %R</button>
+                                <button class="btn btn-sm iq-ca-ind-btn" data-ind="atr" onclick="iqCAToggleInd('atr',this)" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;">ATR</button>
+                            </div>
+                        </div>
+                        <!-- Strategy signals toggle -->
+                        <div class="p-2 rounded d-flex align-items-center justify-content-between" style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.3);">
+                            <div>
+                                <div class="small fw-semibold" style="color:#34d399;"><i class="fas fa-robot me-1"></i>Sinyal Strategi (BUY/SELL)</div>
+                                <div class="small" style="color:#64748b;">Tampilkan marker beli/jual dari strategi yang diterapkan</div>
+                            </div>
+                            <button class="btn btn-sm" id="ca-signals-btn" onclick="iqCAToggleSignals()" style="background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:0.78rem;min-width:60px;">OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- Strategies Panel -->
+                    <div id="ca-panel-strategies" class="p-3" style="display:none;">
+                        <div class="small text-muted mb-3"><i class="fas fa-info-circle me-1"></i>Strategi dari Generate Strategi yang diterapkan ke robot. Aktifkan sinyal untuk melihat marker BUY/SELL pada chart.</div>
+                        <div id="ca-strategies-list">
+                            <div class="text-center py-3 small" style="color:#64748b;"><i class="fas fa-spinner fa-spin me-1"></i>Memuat...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ── Chart Type Modal functions ───────────────────────────────────────────
+    const _iqChartTypeNames = {candle:'Candlestick', bar:'Bars', line:'Line with Shadow', ha:'Heikin-Ashi'};
+    const _iqChartTypeIcons = {candle:'fa-chart-bar', bar:'fa-bars', line:'fa-chart-line', ha:'fa-chart-area'};
+
+    function iqOpenChartTypeModal() {
+        // Sync current type
+        const ct = _iqChartType || 'candle';
+        document.querySelectorAll('.iq-ct-btn').forEach(b => {
+            const active = b.dataset.ct === ct;
+            b.style.background = active ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.05)';
+            b.style.borderColor = active ? 'rgba(139,92,246,0.6)' : 'rgba(255,255,255,0.1)';
+            b.style.color       = active ? '#a78bfa' : '#94a3b8';
+        });
+        // Sync current TF
+        const curSecs = window._iqCurrentInterval || 300;
+        document.querySelectorAll('.iq-ct-tf-btn').forEach(b => {
+            const active = parseInt(b.dataset.secs) === curSecs;
+            b.style.background = active ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.06)';
+            b.style.borderColor= active ? 'rgba(139,92,246,0.6)' : 'rgba(255,255,255,0.15)';
+            b.style.color      = active ? '#a78bfa' : '#94a3b8';
+        });
+        new bootstrap.Modal(document.getElementById('iqChartTypeModal')).show();
+    }
+
+    function iqSetChartTypeModal(type) {
+        iqSetChartType(type);
+        // Update visible label
+        const lbl = document.getElementById('iq-chart-type-label');
+        if (lbl) lbl.textContent = _iqChartTypeNames[type] || type;
+        const icon = document.querySelector('#iq-chart-type-btn-main i.fas');
+        if (icon) { icon.className = `fas ${_iqChartTypeIcons[type] || 'fa-chart-bar'}`; }
+        // Update active buttons in modal
+        document.querySelectorAll('.iq-ct-btn').forEach(b => {
+            const active = b.dataset.ct === type;
+            b.style.background = active ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.05)';
+            b.style.borderColor = active ? 'rgba(139,92,246,0.6)' : 'rgba(255,255,255,0.1)';
+            b.style.color       = active ? '#a78bfa' : '#94a3b8';
+        });
+    }
+
+    function iqSetTFModal(secs) {
+        // Click matching TF button in chart toolbar
+        document.querySelectorAll('.iq-tf-btn').forEach(b => {
+            if (parseInt(b.dataset.seconds) === secs) b.click();
+        });
+        // Also update modal button states
+        document.querySelectorAll('.iq-ct-tf-btn').forEach(b => {
+            const active = parseInt(b.dataset.secs) === secs;
+            b.style.background = active ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.06)';
+            b.style.borderColor= active ? 'rgba(139,92,246,0.6)' : 'rgba(255,255,255,0.15)';
+            b.style.color      = active ? '#a78bfa' : '#94a3b8';
+        });
+        bootstrap.Modal.getInstance(document.getElementById('iqChartTypeModal'))?.hide();
+    }
+
+    // ── Chart Analysis Modal functions ──────────────────────────────────────
+    let _iqCASignalsOn = false;
+
+    function iqOpenChartAnalysisModal() {
+        // Sync indicator buttons
+        document.querySelectorAll('.iq-ca-ind-btn').forEach(btn => {
+            const ind = btn.dataset.ind;
+            const mainBtn = document.getElementById('ind-' + ind);
+            const isActive = mainBtn ? mainBtn.classList.contains('active') : false;
+            _iqCAApplyBtnStyle(btn, isActive);
+        });
+        // Sync signals button
+        const sigBtn = document.getElementById('ca-signals-btn');
+        if (sigBtn) {
+            sigBtn.textContent = _iqCASignalsOn ? 'ON' : 'OFF';
+            sigBtn.style.background = _iqCASignalsOn ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.05)';
+            sigBtn.style.color      = _iqCASignalsOn ? '#34d399' : '#94a3b8';
+            sigBtn.style.borderColor= _iqCASignalsOn ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.15)';
+        }
+        // Load strategies in strategies tab
+        iqCALoadStrategies();
+        new bootstrap.Modal(document.getElementById('iqChartAnalysisModal')).show();
+    }
+
+    function iqCATab(tab) {
+        document.querySelectorAll('#iq-ca-tabs .nav-link').forEach(b => {
+            b.classList.toggle('active', b.id === 'ca-tab-' + tab);
+            b.style.color = b.id === 'ca-tab-' + tab ? '#34d399' : '#94a3b8';
+        });
+        document.getElementById('ca-panel-indicators').style.display = tab === 'indicators' ? '' : 'none';
+        document.getElementById('ca-panel-strategies').style.display = tab === 'strategies' ? '' : 'none';
+    }
+
+    function iqCAToggleInd(ind, btn) {
+        // Delegate to the real toggle function
+        iqToggleIndicator(ind);
+        const mainBtn = document.getElementById('ind-' + ind);
+        const isActive = mainBtn ? mainBtn.classList.contains('active') : false;
+        _iqCAApplyBtnStyle(btn, isActive);
+    }
+
+    function _iqCAApplyBtnStyle(btn, active) {
+        const ind = btn.dataset.ind;
+        const colors = {
+            ma1: {a:'rgba(251,191,36,0.2)', ac:'#fbbf24', ab:'rgba(251,191,36,0.5)'},
+            ma2: {a:'rgba(96,165,250,0.2)',  ac:'#60a5fa', ab:'rgba(96,165,250,0.5)'},
+            ema3:{a:'rgba(52,211,153,0.2)',  ac:'#34d399', ab:'rgba(52,211,153,0.5)'},
+            vol: {a:'rgba(74,222,128,0.15)', ac:'#4ade80', ab:'rgba(74,222,128,0.4)'},
+        };
+        const c = colors[ind] || {a:'rgba(16,185,129,0.15)', ac:'#34d399', ab:'rgba(16,185,129,0.4)'};
+        btn.style.background  = active ? c.a   : 'rgba(255,255,255,0.05)';
+        btn.style.color       = active ? c.ac  : '#94a3b8';
+        btn.style.borderColor = active ? c.ab  : 'rgba(255,255,255,0.15)';
+    }
+
+    function iqCAToggleSignals() {
+        _iqCASignalsOn = !_iqCASignalsOn;
+        iqToggleStrategySignals();
+        const btn = document.getElementById('ca-signals-btn');
+        if (btn) {
+            btn.textContent = _iqCASignalsOn ? 'ON' : 'OFF';
+            btn.style.background = _iqCASignalsOn ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.05)';
+            btn.style.color      = _iqCASignalsOn ? '#34d399' : '#94a3b8';
+            btn.style.borderColor= _iqCASignalsOn ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.15)';
+        }
+    }
+
+    async function iqCALoadStrategies() {
+        const container = document.getElementById('ca-strategies-list');
+        const badge = document.getElementById('ca-strat-badge');
+        try {
+            const resp = await fetch('/strategy-generator/multi-strategies');
+            const data = await resp.json();
+            const strategies = data.strategies || [];
+            if (badge) { badge.textContent = strategies.length; badge.style.display = strategies.length ? '' : 'none'; }
+            if (!strategies.length) {
+                container.innerHTML = `<div class="text-center py-3 small" style="color:#64748b;"><i class="fas fa-exclamation-triangle me-1 text-warning"></i>Belum ada strategi. Tambahkan dari Generator.</div>`;
+                return;
+            }
+            container.innerHTML = strategies.map((s, i) => {
+                const inds = (s.indicators||[]).map(ind => `<span class="badge me-1" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.3);font-size:0.65rem;">${ind.id}</span>`).join('');
+                return `<div class="mb-2 p-2 rounded d-flex align-items-start gap-2" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="small fw-bold text-white">${s.name}</span>
+                            <span class="badge bg-secondary" style="font-size:0.6rem;">${s.asset}</span>
+                            <span class="badge bg-info" style="font-size:0.6rem;">M${s.interval}</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-1">${inds}</div>
+                    </div>
+                    <button class="btn btn-sm py-0 px-1 flex-shrink-0" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);border-radius:6px;font-size:0.7rem;" onclick="iqDeleteMultiStrategy('${s.id}'); iqCALoadStrategies();">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>`;
+            }).join('');
+        } catch(e) {
+            if (container) container.innerHTML = `<div class="text-center py-2 small text-danger">Error: ${e.message}</div>`;
+        }
+    }
+
+    // Auto-load multi strategies when strategy panel is shown
+    (function() {
+        const observer = new MutationObserver(() => {
+            const panel = document.getElementById('iq-strategy-gen-panel');
+            if (panel && panel.style.display !== 'none') {
+                iqRefreshAppliedStrategy();
+            }
+        });
+        const panel = document.getElementById('iq-strategy-gen-panel');
+        if (panel) observer.observe(panel, {attributes: true, attributeFilter:['style']});
+    })();
     </script>
 
 </body>

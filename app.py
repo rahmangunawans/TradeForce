@@ -113,6 +113,8 @@ class BotSetting(db.Model):
     selected_asset    = db.Column(db.String(30))
     selected_interval = db.Column(db.Integer, default=1)  # timeframe in minutes
     min_agreement     = db.Column(db.Integer, default=1)
+    # Multi-strategy: JSON list of {id, name, asset, interval, min_agreement, indicators:[{id,params}]}
+    active_strategies = db.Column(db.Text, default='[]')
 
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
@@ -130,6 +132,7 @@ with app.app_context():
         "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS selected_asset VARCHAR(30)",
         "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS selected_interval INTEGER DEFAULT 1",
         "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS min_agreement INTEGER DEFAULT 1",
+        "ALTER TABLE bot_setting ADD COLUMN IF NOT EXISTS active_strategies TEXT DEFAULT '[]'",
     ]
     try:
         from sqlalchemy import text as _text
@@ -1664,12 +1667,16 @@ def strategy_generator_apply():
             settings.selected_strategy = _json.dumps(indicators)
             settings.signal_type       = 'strategy_generator'
 
+        asset    = str(data.get('asset', settings.selected_asset or 'EURUSD-OTC'))
+        interval = int(data.get('interval', settings.selected_interval or 1))
+        min_agr  = int(data.get('min_agreement', settings.min_agreement or 1))
+
         if 'asset' in data:
-            settings.selected_asset = str(data['asset'])
+            settings.selected_asset = asset
         if 'interval' in data:
-            settings.selected_interval = int(data['interval'])
+            settings.selected_interval = interval
         if 'min_agreement' in data:
-            settings.min_agreement = int(data['min_agreement'])
+            settings.min_agreement = min_agr
 
         db.session.commit()
 
@@ -1679,6 +1686,111 @@ def strategy_generator_apply():
             'message': f'Strategi berhasil diterapkan ke robot! Indikator: {ind_names}. '
                        f'Asset: {settings.selected_asset or "-"} | TF: M{settings.selected_interval}',
         })
+    except Exception as ex:
+        return jsonify({'success': False, 'message': str(ex)})
+
+
+@app.route('/strategy-generator/multi-strategies', methods=['GET'])
+@login_required
+def multi_strategies_list():
+    """Return all active multi-strategies for the user."""
+    import json as _json
+    settings = BotSetting.query.filter_by(user_id=current_user.id).first()
+    if not settings:
+        return jsonify({'success': True, 'strategies': []})
+    try:
+        strategies = _json.loads(settings.active_strategies or '[]')
+    except Exception:
+        strategies = []
+    return jsonify({'success': True, 'strategies': strategies})
+
+
+@app.route('/strategy-generator/multi-add', methods=['POST'])
+@login_required
+def multi_strategies_add():
+    """Add a strategy to the active multi-strategies list."""
+    import json as _json, uuid as _uuid
+    try:
+        data = request.get_json() or {}
+        user_id = current_user.id
+
+        settings = BotSetting.query.filter_by(user_id=user_id).first()
+        if not settings:
+            return jsonify({'success': False, 'message': 'Bot settings belum dikonfigurasi.'})
+
+        indicators = data.get('indicators', [])
+        if not indicators:
+            return jsonify({'success': False, 'message': 'Tidak ada indikator.'})
+
+        try:
+            strategies = _json.loads(settings.active_strategies or '[]')
+        except Exception:
+            strategies = []
+
+        new_entry = {
+            'id': str(_uuid.uuid4())[:8],
+            'name': data.get('name', f'Strategi #{len(strategies)+1}'),
+            'asset': str(data.get('asset', 'EURUSD-OTC')),
+            'interval': int(data.get('interval', 1)),
+            'min_agreement': int(data.get('min_agreement', 1)),
+            'indicators': indicators,
+        }
+        strategies.append(new_entry)
+        settings.active_strategies = _json.dumps(strategies)
+        # Also update primary single-strategy slot (first entry is primary)
+        settings.selected_strategy = _json.dumps(indicators)
+        settings.selected_asset    = new_entry['asset']
+        settings.selected_interval = new_entry['interval']
+        settings.min_agreement     = new_entry['min_agreement']
+        settings.signal_type       = 'strategy_generator'
+        db.session.commit()
+
+        ind_names = ', '.join(i.get('id', '?') for i in indicators)
+        return jsonify({
+            'success': True,
+            'message': f'Strategi ditambahkan: {new_entry["name"]} ({new_entry["asset"]}, M{new_entry["interval"]}) — {ind_names}',
+            'strategy': new_entry,
+        })
+    except Exception as ex:
+        return jsonify({'success': False, 'message': str(ex)})
+
+
+@app.route('/strategy-generator/multi-delete', methods=['POST'])
+@login_required
+def multi_strategies_delete():
+    """Delete a strategy from the active multi-strategies list by its id."""
+    import json as _json
+    try:
+        data = request.get_json() or {}
+        sid = data.get('id', '')
+        user_id = current_user.id
+
+        settings = BotSetting.query.filter_by(user_id=user_id).first()
+        if not settings:
+            return jsonify({'success': False, 'message': 'Settings tidak ditemukan.'})
+
+        try:
+            strategies = _json.loads(settings.active_strategies or '[]')
+        except Exception:
+            strategies = []
+
+        strategies = [s for s in strategies if s.get('id') != sid]
+        settings.active_strategies = _json.dumps(strategies)
+
+        # Keep primary slot updated with first remaining strategy
+        if strategies:
+            first = strategies[0]
+            settings.selected_strategy = _json.dumps(first['indicators'])
+            settings.selected_asset    = first['asset']
+            settings.selected_interval = first['interval']
+            settings.min_agreement     = first['min_agreement']
+        else:
+            settings.selected_strategy = None
+            settings.selected_asset    = None
+            settings.signal_type       = 'signal_input'
+
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Strategi dihapus.'})
     except Exception as ex:
         return jsonify({'success': False, 'message': str(ex)})
 
